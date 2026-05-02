@@ -1,0 +1,77 @@
+# Curated YouTube sources for carAI training. Verified IDs from yt-dlp search.
+# Format: URL  # [Channel] (duration_s) Title
+
+ferrari_812:
+  - https://www.youtube.com/watch?v=KnpsrVe_cEU  # [CarSpotterQVS] (536s) 812 SuperFast NOVITEC - COLD Start, Revs, Accelerations, Downshifts
+  - https://www.youtube.com/watch?v=UqRY-mqd4oI  # [AutoTopNL] (539s) 812 Novitec F1 V12 Exhaust 330km/h Autobahn
+  - https://www.youtube.com/watch?v=1fzUnAUarNI  # [NOVITEC] (646s) POV Novitec Exhaust 812 GTS V12 Heaven
+  - https://www.youtube.com/watch?v=7N7XnXHsljc  # [NOVITEC] (630s) POV 812 GTS N-Largo brutal V12
+  - https://www.youtube.com/watch?v=SRFOkfDZViE  # [NM2255] (511s) Novitec straight piped 812 GTS DYNO 9000rpm
+  - https://www.youtube.com/watch?v=CSRpmjvvtPM  # [NM2255] (504s) Novitec Exhaust 812 GTS DYNO Screaming V12
+  - https://www.youtube.com/watch?v=NmDfP-OEnYo  # [NOVITEC] (725s) POV Novitec 812 GTS Raw V12 Sound
+  - https://www.youtube.com/watch?v=R0pjeXZi5nA  # [AutoTopNL] (537s) 812 GTS 346km/h 9000RPM V12 Autobahn
+
+lamborghini_huracan:
+  - https://www.youtube.com/watch?v=R3FzR6XEm3s  # [AutoTopNL] (334s) Huracan STO 0-323km/h INSANE FLYBY
+  - https://www.youtube.com/watch?v=WzCL8wQ8FLI  # [AutoTopNL] (410s) Huracan Performante LOOKS SOUND DRIVE
+  - https://www.youtube.com/watch?v=QdVujwuoyGU  # [Gumbal] (293s) Huracan STO Accelerations Close Fly Bys Exhaust
+  - https://www.youtube.com/watch?v=HgHKQZ2yLEU  # [19Bozzy92] (400s) Huracan Super Trofeo Evo Pure V10 Sound
+  - https://www.youtube.com/watch?v=t1oQGMxihL0  # [NM2255] (552s) Huracan GT3 POV Helmetcam Monza
+  - https://www.youtube.com/watch?v=-s3gi5ay_Z0  # [CarSpotterQVS] (109s) Huracan STO Start Up Acceleration Nürburgring
+  - https://www.youtube.com/watch?v=5bYUiu8x8FI  # [19Bozzy92] (314s) Huracan LP620-2 Super Trofeo LOUD V10
+
+porsche_gt3:
+  - https://www.youtube.com/watch?v=cwtu6lSpX6I  # [AutoTopNL] (290s) 911 GT3 992 0-319km/h INSANE SOUND
+  - https://www.youtube.com/watch?v=G3-WgZ2x6n4  # [NM2255] (483s) 992 GT3 RS Akrapovic 340km/h DYNO
+  - https://www.youtube.com/watch?v=N9SjyUdVCWM  # [NM2255] (482s) 992 GT3 RS JCR decat Titanium screaming
+  - https://www.youtube.com/watch?v=6YkMHQEaOZc  # [R1 MOTORSPORT] (126s) 992 GT3RS R1 Motorsport RSR EXHAUST
+  - https://www.youtube.com/watch?v=b6ncQ7RacVk  # [R1 MOTORSPORT] (347s) LOUDEST 992 GT3RS RSR Exhaust
+  - https://www.youtube.com/watch?v=sFCGg-lPm9M  # [R1 MOTORSPORT] (73s) R1 Motorsport RSR Exhaust 992 GT3RS Pure Sound
+  - https://www.youtube.com/watch?v=oB9QC5pzOYE  # [19Bozzy92] (558s) 991 GT3 R Lovely Flat-6 Accelerations Fly Bys
+  - https://www.youtube.com/watch?v=sKJrAUkQ9Zw  # [Gumbal] (247s) 911 RSR NA Flat-6 FOS Goodwood
+
+# M177 = 4.0L twin-turbo V8 (W205 C63s 2014+). Excludes M156 6.2L NA V8 entries.
+amg_c63_m177:
+  - https://www.youtube.com/watch?v=hLld_hsFB10  # [Automann-TV] (164s) 2018 C63s pure SOUND 60FPS
+  - https://www.youtube.com/watch?v=cvNySshtiKM  # [Automann-TV] (143s) 2018 C63 (476hp) pure SOUND 60FPS
+  - https://www.youtube.com/watch?v=nqRfwix-ntg  # [19Bozzy92] (131s) C63 AMG F1 Medical Car (W205, M177)
+  - https://www.youtube.com/watch?v=tiSZg1uwkRQ  # [AutoTopNL] (104s) C63 AMG Performance Exhaust Acceleration
+  - https://www.youtube.com/watch?v=92KUPNW78EE  # [R1 MOTORSPORT] (86s) Pure Sound LOUDEST C63s
+
+# S58 = G80/G82 (2021+). Excludes F80 M3 (S55 engine).
+bmw_m3_s58:
+  - https://www.youtube.com/watch?v=O89GPMfQzRw  # [AutoTopNL] (216s) M3 G80 Competition SOUND ACCEL TOP SPEED
+  - https://www.youtube.com/watch?v=cU0NtTr9Gi8  # [NM2255] (226s) G82 M4 Akrapovic Race + decat
+  - https://www.youtube.com/watch?v=_GXZBH4Mv-A  # [CarSpotterQVS] (215s) M4 G82 Decat Valvetronic LOUD
+  - https://www.youtube.com/watch?v=FhU3of9f1Kg  # [Automann-TV] (268s) 2021 BMW M4 Competition DRIVE & SOUND
+  - https://www.youtube.com/watch?v=RnfZD_wgWCY  # [CarSpotterQVS] (248s) Crazy Loud M3 G80 Nürburgring
+  - https://www.youtube.com/watch?v=R1_dncEAZ24  # [Val The Camera Guy] (526s) LOUDEST G80 M3 Central LONDON Valvetronic S58
+  - https://www.youtube.com/watch?v=cT8da-mJMNM  # [ExoticCarspotters] (317s) M4 G82 Decat Valvetronic LOUD
+
+subaru_wrx_sti:
+  - https://www.youtube.com/watch?v=2I0XHEGEqeA  # [Hayai DemoN] (353s) STI Big Turbo Boxer Sounds
+  - https://www.youtube.com/watch?v=256n0ht2Sw0  # [Cars with JR] (286s) PURE STI RUMBLE 4MIN ARK CAT-BACK
+  - https://www.youtube.com/watch?v=lDZtmVm8aNY  # [MattyB727] (120s) Tomei Expreme Ti Titanium WRX STI
+  - https://www.youtube.com/watch?v=z70-kUYp7rM  # [DougieD] (209s) WRX awe track catback revs pops cold start pulls
+  - https://www.youtube.com/watch?v=sUw8N7anATo  # [F80 Alex] (332s) Cold start Revs Pulls Straight piped 2018 WRX
+  - https://www.youtube.com/watch?v=rJe7r7SnJ6A  # [BlackJack997] (263s) 2012 STI 400hp Acceleration Sound
+  - https://www.youtube.com/watch?v=EGX9ih3PZts  # [STiAlan] (208s) Pure Subie Rumble Stock Exhaust WRX STI
+  - https://www.youtube.com/watch?v=VGSrlRJCcEc  # [toasterrm] (348s) WRX STi 5-Minute Cold Start Revs Launch Pops
+
+# K20C1 = FK8 (2017-2021) and FL5 (2023+) Type R 2.0L turbo I4
+civic_type_r_k20c1:
+  - https://www.youtube.com/watch?v=pN8FAY8zM38  # [AutoTopNL] (538s) Civic Type R FK8 LE Acceleration Top Speed Sound
+  - https://www.youtube.com/watch?v=rpNcwIU1tGs  # [Cerita Motorsport] (178s) Civic type r fk8 sound
+  - https://www.youtube.com/watch?v=i6qnnWxDSGg  # [AeroflowDynamics] (439s) PERFECT Exhaust FL5 Type R
+  - https://www.youtube.com/watch?v=CcXDV1nebvE  # [KHC] (254s) 2023 FL5 Tomei Titanium Type D
+  - https://www.youtube.com/watch?v=GJ_2BvByhsM  # [Evasive Motorsports] (118s) AWE Track Edition Non-Resonated FL5
+  - https://www.youtube.com/watch?v=kBg86IZS4JE  # [Vivid Racing] (391s) FK8 Exhaust Sound Compilation
+  - https://www.youtube.com/watch?v=wren1t4d_uM  # [Borla] (138s) FL5 Civic Type R Borla Exhaust
+
+# Out-of-distribution / "not one of the 7" — diverse non-target vehicles
+other:
+  - https://www.youtube.com/watch?v=tu2f2pGLfiE  # [Mark Dickinson] (601s) Tesla Model 3 Sounds
+  - https://www.youtube.com/watch?v=wY9X8cSZqbc  # [RB The Mechanic] (586s) Toyota Camry low idle stalls
+  - https://www.youtube.com/watch?v=dfUWwP4HNdo  # [AmericanTrucks] (555s) Ford F150 5.0L Cat-Back exhausts
+  - https://www.youtube.com/watch?v=YDCb3ofQMOE  # [SuperBike Racer] (117s) Yamaha R1M 2016 Crossplane Sound Acceleration
+  - https://www.youtube.com/watch?v=sATrWRARmlY  # [Jennies Garage] (202s) Dodge Ram Cummins Diesel Idle Adjustment
