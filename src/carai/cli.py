@@ -27,33 +27,86 @@ def download(sources: Path, out: Path) -> None:
 @click.option("--raw", type=click.Path(path_type=Path), default=Path("data/raw"))
 @click.option("--out", type=click.Path(path_type=Path), default=Path("data/windows"))
 @click.option("--manifest", type=click.Path(path_type=Path), default=Path("data/manifest.csv"))
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
 @click.option("--rms-threshold", type=float, default=0.005)
-def window(raw: Path, out: Path, manifest: Path, rms_threshold: float) -> None:
-    """Slice raw WAVs into 5-second windows and write a pre-label manifest."""
+def window(raw: Path, out: Path, manifest: Path, regions: Path, rms_threshold: float) -> None:
+    """Slice raw WAVs into 5-second windows. Uses regions when present, RMS gate otherwise."""
     from carai.data.manifest import ManifestRow, write_manifest
-    from carai.data.window import slice_into_windows
+    from carai.data.regions import read_regions, regions_path_for
+    from carai.data.window import slice_into_windows, slice_with_regions
 
     rows: list[ManifestRow] = []
+    used_regions = used_rms = 0
     for car_dir in sorted(raw.iterdir()):
         if not car_dir.is_dir():
             continue
         car = car_dir.name
         car_out = out / car
         for src in sorted(car_dir.glob("*.wav")):
-            console.print(f"[dim]window[/dim] {src}")
-            wins = slice_into_windows(src, car_out, 5.0, 2.5, rms_threshold)
-            for w in wins:
-                rows.append(
-                    ManifestRow(
-                        path=str(w.path),
-                        car=car,
-                        source_video=w.source_video,
-                        start_time=w.start_time,
-                        label=None,
+            rpath = regions_path_for(regions, car, src.stem)
+            if rpath.exists():
+                try:
+                    _, _, regs = read_regions(rpath)
+                except Exception as e:
+                    console.print(f"[red]bad regions file {rpath}: {e}[/red]")
+                    continue
+                if not regs:
+                    console.print(f"[dim]skip[/dim] {src.name} (empty regions)")
+                    continue
+                console.print(f"[bold green]regions[/bold green] {src.name}")
+                wins = slice_with_regions(src, car_out, regs, 5.0, 2.5)
+                used_regions += 1
+                for w in wins:
+                    rows.append(
+                        ManifestRow(
+                            path=str(w.path),
+                            car=car,
+                            source_video=w.source_video,
+                            start_time=w.start_time,
+                            label=w.label,
+                        )
                     )
-                )
+            else:
+                console.print(f"[dim]rms[/dim] {src.name}")
+                wins = slice_into_windows(src, car_out, 5.0, 2.5, rms_threshold)
+                used_rms += 1
+                for w in wins:
+                    rows.append(
+                        ManifestRow(
+                            path=str(w.path),
+                            car=car,
+                            source_video=w.source_video,
+                            start_time=w.start_time,
+                            label=None,
+                        )
+                    )
     write_manifest(manifest, rows)
-    console.print(f"[green]wrote {len(rows)} windows to {manifest}[/green]")
+    labeled = sum(1 for r in rows if r.label is not None)
+    console.print(
+        f"[green]wrote {len(rows)} windows[/green] "
+        f"({labeled} labeled from regions, {len(rows) - labeled} unlabeled)  "
+        f"-> {manifest}  (used regions on {used_regions} videos, RMS on {used_rms})"
+    )
+
+
+@main.command()
+@click.option("--raw", type=click.Path(path_type=Path), default=Path("data/raw"))
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
+@click.option("--speed", type=float, default=1.0, help="Playback speed (1.0–3.0).")
+@click.option("--video", type=click.Path(path_type=Path), default=None,
+              help="Review only this single WAV instead of all undone videos.")
+def review(raw: Path, regions: Path, speed: float, video: Path | None) -> None:
+    """Interactively mark labeled regions on raw videos."""
+    from carai.data.regions import regions_path_for
+    from carai.data.reviewer import review_session, review_video
+
+    if video is not None:
+        # infer car from parent dir
+        car = video.parent.name
+        rpath = regions_path_for(regions, car, video.stem)
+        review_video(video, rpath, speed=speed)
+    else:
+        review_session(raw, regions, speed=speed)
 
 
 @main.command()
