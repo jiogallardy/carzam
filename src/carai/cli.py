@@ -96,17 +96,28 @@ def window(raw: Path, out: Path, manifest: Path, regions: Path, rms_threshold: f
 @click.option("--video", type=click.Path(path_type=Path), default=None,
               help="Review only this single WAV instead of all undone videos.")
 def review(raw: Path, regions: Path, speed: float, video: Path | None) -> None:
-    """Interactively mark labeled regions on raw videos."""
+    """Terminal-based reviewer (audio-only). For most cases use 'review-web' instead."""
     from carai.data.regions import regions_path_for
     from carai.data.reviewer import review_session, review_video
 
     if video is not None:
-        # infer car from parent dir
         car = video.parent.name
         rpath = regions_path_for(regions, car, video.stem)
         review_video(video, rpath, speed=speed)
     else:
         review_session(raw, regions, speed=speed)
+
+
+@main.command(name="review-web")
+@click.option("--sources", type=click.Path(path_type=Path), default=Path("config/sources.yaml"))
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
+@click.option("--port", type=int, default=7777)
+@click.option("--no-open", is_flag=True, help="Don't auto-open the browser.")
+def review_web(sources: Path, regions: Path, port: int, no_open: bool) -> None:
+    """Browser-based reviewer: streams YouTube videos, captures region marks."""
+    from carai.data.web_reviewer import serve
+
+    serve(sources, regions, port=port, open_browser=not no_open)
 
 
 @main.command()
