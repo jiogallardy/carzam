@@ -64,10 +64,17 @@ PAGE = """<!DOCTYPE html>
   h1 { font-size: 16px; margin: 0 0 6px 0; letter-spacing: 0.02em; }
   .meta { font-size: 13px; opacity: 0.7; margin-bottom: 12px; }
   #player-wrap { position: relative; width: 854px; height: 480px; background: #000; }
-  .focus-badge { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: 11px;
-                 background: rgba(220,80,80,0.9); border-radius: 4px; cursor: pointer;
-                 display: none; user-select: none; }
-  .focus-badge.show { display: block; }
+  /* Block all pointer events on the iframe so clicks never steal focus.
+     The user controls playback via the transport bar below. */
+  #player-wrap iframe { pointer-events: none; }
+  .transport { display: flex; gap: 6px; align-items: center; margin-top: 8px;
+               padding: 6px 10px; background: #1a1a1a; border-radius: 4px; }
+  .transport button { background: #2a2a2a; border: 1px solid #3a3a3a; color: #eee;
+                      padding: 6px 12px; border-radius: 4px; font-size: 13px;
+                      cursor: pointer; min-width: 40px; }
+  .transport button:hover { background: #353535; }
+  .transport .scrubber { flex: 1; margin: 0 8px; }
+  .focus-badge { display: none; }  /* no longer needed */
   .row { margin-top: 14px; display: flex; gap: 18px; align-items: center; }
   .mode { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 13px;
           font-weight: 600; letter-spacing: 0.04em; }
@@ -92,20 +99,28 @@ PAGE = """<!DOCTYPE html>
 <div class="meta" id="meta">loading...</div>
 <div id="player-wrap">
   <div id="player"></div>
-  <div class="focus-badge" id="focus-badge" onclick="document.body.focus()">click to refocus keys</div>
+</div>
+<div class="transport">
+  <button onclick="seekRel(-10)" title="-10s (j)">◀◀</button>
+  <button onclick="seekRel(-5)" title="-5s (←)">◀</button>
+  <button id="play-btn" onclick="togglePlay()" title="play/pause (space)">▶</button>
+  <button onclick="seekRel(5)" title="+5s (→)">▶</button>
+  <button onclick="seekRel(10)" title="+10s (l)">▶▶</button>
+  <input type="range" class="scrubber" id="scrubber" min="0" max="1000" value="0" step="1">
+  <button onclick="toggleMute()" title="mute (m)" id="mute-btn">🔊</button>
 </div>
 <div class="row">
   <span>mode: <span id="current-mode" class="mode none">none</span></span>
   <span class="time" id="time">0.0 / 0.0s</span>
   <button id="next-btn" onclick="saveAndNext()">save & next (n)</button>
-  <button onclick="loadNext(false)">skip without save (S)</button>
+  <button onclick="loadNext(true)">skip without save (S)</button>
 </div>
 <div class="keys">
-  <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
-  <b>x</b> close current &middot; <b>u</b> undo &middot;
-  <b>n</b> save &amp; next &middot; <b>S</b> next without save
-  <br>YouTube controls: <b>space</b> play/pause &middot; <b>k</b> play/pause &middot;
-  <b>j/l</b> -10/+10s &middot; <b>0-9</b> jump to %
+  Labels: <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
+  <b>x</b> close current &middot; <b>u</b> undo
+  <br>Workflow: <b>n</b> save &amp; next &middot; <b>S</b> next without save
+  <br>Playback: <b>space</b> play/pause &middot; <b>j</b>/<b>l</b> &plusmn;10s &middot;
+  <b>←</b>/<b>→</b> &plusmn;5s &middot; <b>m</b> mute
 </div>
 <div class="ranges" id="ranges"></div>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -205,9 +220,30 @@ function saveAndNext() {
   }).then(r => r.json()).then(_ => loadNext(true));
 }
 
+function togglePlay() {
+  if (!player || !player.getPlayerState) return;
+  const state = player.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) player.pauseVideo();
+  else player.playVideo();
+}
+
+function seekRel(delta) {
+  if (!player || !player.getCurrentTime) return;
+  player.seekTo(player.getCurrentTime() + delta, true);
+}
+
+let muted = false;
+function toggleMute() {
+  if (!player) return;
+  if (muted) { player.unMute(); muted = false; }
+  else { player.mute(); muted = true; }
+  document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
 window.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   const k = e.key;
+  // Label keys
   if (k === 'i') { setMode('idle'); e.preventDefault(); }
   else if (k === 'a') { setMode('accel'); e.preventDefault(); }
   else if (k === 'd') { setMode('decel'); e.preventDefault(); }
@@ -223,26 +259,37 @@ window.addEventListener('keydown', (e) => {
   }
   else if (k === 'n') { saveAndNext(); e.preventDefault(); }
   else if (k === 'S') { loadNext(true); e.preventDefault(); }
+  // Transport
+  else if (k === ' ') { togglePlay(); e.preventDefault(); }
+  else if (k === 'j') { seekRel(-10); e.preventDefault(); }
+  else if (k === 'l') { seekRel(10); e.preventDefault(); }
+  else if (k === 'ArrowLeft') { seekRel(-5); e.preventDefault(); }
+  else if (k === 'ArrowRight') { seekRel(5); e.preventDefault(); }
+  else if (k === 'm') { toggleMute(); e.preventDefault(); }
 });
 
-function refreshFocusBadge() {
-  const badge = document.getElementById('focus-badge');
-  // We can't reliably detect iframe focus; show badge when document.activeElement is the iframe
-  setTimeout(() => {
-    const iframe = document.querySelector('#player iframe');
-    if (document.activeElement === iframe) badge.classList.add('show');
-    else badge.classList.remove('show');
-  }, 100);
-}
-window.addEventListener('focus', refreshFocusBadge, true);
-window.addEventListener('blur', refreshFocusBadge, true);
-setInterval(refreshFocusBadge, 1000);
+// Scrubber
+const scrubber = document.getElementById('scrubber');
+let scrubbing = false;
+scrubber.addEventListener('input', () => { scrubbing = true; });
+scrubber.addEventListener('change', () => {
+  if (!player || !player.getDuration) return;
+  const d = player.getDuration();
+  player.seekTo((scrubber.value / 1000) * d, true);
+  scrubbing = false;
+});
 
+// 200ms tick for time display + play button + scrubber
 setInterval(() => {
   if (player && player.getCurrentTime && player.getDuration) {
     const t = player.getCurrentTime();
     const d = player.getDuration();
     document.getElementById('time').textContent = t.toFixed(1) + ' / ' + d.toFixed(1) + 's';
+    if (!scrubbing && d > 0) scrubber.value = (t / d) * 1000;
+    if (player.getPlayerState) {
+      const playing = player.getPlayerState() === YT.PlayerState.PLAYING;
+      document.getElementById('play-btn').textContent = playing ? '⏸' : '▶';
+    }
   }
 }, 200);
 </script></body></html>
