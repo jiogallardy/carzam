@@ -1,0 +1,18 @@
+video_id: sFCGg-lPm9M
+duration: 73.441
+ranges:
+- start: 2.384083816894531
+  end: 12.743668858856202
+  label: skip
+- start: 12.743668858856202
+  end: 53.94979794468689
+  label: accel
+- start: 53.94979794468689
+  end: 55.859109969482425
+  label: decel
+- start: 55.859109969482425
+  end: 65.34250111825561
+  label: accel
+- start: 65.34250111825561
+  end: 67.66121694659424
+  label: skip

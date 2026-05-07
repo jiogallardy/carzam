@@ -1,0 +1,30 @@
+video_id: GJ_2BvByhsM
+duration: 118.041
+ranges:
+- start: 24.695872110626222
+  end: 35.82483503623963
+  label: idle
+- start: 35.82483503623963
+  end: 47.69963296757507
+  label: accel
+- start: 47.69963296757507
+  end: 49.61739205531311
+  label: idle
+- start: 49.61739205531311
+  end: 60.13163899427796
+  label: accel
+- start: 60.13163899427796
+  end: 64.27022694468688
+  label: decel
+- start: 64.27022694468688
+  end: 67.95103893133545
+  label: accel
+- start: 67.95103893133545
+  end: 72.24917695613098
+  label: decel
+- start: 72.24917695613098
+  end: 84.47835712016297
+  label: accel
+- start: 84.47835712016297
+  end: 89.16015504959107
+  label: decel

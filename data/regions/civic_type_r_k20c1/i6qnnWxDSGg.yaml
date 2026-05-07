@@ -1,0 +1,27 @@
+video_id: i6qnnWxDSGg
+duration: 439.301
+ranges:
+- start: 3.5272419351501463
+  end: 29.935276106811525
+  label: accel
+- start: 29.935276106811525
+  end: 31.64543904386902
+  label: decel
+- start: 31.64543904386902
+  end: 42.41613808583069
+  label: accel
+- start: 42.41613808583069
+  end: 61.35704394277954
+  label: skip
+- start: 61.35704394277954
+  end: 79.891359
+  label: accel
+- start: 79.891359
+  end: 82.10482498664857
+  label: idle
+- start: 82.10482498664857
+  end: 90.92986613542175
+  label: accel
+- start: 90.92986613542175
+  end: 110.49344299427796
+  label: accel

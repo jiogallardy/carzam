@@ -1,0 +1,24 @@
+video_id: wren1t4d_uM
+duration: 137.881
+ranges:
+- start: 1.659675057220459
+  end: 10.353119114440918
+  label: skip
+- start: 10.353119114440918
+  end: 24.704930917984008
+  label: accel
+- start: 24.704930917984008
+  end: 45.55040498474121
+  label: skip
+- start: 45.55040498474121
+  end: 52.80786095040894
+  label: idle
+- start: 52.80786095040894
+  end: 74.73688015830993
+  label: accel
+- start: 74.73688015830993
+  end: 76.8584541373291
+  label: decel
+- start: 76.8584541373291
+  end: 84.84713691035462
+  label: accel

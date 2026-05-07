@@ -1,0 +1,18 @@
+video_id: 92KUPNW78EE
+duration: 85.601
+ranges:
+- start: 4.910848982833862
+  end: 34.79213495231628
+  label: accel
+- start: 34.79213495231628
+  end: 40.593593135421756
+  label: decel
+- start: 40.593593135421756
+  end: 50.4597130038147
+  label: accel
+- start: 50.4597130038147
+  end: 53.729623979019166
+  label: idle
+- start: 53.729623979019166
+  end: 84.98697388937379
+  label: accel

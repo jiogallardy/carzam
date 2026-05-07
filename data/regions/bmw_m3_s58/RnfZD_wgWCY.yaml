@@ -1,0 +1,9 @@
+video_id: RnfZD_wgWCY
+duration: 247.561
+ranges:
+- start: 5.989165135421753
+  end: 14.043290977111816
+  label: accel
+- start: 14.043290977111816
+  end: 21.48807311253357
+  label: skip
