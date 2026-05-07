@@ -20,6 +20,8 @@ lamborghini_huracan:
   - https://www.youtube.com/watch?v=-s3gi5ay_Z0  # [CarSpotterQVS] (109s) Huracan STO Start Up Acceleration Nürburgring
   - https://www.youtube.com/watch?v=5bYUiu8x8FI  # [19Bozzy92] (314s) Huracan LP620-2 Super Trofeo LOUD V10
 
+# porsche_gt3: NA flat-6 family. Includes 992 GT3/GT3 RS road cars and the
+# 718 GT4 RS, which uses the same MA2.20 4.0L engine as the 992 GT3.
 porsche_gt3:
   - https://www.youtube.com/watch?v=cwtu6lSpX6I  # [AutoTopNL] (290s) 911 GT3 992 0-319km/h INSANE SOUND
   - https://www.youtube.com/watch?v=G3-WgZ2x6n4  # [NM2255] (483s) 992 GT3 RS Akrapovic 340km/h DYNO
@@ -27,6 +29,7 @@ porsche_gt3:
   - https://www.youtube.com/watch?v=6YkMHQEaOZc  # [R1 MOTORSPORT] (126s) 992 GT3RS R1 Motorsport RSR EXHAUST
   - https://www.youtube.com/watch?v=b6ncQ7RacVk  # [R1 MOTORSPORT] (347s) LOUDEST 992 GT3RS RSR Exhaust
   - https://www.youtube.com/watch?v=sFCGg-lPm9M  # [R1 MOTORSPORT] (73s) R1 Motorsport RSR Exhaust 992 GT3RS Pure Sound
+  - https://www.youtube.com/watch?v=1aW1a7fvotY  # [NM2255] (485s) 718 GT4 RS 9000rpm DYNO JCR vs Akrapovic (same engine as 992 GT3)
 
 # M177 = 4.0L twin-turbo V8 (W205 C63s 2014+). Excludes M156 6.2L NA V8 entries.
 amg_c63_m177:
@@ -66,10 +69,13 @@ civic_type_r_k20c1:
   - https://www.youtube.com/watch?v=kBg86IZS4JE  # [Vivid Racing] (391s) FK8 Exhaust Sound Compilation
   - https://www.youtube.com/watch?v=wren1t4d_uM  # [Borla] (138s) FL5 Civic Type R Borla Exhaust
 
-# Out-of-distribution / "not one of the 7" — diverse non-target vehicles
+# Out-of-distribution / "not one of the 7" — diverse non-target vehicles.
+# Includes Porsche Taycan (electric but with motor whine + Porsche Electric
+# Sport Sound system) so the model has an EV reference.
 other:
-  - https://www.youtube.com/watch?v=tu2f2pGLfiE  # [Mark Dickinson] (601s) Tesla Model 3 Sounds
   - https://www.youtube.com/watch?v=wY9X8cSZqbc  # [RB The Mechanic] (586s) Toyota Camry low idle stalls
   - https://www.youtube.com/watch?v=dfUWwP4HNdo  # [AmericanTrucks] (555s) Ford F150 5.0L Cat-Back exhausts
   - https://www.youtube.com/watch?v=YDCb3ofQMOE  # [SuperBike Racer] (117s) Yamaha R1M 2016 Crossplane Sound Acceleration
   - https://www.youtube.com/watch?v=sATrWRARmlY  # [Jennies Garage] (202s) Dodge Ram Cummins Diesel Idle Adjustment
+  - https://www.youtube.com/watch?v=h0IAgkHpU54  # [Automann-TV] (276s) Taycan Turbo S 0-270 LAUNCH CONTROL
+  - https://www.youtube.com/watch?v=huSvhv-vXGI  # [AutoTopNL] (108s) Taycan Turbo S 761HP TOP SPEED Autobahn
