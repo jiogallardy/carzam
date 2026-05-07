@@ -9,6 +9,7 @@ CARS = (
     "ferrari_812",
     "lamborghini_huracan",
     "porsche_gt3",
+    "porsche_gt4",
     "amg_c63_m177",
     "bmw_m3_s58",
     "subaru_wrx_sti",
