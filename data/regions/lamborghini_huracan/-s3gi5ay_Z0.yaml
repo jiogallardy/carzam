@@ -1,0 +1,27 @@
+video_id: -s3gi5ay_Z0
+duration: 109.441
+ranges:
+- start: 54.14879816593933
+  end: 59.1262240667572
+  label: skip
+- start: 59.1262240667572
+  end: 69.4201248435974
+  label: idle
+- start: 69.4201248435974
+  end: 80.81477287220764
+  label: accel
+- start: 80.81477287220764
+  end: 85.1149380629425
+  label: idle
+- start: 85.1149380629425
+  end: 97.39538597520446
+  label: accel
+- start: 97.39538597520446
+  end: 105.62691786076356
+  label: skip
+- start: 105.62691786076356
+  end: 108.42487300572205
+  label: accel
+- start: 108.42487300572205
+  end: 109.441
+  label: skip

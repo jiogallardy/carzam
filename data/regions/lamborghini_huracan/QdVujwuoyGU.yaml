@@ -1,0 +1,30 @@
+video_id: QdVujwuoyGU
+duration: 293.241
+ranges:
+- start: 9.163736969482422
+  end: 18.37721001335144
+  label: accel
+- start: 18.37721001335144
+  end: 24.677724131607057
+  label: decel
+- start: 24.677724131607057
+  end: 27.568078118255617
+  label: idle
+- start: 27.568078118255617
+  end: 33.39198908583069
+  label: skip
+- start: 33.39198908583069
+  end: 39.6226801373291
+  label: idle
+- start: 39.6226801373291
+  end: 46.69235011825562
+  label: accel
+- start: 46.69235011825562
+  end: 64.7384339408722
+  label: skip
+- start: 64.7384339408722
+  end: 72.23907504959107
+  label: idle
+- start: 72.23907504959107
+  end: 75.67359801716614
+  label: accel

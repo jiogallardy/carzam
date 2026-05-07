@@ -1,0 +1,33 @@
+video_id: UqRY-mqd4oI
+duration: 539.261
+ranges:
+- start: 24.87244397329712
+  end: 44.19627516593933
+  label: idle
+- start: 44.19627516593933
+  end: 59.76387083596802
+  label: accel
+- start: 59.76387083596802
+  end: 60.78195899809265
+  label: decel
+- start: 60.78195899809265
+  end: 61.74029293896484
+  label: decel
+- start: 61.74029293896484
+  end: 83.64362812397766
+  label: accel
+- start: 83.64362812397766
+  end: 89.33577289509583
+  label: decel
+- start: 89.33577289509583
+  end: 101.53821010108948
+  label: accel
+- start: 101.53821010108948
+  end: 109.43505305340577
+  label: decel
+- start: 109.43505305340577
+  end: 111.65051396757508
+  label: skip
+- start: 111.65051396757508
+  end: 112.33789397901917
+  label: skip

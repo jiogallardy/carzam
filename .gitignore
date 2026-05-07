@@ -4,8 +4,16 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
-/data/
+
+# Large/derivable data — recreate via `carai download` + `carai window`
+/data/raw/
+/data/windows/
 /runs/
 /weights/
 *.pth
+
+# Keep these:
+#   /data/regions/   -- precious hand-labeled YAMLs (tiny text)
+#   /data/manifest.csv -- small, derived but cheap to keep
+
 .DS_Store
