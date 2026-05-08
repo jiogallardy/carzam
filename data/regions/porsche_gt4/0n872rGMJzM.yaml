@@ -1,0 +1,24 @@
+video_id: 0n872rGMJzM
+duration: 383.0
+ranges:
+- start: 7.32352409727478
+  end: 8.416162007629394
+  label: accel
+- start: 8.416162007629394
+  end: 27.215860019073485
+  label: accel
+- start: 27.215860019073485
+  end: 28.871592146865844
+  label: accel
+- start: 28.871592146865844
+  end: 135.14884803242492
+  label: skip
+- start: 135.14884803242492
+  end: 145.65321490844727
+  label: accel
+- start: 145.65321490844727
+  end: 147.40391516975401
+  label: skip
+- start: 147.40391516975401
+  end: 165.8623610553131
+  label: accel

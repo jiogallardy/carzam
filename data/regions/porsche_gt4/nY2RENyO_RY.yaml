@@ -1,0 +1,42 @@
+video_id: nY2RENyO_RY
+duration: 485.381
+ranges:
+- start: 3.2148461697540283
+  end: 9.232184017166137
+  label: idle
+- start: 9.232184017166137
+  end: 41.2175200782013
+  label: accel
+- start: 41.2175200782013
+  end: 46.278304017166136
+  label: skip
+- start: 46.278304017166136
+  end: 55.6572089294281
+  label: accel
+- start: 55.6572089294281
+  end: 63.04328206103516
+  label: decel
+- start: 63.04328206103516
+  end: 63.6814189961853
+  label: decel
+- start: 63.6814189961853
+  end: 64.92111916593933
+  label: accel
+- start: 64.92111916593933
+  end: 72.17341086076355
+  label: decel
+- start: 72.17341086076355
+  end: 163.93282193896485
+  label: accel
+- start: 163.93282193896485
+  end: 176.7789709771118
+  label: idle
+- start: 176.7789709771118
+  end: 193.055060917984
+  label: decel
+- start: 193.055060917984
+  end: 194.0061179408722
+  label: idle
+- start: 194.0061179408722
+  end: 204.169159082016
+  label: skip

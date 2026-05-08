@@ -1,0 +1,24 @@
+video_id: H4hb19_M7y0
+duration: 212.04462585034014
+ranges:
+- start: 2.6090528779296873
+  end: 11.82053601335144
+  label: skip
+- start: 11.82053601335144
+  end: 17.722985101089478
+  label: accel
+- start: 17.722985101089478
+  end: 28.305004118255614
+  label: decel
+- start: 28.305004118255614
+  end: 44.64648209727478
+  label: accel
+- start: 44.64648209727478
+  end: 47.3005860038147
+  label: decel
+- start: 47.3005860038147
+  end: 75.60465700572205
+  label: accel
+- start: 75.60465700572205
+  end: 81.17352001525879
+  label: decel
