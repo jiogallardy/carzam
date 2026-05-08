@@ -168,6 +168,9 @@ def train(config_path: Path) -> Path:
     run_dir = Path(cfg["paths"]["runs_dir"]) / time.strftime("%Y%m%d_%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(cfg))
+    (run_dir / "classes.json").write_text(
+        json.dumps({"cars": list(CARS), "states": list(STATES)}, indent=2)
+    )
 
     base_lrs = [
         cfg["train"]["lr_backbone"],

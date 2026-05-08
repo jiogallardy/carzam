@@ -24,11 +24,16 @@ STATES = ("idle", "accel", "decel")
 
 
 class CarAudioModel(nn.Module):
-    def __init__(self, weights_path: Path | str | None) -> None:
+    def __init__(
+        self,
+        weights_path: Path | str | None,
+        n_cars: int = len(CARS),
+        n_states: int = len(STATES),
+    ) -> None:
         super().__init__()
         self.backbone = build_backbone(weights_path)
-        self.car_head = nn.Linear(2048, len(CARS))
-        self.state_head = nn.Linear(2048, len(STATES))
+        self.car_head = nn.Linear(2048, n_cars)
+        self.state_head = nn.Linear(2048, n_states)
         nn.init.xavier_uniform_(self.car_head.weight)
         nn.init.xavier_uniform_(self.state_head.weight)
         nn.init.zeros_(self.car_head.bias)

@@ -1,3 +1,4 @@
+import json
 import subprocess
 import tempfile
 from pathlib import Path
@@ -10,6 +11,23 @@ import torch.nn.functional as F
 from carai.audio import load_wav, resample_to
 from carai.data.dataset import SAMPLE_RATE, compute_logmel
 from carai.models.multihead import CARS, STATES, CarAudioModel
+
+
+def _load_classes(checkpoint: Path) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Read classes.json next to the checkpoint, falling back to current defaults."""
+    classes_path = Path(checkpoint).parent / "classes.json"
+    if classes_path.exists():
+        data = json.loads(classes_path.read_text())
+        return tuple(data["cars"]), tuple(data["states"])
+    return CARS, STATES
+
+
+def _load_model(checkpoint: Path, device: torch.device) -> tuple[CarAudioModel, tuple[str, ...], tuple[str, ...]]:
+    cars, states = _load_classes(checkpoint)
+    model = CarAudioModel(weights_path=None, n_cars=len(cars), n_states=len(states)).to(device)
+    model.load_state_dict(torch.load(checkpoint, map_location=device))
+    model.eval()
+    return model, cars, states
 
 WINDOW_SECONDS = 5.0
 OTHER_THRESHOLD = 0.40
@@ -83,10 +101,8 @@ def _predict_audio(
     device: torch.device,
 ) -> dict:
     """Predict on a single, already-prepared 5s audio tensor."""
+    model, cars, states = _load_model(checkpoint, device)
     logmel = compute_logmel(audio).unsqueeze(0).to(device)
-    model = CarAudioModel(weights_path=None).to(device)
-    model.load_state_dict(torch.load(checkpoint, map_location=device))
-    model.eval()
     with torch.no_grad():
         car_logits, state_logits = model(logmel)
         car_probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
@@ -94,16 +110,16 @@ def _predict_audio(
     car_top1 = int(np.argmax(car_probs))
     state_top1 = int(np.argmax(state_probs))
     car_conf = float(car_probs[car_top1])
-    car_label = CARS[car_top1] if car_conf >= OTHER_THRESHOLD else "other"
+    car_label = cars[car_top1] if car_conf >= OTHER_THRESHOLD else "other"
     car_order = np.argsort(-car_probs)
     state_order = np.argsort(-state_probs)
     return {
         "car": car_label,
         "car_confidence": car_conf,
-        "state": STATES[state_top1],
+        "state": states[state_top1],
         "state_confidence": float(state_probs[state_top1]),
-        "car_top3": [(CARS[i], float(car_probs[i])) for i in car_order[:3]],
-        "state_all": [(STATES[i], float(state_probs[i])) for i in state_order],
+        "car_top3": [(cars[i], float(car_probs[i])) for i in car_order[:3]],
+        "state_all": [(states[i], float(state_probs[i])) for i in state_order],
         "n_windows": 1,
         "windows": [],
     }
@@ -158,10 +174,7 @@ def predict_clip(
             return predict_clip(wav, checkpoint, device)
 
     windows, starts = _prepare_windows(Path(path_or_url))
-
-    model = CarAudioModel(weights_path=None).to(device)
-    model.load_state_dict(torch.load(checkpoint, map_location=device))
-    model.eval()
+    model, cars, states = _load_model(checkpoint, device)
 
     car_probs_list: list[np.ndarray] = []
     state_probs_list: list[np.ndarray] = []
@@ -178,9 +191,9 @@ def predict_clip(
             j = int(np.argmax(sp))
             per_window.append({
                 "start": float(t),
-                "car": CARS[i],
+                "car": cars[i],
                 "car_confidence": float(cp[i]),
-                "state": STATES[j],
+                "state": states[j],
                 "state_confidence": float(sp[j]),
             })
 
@@ -190,17 +203,17 @@ def predict_clip(
     car_top1 = int(np.argmax(car_probs))
     state_top1 = int(np.argmax(state_probs))
     car_conf = float(car_probs[car_top1])
-    car_label = CARS[car_top1] if car_conf >= OTHER_THRESHOLD else "other"
+    car_label = cars[car_top1] if car_conf >= OTHER_THRESHOLD else "other"
 
     car_order = np.argsort(-car_probs)
     state_order = np.argsort(-state_probs)
     return {
         "car": car_label,
         "car_confidence": car_conf,
-        "state": STATES[state_top1],
+        "state": states[state_top1],
         "state_confidence": float(state_probs[state_top1]),
-        "car_top3": [(CARS[i], float(car_probs[i])) for i in car_order[:3]],
-        "state_all": [(STATES[i], float(state_probs[i])) for i in state_order],
+        "car_top3": [(cars[i], float(car_probs[i])) for i in car_order[:3]],
+        "state_all": [(states[i], float(state_probs[i])) for i in state_order],
         "n_windows": len(windows),
         "windows": per_window,
     }

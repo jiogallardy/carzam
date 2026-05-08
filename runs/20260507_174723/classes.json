@@ -1,0 +1,17 @@
+{
+  "cars": [
+    "ferrari_812",
+    "lamborghini_huracan",
+    "porsche_gt3",
+    "amg_c63_m177",
+    "bmw_m3_s58",
+    "subaru_wrx_sti",
+    "civic_type_r_k20c1",
+    "other"
+  ],
+  "states": [
+    "idle",
+    "accel",
+    "decel"
+  ]
+}
