@@ -3,6 +3,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import sounddevice as sd
 import torch
 import torch.nn.functional as F
 
@@ -67,6 +68,60 @@ def _download_url_to_wav(url: str, out_dir: Path) -> Path:
         if cands:
             cands[0].rename(out)
     return out
+
+
+def _predict_audio(
+    audio: torch.Tensor,
+    checkpoint: Path,
+    device: torch.device,
+) -> dict:
+    """Predict on a single, already-prepared 5s audio tensor."""
+    logmel = compute_logmel(audio).unsqueeze(0).to(device)
+    model = CarAudioModel(weights_path=None).to(device)
+    model.load_state_dict(torch.load(checkpoint, map_location=device))
+    model.eval()
+    with torch.no_grad():
+        car_logits, state_logits = model(logmel)
+        car_probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
+        state_probs = F.softmax(state_logits, dim=-1).squeeze(0).cpu().numpy()
+    car_top1 = int(np.argmax(car_probs))
+    state_top1 = int(np.argmax(state_probs))
+    car_conf = float(car_probs[car_top1])
+    car_label = CARS[car_top1] if car_conf >= OTHER_THRESHOLD else "other"
+    car_order = np.argsort(-car_probs)
+    state_order = np.argsort(-state_probs)
+    return {
+        "car": car_label,
+        "car_confidence": car_conf,
+        "state": STATES[state_top1],
+        "state_confidence": float(state_probs[state_top1]),
+        "car_top3": [(CARS[i], float(car_probs[i])) for i in car_order[:3]],
+        "state_all": [(STATES[i], float(state_probs[i])) for i in state_order],
+        "n_windows": 1,
+        "windows": [],
+    }
+
+
+def listen_and_predict(
+    checkpoint: Path,
+    duration: float = WINDOW_SECONDS,
+    device: torch.device | None = None,
+    sr: int = 16000,
+) -> dict:
+    """Record `duration` seconds from the default mic and predict."""
+    device = device or torch.device("cpu")
+    n_samples = int(duration * sr)
+    rec = sd.rec(n_samples, samplerate=sr, channels=1, dtype="float32")
+    sd.wait()
+    audio_np = rec.squeeze()
+    audio_np = resample_to(audio_np, src_sr=sr, dst_sr=SAMPLE_RATE)
+    target_len = int(WINDOW_SECONDS * SAMPLE_RATE)
+    if len(audio_np) < target_len:
+        audio_np = np.concatenate([audio_np, np.zeros(target_len - len(audio_np), dtype=np.float32)])
+    elif len(audio_np) > target_len:
+        audio_np = audio_np[:target_len]
+    audio = torch.from_numpy(np.ascontiguousarray(audio_np))
+    return _predict_audio(audio, checkpoint, device)
 
 
 def predict_clip(

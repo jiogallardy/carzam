@@ -149,6 +149,33 @@ def evaluate_cmd(run_dir: Path, split: str) -> None:
 
 
 @main.command()
+@click.option("--checkpoint", type=click.Path(path_type=Path), required=True)
+@click.option("--duration", type=float, default=5.0, help="Seconds to record (default 5).")
+@click.option("--json", "as_json", is_flag=True)
+def listen(checkpoint: Path, duration: float, as_json: bool) -> None:
+    """Record from default mic for N seconds, then predict the car. Shazam-style."""
+    import torch
+
+    from carai.infer import listen_and_predict
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    console.print(f"[bold cyan]listening for {duration:.1f}s...[/bold cyan]")
+    result = listen_and_predict(checkpoint, duration=duration, device=device)
+    if as_json:
+        click.echo(json.dumps(result, indent=2))
+        return
+
+    table = Table(show_header=False)
+    table.add_row("source", "microphone")
+    table.add_row("duration", f"{duration:.1f}s")
+    table.add_row("car", f"{result['car']}  ({result['car_confidence']:.2f})")
+    for name, p in result["car_top3"]:
+        table.add_row("", f"  {name}: {p:.2f}")
+    table.add_row("state", f"{result['state']}  ({result['state_confidence']:.2f})")
+    console.print(table)
+
+
+@main.command()
 @click.argument("clip")
 @click.option("--checkpoint", type=click.Path(path_type=Path), required=True)
 @click.option("--json", "as_json", is_flag=True)
