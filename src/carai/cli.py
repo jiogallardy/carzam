@@ -108,6 +108,61 @@ def review(raw: Path, regions: Path, speed: float, video: Path | None) -> None:
         review_session(raw, regions, speed=speed)
 
 
+@main.command()
+@click.argument("audio_path", type=click.Path(path_type=Path, exists=True))
+@click.option("--start", type=float, default=0.0,
+              help="Start time in seconds (anything before is marked as skip).")
+@click.option("--end", type=float, default=None,
+              help="End time in seconds (default: full duration).")
+@click.option("--label", type=click.Choice(["idle", "accel", "decel"]), default="idle",
+              help="Placeholder state label. State head is unused at training time, "
+                   "so this rarely matters — defaults to 'idle'.")
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
+def mark(audio_path: Path, start: float, end: float | None, label: str, regions: Path) -> None:
+    """Bulk-mark a downloaded audio file with a single labeled range.
+
+    Use when you've already identified the audio as a particular car and don't
+    want to interactively label idle/accel/decel sections. Creates a regions
+    YAML covering [start, end] as the given placeholder state. Anything outside
+    that range becomes skip. The class comes from the parent directory name.
+
+    Examples:
+      # whole file as one labeled chunk
+      carai mark data/raw/porsche_gt4/QIIO2SOSQMw.wav
+
+      # only seconds 28..143 are usable, skip the rest
+      carai mark data/raw/porsche_gt3/IUN-bVQ-KXI.wav --start 28 --end 143
+    """
+    from carai.audio import load_wav
+    from carai.data.regions import Region, regions_path_for, write_regions
+
+    car = audio_path.parent.name
+    video_id = audio_path.stem
+    audio, sr = load_wav(audio_path)
+    duration = len(audio) / sr
+
+    if end is None or end > duration:
+        end = duration
+    if start < 0:
+        start = 0.0
+    if end <= start:
+        raise click.UsageError(f"end ({end}) must be > start ({start})")
+
+    ranges: list[Region] = []
+    if start > 0.05:
+        ranges.append(Region(start=0.0, end=start, label="skip"))
+    ranges.append(Region(start=start, end=end, label=label))
+    if duration - end > 0.05:
+        ranges.append(Region(start=end, end=duration, label="skip"))
+
+    rpath = regions_path_for(regions, car, video_id)
+    write_regions(rpath, video_id=video_id, duration=duration, regions=ranges)
+    console.print(
+        f"[green]marked[/green] {car}/{video_id}: "
+        f"{start:.1f}s–{end:.1f}s as [bold]{label}[/bold]  ({duration:.1f}s total)  -> {rpath}"
+    )
+
+
 @main.command(name="review-web")
 @click.option("--sources", type=click.Path(path_type=Path), default=Path("config/sources.yaml"))
 @click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
