@@ -5,11 +5,15 @@ import torch.nn as nn
 
 from carai.models.backbone import build_backbone
 
+# Class labels.
+# Note: porsche_gt3 lumps in Cayman GT4 / GT4 RS — they share the same NA flat-6
+# engine family (GT4 RS literally uses the 992 GT3 engine). Tags in
+# config/sources.yaml mark which physical model each URL is so the class can be
+# split back into porsche_gt3 + porsche_gt4 if there's enough data.
 CARS = (
     "ferrari_812",
     "lamborghini_huracan",
     "porsche_gt3",
-    "porsche_gt4",
     "amg_c63_m177",
     "bmw_m3_s58",
     "subaru_wrx_sti",
