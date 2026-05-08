@@ -14,20 +14,35 @@ WINDOW_SECONDS = 5.0
 OTHER_THRESHOLD = 0.40
 
 
-def _prepare_audio(path: Path) -> torch.Tensor:
+def _prepare_windows(path: Path, hop_seconds: float = 2.5) -> tuple[list[torch.Tensor], list[float]]:
+    """Slice the input clip into 5s windows. Returns (windows, start_times_in_seconds).
+    For clips <= 5s, returns one padded window. For longer clips, returns overlapping
+    windows hopping every hop_seconds.
+    """
     audio, sr = load_wav(path)
     audio = resample_to(audio, src_sr=sr, dst_sr=SAMPLE_RATE)
     target_len = int(WINDOW_SECONDS * SAMPLE_RATE)
+    hop_len = int(hop_seconds * SAMPLE_RATE)
+
     if len(audio) < int(2.0 * SAMPLE_RATE):
         raise ValueError(f"clip too short: {len(audio) / SAMPLE_RATE:.1f}s, need >= 2s")
-    if len(audio) < target_len:
-        pad = np.zeros(target_len - len(audio), dtype=np.float32)
-        audio = np.concatenate([audio, pad])
-    elif len(audio) > target_len:
-        excess = len(audio) - target_len
-        start = excess // 2
-        audio = audio[start : start + target_len]
-    return torch.from_numpy(np.ascontiguousarray(audio))
+
+    windows: list[torch.Tensor] = []
+    starts: list[float] = []
+    if len(audio) <= target_len:
+        if len(audio) < target_len:
+            pad = np.zeros(target_len - len(audio), dtype=np.float32)
+            audio = np.concatenate([audio, pad])
+        windows.append(torch.from_numpy(np.ascontiguousarray(audio)))
+        starts.append(0.0)
+    else:
+        start = 0
+        while start + target_len <= len(audio):
+            chunk = audio[start : start + target_len]
+            windows.append(torch.from_numpy(np.ascontiguousarray(chunk)))
+            starts.append(start / SAMPLE_RATE)
+            start += hop_len
+    return windows, starts
 
 
 def _is_url(path_or_url: str | Path) -> bool:
@@ -59,22 +74,47 @@ def predict_clip(
     checkpoint: Path,
     device: torch.device | None = None,
 ) -> dict:
+    """Predict car + state with test-time aggregation.
+
+    For clips longer than 5s, slides 5s windows with 2.5s hop, runs the model on
+    each, and averages the softmaxes. Per-window predictions are also returned
+    so callers can inspect the timeline.
+    """
     device = device or torch.device("cpu")
     if _is_url(path_or_url):
         with tempfile.TemporaryDirectory() as td:
             wav = _download_url_to_wav(str(path_or_url), Path(td))
             return predict_clip(wav, checkpoint, device)
 
-    audio = _prepare_audio(Path(path_or_url))
-    logmel = compute_logmel(audio).unsqueeze(0).to(device)
+    windows, starts = _prepare_windows(Path(path_or_url))
 
     model = CarAudioModel(weights_path=None).to(device)
     model.load_state_dict(torch.load(checkpoint, map_location=device))
     model.eval()
+
+    car_probs_list: list[np.ndarray] = []
+    state_probs_list: list[np.ndarray] = []
+    per_window: list[dict] = []
     with torch.no_grad():
-        car_logits, state_logits = model(logmel)
-        car_probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
-        state_probs = F.softmax(state_logits, dim=-1).squeeze(0).cpu().numpy()
+        for w, t in zip(windows, starts):
+            logmel = compute_logmel(w).unsqueeze(0).to(device)
+            cl, sl = model(logmel)
+            cp = F.softmax(cl, dim=-1).squeeze(0).cpu().numpy()
+            sp = F.softmax(sl, dim=-1).squeeze(0).cpu().numpy()
+            car_probs_list.append(cp)
+            state_probs_list.append(sp)
+            i = int(np.argmax(cp))
+            j = int(np.argmax(sp))
+            per_window.append({
+                "start": float(t),
+                "car": CARS[i],
+                "car_confidence": float(cp[i]),
+                "state": STATES[j],
+                "state_confidence": float(sp[j]),
+            })
+
+    car_probs = np.mean(car_probs_list, axis=0)
+    state_probs = np.mean(state_probs_list, axis=0)
 
     car_top1 = int(np.argmax(car_probs))
     state_top1 = int(np.argmax(state_probs))
@@ -90,4 +130,6 @@ def predict_clip(
         "state_confidence": float(state_probs[state_top1]),
         "car_top3": [(CARS[i], float(car_probs[i])) for i in car_order[:3]],
         "state_all": [(STATES[i], float(state_probs[i])) for i in state_order],
+        "n_windows": len(windows),
+        "windows": per_window,
     }

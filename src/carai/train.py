@@ -10,10 +10,12 @@ import yaml
 from rich.console import Console
 from torch.utils.data import DataLoader
 
+from collections import Counter
+
 from carai.data.dataset import CarAudioDataset
 from carai.data.manifest import read_manifest
 from carai.data.splits import split_by_video
-from carai.models.multihead import CarAudioModel
+from carai.models.multihead import CARS, STATES, CarAudioModel
 
 console = Console()
 
@@ -67,12 +69,24 @@ class EpochStats:
     state_acc: float
 
 
+def compute_class_weights(rows, classes: tuple[str, ...], attr: str) -> torch.Tensor:
+    """Inverse-frequency weights, normalized so mean weight = 1."""
+    counts = Counter(getattr(r, attr) for r in rows if r.label is not None)
+    weights = []
+    for c in classes:
+        n = counts.get(c, 0)
+        weights.append(1.0 / max(n, 1))
+    w = torch.tensor(weights, dtype=torch.float32)
+    return w * (len(classes) / w.sum())  # mean = 1
+
+
 def run_epoch(
     model: CarAudioModel,
     loader: DataLoader,
     optimizer: torch.optim.Optimizer | None,
     device: torch.device,
     cfg: dict,
+    car_weights: torch.Tensor | None = None,
 ) -> EpochStats:
     is_train = optimizer is not None
     model.train(is_train)
@@ -84,7 +98,7 @@ def run_epoch(
         state_y = batch["state_idx"].to(device)
         with torch.set_grad_enabled(is_train):
             car_logits, state_logits = model(logmel)
-            car_loss = F.cross_entropy(car_logits, car_y)
+            car_loss = F.cross_entropy(car_logits, car_y, weight=car_weights)
             state_loss = F.cross_entropy(state_logits, state_y)
             loss = (
                 cfg["train"]["car_loss_weight"] * car_loss
@@ -145,6 +159,12 @@ def train(config_path: Path) -> Path:
     model = CarAudioModel(weights_path if weights_path.exists() else None).to(device)
     optimizer = make_optimizer(model, cfg)
 
+    car_weights = compute_class_weights(splits.train, CARS, "car").to(device)
+    console.print(
+        "car class weights: "
+        + ", ".join(f"{c}={w:.2f}" for c, w in zip(CARS, car_weights.cpu().tolist()))
+    )
+
     run_dir = Path(cfg["paths"]["runs_dir"]) / time.strftime("%Y%m%d_%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(cfg))
@@ -163,9 +183,9 @@ def train(config_path: Path) -> Path:
             group["lr"] = base * scale
 
         ts = time.time()
-        tr = run_epoch(model, train_loader, optimizer, device, cfg)
+        tr = run_epoch(model, train_loader, optimizer, device, cfg, car_weights=car_weights)
         va = (
-            run_epoch(model, val_loader, None, device, cfg)
+            run_epoch(model, val_loader, None, device, cfg, car_weights=car_weights)
             if len(val_ds) > 0
             else EpochStats(0.0, 0.0, 0.0, 0.0)
         )

@@ -152,8 +152,13 @@ def evaluate_cmd(run_dir: Path, split: str) -> None:
 @click.argument("clip")
 @click.option("--checkpoint", type=click.Path(path_type=Path), required=True)
 @click.option("--json", "as_json", is_flag=True)
-def infer(clip: str, checkpoint: Path, as_json: bool) -> None:
-    """Predict car + state for a clip (file path or YouTube URL)."""
+@click.option("--timeline", is_flag=True, help="Print per-window predictions for long clips.")
+def infer(clip: str, checkpoint: Path, as_json: bool, timeline: bool) -> None:
+    """Predict car + state for a clip (file path or YouTube URL).
+
+    Long clips are auto-sliced into overlapping 5s windows; predictions are
+    averaged for the verdict. Use --timeline to also see per-window results.
+    """
     import torch
 
     from carai.infer import predict_clip
@@ -164,10 +169,27 @@ def infer(clip: str, checkpoint: Path, as_json: bool) -> None:
         click.echo(json.dumps(result, indent=2))
         return
 
+    n_windows = result.get("n_windows", 1)
     table = Table(show_header=False)
     table.add_row("clip", str(clip))
+    table.add_row("windows", f"{n_windows}")
     table.add_row("car", f"{result['car']}  ({result['car_confidence']:.2f})")
     for name, p in result["car_top3"]:
         table.add_row("", f"  {name}: {p:.2f}")
     table.add_row("state", f"{result['state']}  ({result['state_confidence']:.2f})")
     console.print(table)
+
+    if timeline and n_windows > 1:
+        tl = Table(title="per-window timeline")
+        tl.add_column("start", justify="right")
+        tl.add_column("car")
+        tl.add_column("conf", justify="right")
+        tl.add_column("state")
+        for w in result["windows"]:
+            tl.add_row(
+                f"{w['start']:.1f}s",
+                w["car"],
+                f"{w['car_confidence']:.2f}",
+                w["state"],
+            )
+        console.print(tl)

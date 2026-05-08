@@ -11,12 +11,12 @@ splits:
 
 train:
   batch_size: 32
-  num_workers: 0          # MPS-safe
-  max_epochs: 50
-  early_stop_patience: 5
-  lr_head: 1.0e-4
-  lr_backbone: 1.0e-5
+  num_workers: 0           # MPS-safe
+  max_epochs: 60
+  early_stop_patience: 10  # bumped — first run hit patience too early
+  lr_head: 3.0e-4          # bumped 3x
+  lr_backbone: 5.0e-5      # bumped 5x — was barely thawing the backbone
   weight_decay: 1.0e-4
   warmup_epochs: 2
   car_loss_weight: 1.0
-  state_loss_weight: 1.0
+  state_loss_weight: 0.0   # only car classification matters for v1

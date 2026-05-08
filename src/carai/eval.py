@@ -64,10 +64,18 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
             state_true.extend(batch["state_idx"].tolist())
 
     car_report = classification_report(
-        car_true, car_pred, target_names=list(CARS), output_dict=True, zero_division=0
+        car_true, car_pred,
+        labels=list(range(len(CARS))),
+        target_names=list(CARS),
+        output_dict=True,
+        zero_division=0,
     )
     state_report = classification_report(
-        state_true, state_pred, target_names=list(STATES), output_dict=True, zero_division=0
+        state_true, state_pred,
+        labels=list(range(len(STATES))),
+        target_names=list(STATES),
+        output_dict=True,
+        zero_division=0,
     )
     metrics = {"car": car_report, "state": state_report, "split": split}
     (run_dir / f"metrics_{split}.json").write_text(json.dumps(metrics, indent=2))

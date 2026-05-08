@@ -44,11 +44,13 @@ def split_by_video(
             train_videos.add(videos[0])
             test_videos.add(videos[1])
             continue
-        n_train = max(1, int(round(ratios[0] * n)))
+        # Guarantee at least 1 video in each of val and test, then fill train.
+        n_test = max(1, int(round(ratios[2] * n)))
         n_val = max(1, int(round(ratios[1] * n)))
-        # ensure at least 1 test video
-        if n_train + n_val >= n:
-            n_val = max(1, n - n_train - 1)
+        n_train = n - n_test - n_val
+        if n_train < 1:
+            # too few videos to honor ratios — minimal viable split
+            n_train, n_val, n_test = max(1, n - 2), 1, 1
         train_videos.update(videos[:n_train])
         val_videos.update(videos[n_train : n_train + n_val])
         test_videos.update(videos[n_train + n_val :])
