@@ -178,20 +178,28 @@ def listen(checkpoint: Path, duration: float, as_json: bool) -> None:
 @main.command()
 @click.argument("clip")
 @click.option("--checkpoint", type=click.Path(path_type=Path), required=True)
+@click.option("--start", type=float, default=None,
+              help="Start time in seconds (clip the input before predicting).")
+@click.option("--duration", type=float, default=None,
+              help="Duration in seconds (default: full clip). Use 5 for Shazam-style.")
 @click.option("--json", "as_json", is_flag=True)
 @click.option("--timeline", is_flag=True, help="Print per-window predictions for long clips.")
-def infer(clip: str, checkpoint: Path, as_json: bool, timeline: bool) -> None:
+def infer(
+    clip: str, checkpoint: Path, start: float | None, duration: float | None,
+    as_json: bool, timeline: bool,
+) -> None:
     """Predict car + state for a clip (file path or YouTube URL).
 
     Long clips are auto-sliced into overlapping 5s windows; predictions are
     averaged for the verdict. Use --timeline to also see per-window results.
+    Use --start S --duration 5 to grab a single 5s slice (Shazam-style).
     """
     import torch
 
     from carai.infer import predict_clip
 
     device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
-    result = predict_clip(clip, checkpoint, device=device)
+    result = predict_clip(clip, checkpoint, device=device, start=start, duration=duration)
     if as_json:
         click.echo(json.dumps(result, indent=2))
         return

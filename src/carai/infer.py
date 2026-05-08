@@ -51,7 +51,12 @@ def _is_url(path_or_url: str | Path) -> bool:
     return s.startswith("http://") or s.startswith("https://")
 
 
-def _download_url_to_wav(url: str, out_dir: Path) -> Path:
+def _download_url_to_wav(
+    url: str,
+    out_dir: Path,
+    start: float | None = None,
+    duration: float | None = None,
+) -> Path:
     out = out_dir / "clip.wav"
     cmd = [
         "yt-dlp",
@@ -60,8 +65,10 @@ def _download_url_to_wav(url: str, out_dir: Path) -> Path:
         "--audio-format", "wav",
         "--postprocessor-args", "-ac 1 -ar 16000",
         "-o", str(out.with_suffix(".%(ext)s")),
-        url,
     ]
+    if start is not None and duration is not None:
+        cmd += ["--download-sections", f"*{start}-{start + duration}"]
+    cmd.append(url)
     subprocess.run(cmd, check=True)
     if not out.exists():
         cands = list(out_dir.glob("*.wav"))
@@ -128,17 +135,26 @@ def predict_clip(
     path_or_url: str | Path,
     checkpoint: Path,
     device: torch.device | None = None,
+    start: float | None = None,
+    duration: float | None = None,
 ) -> dict:
     """Predict car + state with test-time aggregation.
 
     For clips longer than 5s, slides 5s windows with 2.5s hop, runs the model on
     each, and averages the softmaxes. Per-window predictions are also returned
     so callers can inspect the timeline.
+
+    `start` + `duration` (in seconds) trim the input before prediction. For URLs
+    we pass them to yt-dlp so only that slice is downloaded; for local files we
+    trim after loading.
     """
     device = device or torch.device("cpu")
     if _is_url(path_or_url):
         with tempfile.TemporaryDirectory() as td:
-            wav = _download_url_to_wav(str(path_or_url), Path(td))
+            wav = _download_url_to_wav(
+                str(path_or_url), Path(td), start=start, duration=duration
+            )
+            # already trimmed at download time; don't re-trim
             return predict_clip(wav, checkpoint, device)
 
     windows, starts = _prepare_windows(Path(path_or_url))
