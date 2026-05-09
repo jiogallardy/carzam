@@ -159,8 +159,17 @@ def train(config_path: Path) -> Path:
         f"split: train={len(splits.train)} val={len(splits.val)} test={len(splits.test)}"
     )
 
-    train_ds = CarAudioDataset(splits.train, train=True, seed=cfg["splits"]["seed"])
-    val_ds = CarAudioDataset(splits.val, train=False)
+    use_families_as_classes = cfg["train"].get("use_families_as_classes", False)
+    if use_families_as_classes:
+        console.print("[bold yellow]families-as-classes mode: training on 12 engine families[/bold yellow]")
+    train_ds = CarAudioDataset(
+        splits.train, train=True, seed=cfg["splits"]["seed"],
+        use_families_as_classes=use_families_as_classes,
+    )
+    val_ds = CarAudioDataset(
+        splits.val, train=False,
+        use_families_as_classes=use_families_as_classes,
+    )
 
     train_loader = DataLoader(
         train_ds,
@@ -179,17 +188,33 @@ def train(config_path: Path) -> Path:
 
     device = pick_device()
     weights_path = Path(cfg["paths"]["weights"])
-    use_family = cfg["train"].get("family_loss_weight", 0.0) > 0.0
+    # Family head only makes sense when fine classes != family classes.
+    use_family = (
+        cfg["train"].get("family_loss_weight", 0.0) > 0.0
+        and not use_families_as_classes
+    )
+    active_classes = ENGINE_FAMILIES if use_families_as_classes else CARS
     model = CarAudioModel(
         weights_path if weights_path.exists() else None,
+        n_cars=len(active_classes),
         n_families=len(ENGINE_FAMILIES) if use_family else None,
     ).to(device)
     optimizer = make_optimizer(model, cfg)
 
-    car_weights = compute_class_weights(splits.train, CARS, "car").to(device)
+    # Class weights for the (active) car head.
+    if use_families_as_classes:
+        from collections import Counter
+        fam_counts = Counter(family_index_for_car(r.car) for r in splits.train if r.label is not None)
+        cw = torch.tensor(
+            [1.0 / max(fam_counts.get(i, 0), 1) for i in range(len(ENGINE_FAMILIES))],
+            dtype=torch.float32,
+        )
+        car_weights = (cw * (len(ENGINE_FAMILIES) / cw.sum())).to(device)
+    else:
+        car_weights = compute_class_weights(splits.train, CARS, "car").to(device)
     console.print(
-        "car class weights: "
-        + ", ".join(f"{c}={w:.2f}" for c, w in zip(CARS, car_weights.cpu().tolist()))
+        f"active classes ({len(active_classes)}): "
+        + ", ".join(f"{c}={w:.2f}" for c, w in zip(active_classes, car_weights.cpu().tolist()))
     )
 
     family_weights = None
@@ -207,9 +232,11 @@ def train(config_path: Path) -> Path:
     run_dir = Path(cfg["paths"]["runs_dir"]) / time.strftime("%Y%m%d_%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(cfg))
-    classes_payload = {"cars": list(CARS), "states": list(STATES)}
+    classes_payload = {"cars": list(active_classes), "states": list(STATES)}
     if use_family:
         classes_payload["families"] = list(ENGINE_FAMILIES)
+    if use_families_as_classes:
+        classes_payload["families_as_classes"] = True
     (run_dir / "classes.json").write_text(json.dumps(classes_payload, indent=2))
 
     base_lrs = [

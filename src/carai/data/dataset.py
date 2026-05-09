@@ -37,12 +37,14 @@ class CarAudioDataset(Dataset):
         rows: list[ManifestRow],
         train: bool,
         seed: int = 0,
+        use_families_as_classes: bool = False,
     ) -> None:
         self.rows = [r for r in rows if r.label is not None]
         self.train = train
         self.rng = random.Random(seed)
         self.freq_mask = T.FrequencyMasking(freq_mask_param=10)
         self.time_mask = T.TimeMasking(time_mask_param=40)
+        self.use_families = use_families_as_classes
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -80,9 +82,12 @@ class CarAudioDataset(Dataset):
             logmel = self.time_mask(logmel)
             logmel = logmel.squeeze(0).transpose(0, 1)
 
+        family_idx = family_index_for_car(row.car)
+        # In families-as-classes mode, the "car" head IS the family head.
+        car_idx = family_idx if self.use_families else CARS.index(row.car)
         return {
             "logmel": logmel,
-            "car_idx": CARS.index(row.car),
-            "family_idx": family_index_for_car(row.car),
+            "car_idx": car_idx,
+            "family_idx": family_idx,
             "state_idx": STATES.index(row.label),  # type: ignore[arg-type]
         }

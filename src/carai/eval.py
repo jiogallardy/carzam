@@ -49,8 +49,10 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
     loader = DataLoader(ds, batch_size=32, shuffle=False, num_workers=0, collate_fn=collate)
 
     device = pick_device()
-    model = CarAudioModel(weights_path=None).to(device)
-    model.load_state_dict(torch.load(run_dir / "checkpoint.pt", map_location=device))
+    sd = torch.load(run_dir / "checkpoint.pt", map_location=device)
+    n_families = sd["family_head.weight"].shape[0] if "family_head.weight" in sd else None
+    model = CarAudioModel(weights_path=None, n_families=n_families).to(device)
+    model.load_state_dict(sd)
     model.eval()
 
     car_true, car_pred, state_true, state_pred = [], [], [], []
