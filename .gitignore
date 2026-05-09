@@ -17,3 +17,4 @@ __pycache__/
 #   /data/manifest.csv -- small, derived but cheap to keep
 
 .DS_Store
+.superpowers/

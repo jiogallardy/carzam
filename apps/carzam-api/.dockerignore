@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.venv
+.env
+.env.*
+node_modules
+data/raw
+data/windows
+.superpowers
