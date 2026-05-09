@@ -1,0 +1,18 @@
+video_id: KHQc5egaCxQ
+duration: 346.901
+ranges:
+- start: 1.2390908531341553
+  end: 5.311652879837036
+  label: idle
+- start: 7.364843948501587
+  end: 16.33315298474121
+  label: idle
+- start: 20.951385950408934
+  end: 137.49134892370606
+  label: idle
+- start: 209.4626480038147
+  end: 213.7357589332428
+  label: idle
+- start: 252.8606918664856
+  end: 307.0574009523163
+  label: idle

@@ -1,0 +1,30 @@
+video_id: K_0jKeawP78
+duration: 212.521
+ranges:
+- start: 2.624851192642212
+  end: 7.209981929428101
+  label: idle
+- start: 9.058988969482423
+  end: 15.889823036239624
+  label: idle
+- start: 19.010815897003173
+  end: 22.440080082015992
+  label: idle
+- start: 65.99449598283387
+  end: 104.77295196185302
+  label: idle
+- start: 105.77581487411499
+  end: 107.07215704768372
+  label: idle
+- start: 121.18242194659423
+  end: 129.77811590272523
+  label: idle
+- start: 130.87744996757507
+  end: 132.18832302861023
+  label: idle
+- start: 138.23493291989135
+  end: 143.13937019836425
+  label: idle
+- start: 159.38437701716614
+  end: 160.68920008773804
+  label: idle
