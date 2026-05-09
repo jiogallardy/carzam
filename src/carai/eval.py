@@ -12,7 +12,12 @@ from torch.utils.data import DataLoader
 from carai.data.dataset import CarAudioDataset
 from carai.data.manifest import read_manifest
 from carai.data.splits import split_by_video
-from carai.models.multihead import CARS, STATES, CarAudioModel
+from carai.models.multihead import (
+    CARS,
+    ENGINE_FAMILIES,
+    STATES,
+    CarAudioModel,
+)
 from carai.train import collate, pick_device
 
 console = Console()
@@ -45,13 +50,28 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
         seed=cfg["splits"]["seed"],
     )
     chosen = {"train": splits.train, "val": splits.val, "test": splits.test}[split]
-    ds = CarAudioDataset(chosen, train=False)
+
+    # Read classes.json to know what classes were used (and whether the model
+    # was trained in families-as-classes mode).
+    classes_path = run_dir / "classes.json"
+    cars = list(CARS)
+    use_families_as_classes = False
+    if classes_path.exists():
+        cdata = json.loads(classes_path.read_text())
+        cars = list(cdata["cars"])
+        use_families_as_classes = bool(cdata.get("families_as_classes", False))
+
+    ds = CarAudioDataset(chosen, train=False, use_families_as_classes=use_families_as_classes)
     loader = DataLoader(ds, batch_size=32, shuffle=False, num_workers=0, collate_fn=collate)
 
     device = pick_device()
     sd = torch.load(run_dir / "checkpoint.pt", map_location=device)
     n_families = sd["family_head.weight"].shape[0] if "family_head.weight" in sd else None
-    model = CarAudioModel(weights_path=None, n_families=n_families).to(device)
+    model = CarAudioModel(
+        weights_path=None,
+        n_cars=len(cars),
+        n_families=n_families,
+    ).to(device)
     model.load_state_dict(sd)
     model.eval()
 
@@ -67,8 +87,8 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
 
     car_report = classification_report(
         car_true, car_pred,
-        labels=list(range(len(CARS))),
-        target_names=list(CARS),
+        labels=list(range(len(cars))),
+        target_names=list(cars),
         output_dict=True,
         zero_division=0,
     )
@@ -82,9 +102,9 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
     metrics = {"car": car_report, "state": state_report, "split": split}
     (run_dir / f"metrics_{split}.json").write_text(json.dumps(metrics, indent=2))
 
-    cm_car = confusion_matrix(car_true, car_pred, labels=list(range(len(CARS))))
+    cm_car = confusion_matrix(car_true, car_pred, labels=list(range(len(cars))))
     cm_state = confusion_matrix(state_true, state_pred, labels=list(range(len(STATES))))
-    _plot_confusion(cm_car, list(CARS), run_dir / f"confusion_car_{split}.png")
+    _plot_confusion(cm_car, list(cars), run_dir / f"confusion_car_{split}.png")
     _plot_confusion(cm_state, list(STATES), run_dir / f"confusion_state_{split}.png")
 
     console.print(

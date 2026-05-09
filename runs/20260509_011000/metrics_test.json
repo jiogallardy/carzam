@@ -1,0 +1,183 @@
+{
+  "car": {
+    "ferrari_812": {
+      "precision": 0.1951219512195122,
+      "recall": 0.4,
+      "f1-score": 0.26229508196721313,
+      "support": 40.0
+    },
+    "ferrari_f12": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 1.0
+    },
+    "ferrari_458": {
+      "precision": 0.08333333333333333,
+      "recall": 0.15217391304347827,
+      "f1-score": 0.1076923076923077,
+      "support": 46.0
+    },
+    "ferrari_488": {
+      "precision": 0.16666666666666666,
+      "recall": 0.046511627906976744,
+      "f1-score": 0.07272727272727272,
+      "support": 86.0
+    },
+    "ferrari_f8": {
+      "precision": 0.047619047619047616,
+      "recall": 0.007042253521126761,
+      "f1-score": 0.012269938650306749,
+      "support": 142.0
+    },
+    "ferrari_sf90": {
+      "precision": 0.2857142857142857,
+      "recall": 0.13636363636363635,
+      "f1-score": 0.18461538461538463,
+      "support": 44.0
+    },
+    "ferrari_296": {
+      "precision": 0.10185185185185185,
+      "recall": 0.06666666666666667,
+      "f1-score": 0.08058608058608059,
+      "support": 165.0
+    },
+    "mclaren_720s": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 39.0
+    },
+    "mclaren_765lt": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "mclaren_senna": {
+      "precision": 0.4,
+      "recall": 0.08333333333333333,
+      "f1-score": 0.13793103448275862,
+      "support": 48.0
+    },
+    "audi_r8_v10": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 42.0
+    },
+    "lamborghini_huracan": {
+      "precision": 0.625,
+      "recall": 0.8771929824561403,
+      "f1-score": 0.7299270072992701,
+      "support": 57.0
+    },
+    "porsche_gt3": {
+      "precision": 0.18181818181818182,
+      "recall": 0.22727272727272727,
+      "f1-score": 0.20202020202020202,
+      "support": 44.0
+    },
+    "porsche_gt4": {
+      "precision": 0.18018018018018017,
+      "recall": 0.425531914893617,
+      "f1-score": 0.25316455696202533,
+      "support": 47.0
+    },
+    "amg_c63_m177": {
+      "precision": 0.71875,
+      "recall": 0.71875,
+      "f1-score": 0.71875,
+      "support": 32.0
+    },
+    "bmw_m3_s58": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 91.0
+    },
+    "subaru_wrx_sti": {
+      "precision": 0.23684210526315788,
+      "recall": 0.11392405063291139,
+      "f1-score": 0.15384615384615385,
+      "support": 79.0
+    },
+    "civic_type_r_k20c1": {
+      "precision": 0.026455026455026454,
+      "recall": 0.38461538461538464,
+      "f1-score": 0.04950495049504951,
+      "support": 13.0
+    },
+    "corvette_c6_zr1": {
+      "precision": 0.14285714285714285,
+      "recall": 0.4,
+      "f1-score": 0.21052631578947367,
+      "support": 10.0
+    },
+    "corvette_c7_zr1": {
+      "precision": 1.0,
+      "recall": 0.125,
+      "f1-score": 0.2222222222222222,
+      "support": 8.0
+    },
+    "corvette_c7_z06": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 5.0
+    },
+    "other": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "accuracy": 0.1645813282001925,
+    "macro avg": {
+      "precision": 0.19964589877174485,
+      "recall": 0.18928993139572725,
+      "f1-score": 0.15445811406162369,
+      "support": 1039.0
+    },
+    "weighted avg": {
+      "precision": 0.17794698283068405,
+      "recall": 0.1645813282001925,
+      "f1-score": 0.14779298361741397,
+      "support": 1039.0
+    }
+  },
+  "state": {
+    "idle": {
+      "precision": 0.6210045662100456,
+      "recall": 0.1759379042690815,
+      "f1-score": 0.27419354838709675,
+      "support": 773.0
+    },
+    "accel": {
+      "precision": 0.24058919803600654,
+      "recall": 0.5975609756097561,
+      "f1-score": 0.34305717619603265,
+      "support": 246.0
+    },
+    "decel": {
+      "precision": 0.014354066985645933,
+      "recall": 0.15,
+      "f1-score": 0.026200873362445413,
+      "support": 20.0
+    },
+    "accuracy": 0.27526467757459094,
+    "macro avg": {
+      "precision": 0.291982610410566,
+      "recall": 0.3078329599596125,
+      "f1-score": 0.21448386598185823,
+      "support": 1039.0
+    },
+    "weighted avg": {
+      "precision": 0.5192575108151452,
+      "recall": 0.27526467757459094,
+      "f1-score": 0.2857244424588053,
+      "support": 1039.0
+    }
+  },
+  "split": "test"
+}

@@ -1,0 +1,45 @@
+{
+  "cars": [
+    "ferrari_812",
+    "ferrari_f12",
+    "ferrari_458",
+    "ferrari_488",
+    "ferrari_f8",
+    "ferrari_sf90",
+    "ferrari_296",
+    "mclaren_720s",
+    "mclaren_765lt",
+    "mclaren_senna",
+    "audi_r8_v10",
+    "lamborghini_huracan",
+    "porsche_gt3",
+    "porsche_gt4",
+    "amg_c63_m177",
+    "bmw_m3_s58",
+    "subaru_wrx_sti",
+    "civic_type_r_k20c1",
+    "corvette_c6_zr1",
+    "corvette_c7_zr1",
+    "corvette_c7_z06",
+    "other"
+  ],
+  "states": [
+    "idle",
+    "accel",
+    "decel"
+  ],
+  "families": [
+    "na_v12",
+    "na_v8_flat",
+    "tt_v8_flat",
+    "tt_v6_hybrid",
+    "na_v10",
+    "na_flat6",
+    "tt_v8_cross",
+    "tt_inline6",
+    "turbo_boxer4",
+    "turbo_inline4",
+    "supercharged_v8",
+    "other"
+  ]
+}

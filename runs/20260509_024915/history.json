@@ -1,0 +1,1712 @@
+[
+  {
+    "epoch": 0,
+    "train": {
+      "car_loss": 2.730943654108006,
+      "state_loss": 1.2115713265984858,
+      "car_acc": 0.11305872042068361,
+      "state_acc": 0.3175576979257961,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.5036198031756776,
+      "state_loss": 1.0502966870610642,
+      "car_acc": 0.14761376248612654,
+      "state_acc": 0.39289678135405104,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 1,
+    "train": {
+      "car_loss": 2.384807894392178,
+      "state_loss": 1.1054368773782737,
+      "car_acc": 0.1796669588080631,
+      "state_acc": 0.294478527607362,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.460818433602827,
+      "state_loss": 1.053992430655726,
+      "car_acc": 0.1853496115427303,
+      "state_acc": 0.35960044395116536,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "car_loss": 2.155097086423327,
+      "state_loss": 1.130828477087475,
+      "car_acc": 0.3114227286006427,
+      "state_acc": 0.3134677183756938,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.4131015670153992,
+      "state_loss": 1.063964181285058,
+      "car_acc": 0.2142064372918979,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "car_loss": 1.707536393148036,
+      "state_loss": 1.166359463561323,
+      "car_acc": 0.4271107215892492,
+      "state_acc": 0.3204791118901548,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.3389883112828027,
+      "state_loss": 1.118109058989801,
+      "car_acc": 0.2586015538290788,
+      "state_acc": 0.4039955604883463,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 4,
+    "train": {
+      "car_loss": 1.3412798949928963,
+      "state_loss": 1.250799117887922,
+      "car_acc": 0.5241016652059597,
+      "state_acc": 0.3102541630148992,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.549746185508076,
+      "state_loss": 1.1376642467708356,
+      "car_acc": 0.2519422863485017,
+      "state_acc": 0.416204217536071,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 5,
+    "train": {
+      "car_loss": 1.1174729564125134,
+      "state_loss": 1.3153130754963405,
+      "car_acc": 0.5912941863862109,
+      "state_acc": 0.3093777388255916,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.6989797504575352,
+      "state_loss": 1.1698355077374127,
+      "car_acc": 0.25749167591564925,
+      "state_acc": 0.413984461709212,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 6,
+    "train": {
+      "car_loss": 0.9447116696656952,
+      "state_loss": 1.3666018399445592,
+      "car_acc": 0.6453403447268478,
+      "state_acc": 0.3280747881974876,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 2.850812294771616,
+      "state_loss": 1.2390553615863262,
+      "car_acc": 0.24195338512763595,
+      "state_acc": 0.390677025527192,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 7,
+    "train": {
+      "car_loss": 0.8197677221748866,
+      "state_loss": 1.4258049150464691,
+      "car_acc": 0.6967572304995618,
+      "state_acc": 0.32018697049371897,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.13986042945684,
+      "state_loss": 1.2318588535608384,
+      "car_acc": 0.24306326304106549,
+      "state_acc": 0.40288568257491675,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 8,
+    "train": {
+      "car_loss": 0.721614753367641,
+      "state_loss": 1.4482190086937006,
+      "car_acc": 0.7177914110429447,
+      "state_acc": 0.3231083844580777,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.210995437699338,
+      "state_loss": 1.2073010232684085,
+      "car_acc": 0.23085460599334073,
+      "state_acc": 0.4051054384017758,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 9,
+    "train": {
+      "car_loss": 0.6286616419060272,
+      "state_loss": 1.4647393114135658,
+      "car_acc": 0.7537248028045574,
+      "state_acc": 0.31668127373648847,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.3076706960648465,
+      "state_loss": 1.2445956558551428,
+      "car_acc": 0.24750277469478357,
+      "state_acc": 0.3940066592674806,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 10,
+    "train": {
+      "car_loss": 0.5896757942105537,
+      "state_loss": 1.5279617354147552,
+      "car_acc": 0.7551855097867368,
+      "state_acc": 0.32077125328659073,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.461499478920186,
+      "state_loss": 1.2527823718750517,
+      "car_acc": 0.2297447280799112,
+      "state_acc": 0.40066592674805773,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 11,
+    "train": {
+      "car_loss": 0.5299183432901947,
+      "state_loss": 1.591301627023994,
+      "car_acc": 0.7832310838445807,
+      "state_acc": 0.29827636576102834,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.3528668379016247,
+      "state_loss": 1.322433479022768,
+      "car_acc": 0.25527192008879024,
+      "state_acc": 0.38401775804661487,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 12,
+    "train": {
+      "car_loss": 0.4764472960798914,
+      "state_loss": 1.5924053896319752,
+      "car_acc": 0.8033888401986562,
+      "state_acc": 0.30791703184341224,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.4688893635979503,
+      "state_loss": 1.3257406908981544,
+      "car_acc": 0.2641509433962264,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 13,
+    "train": {
+      "car_loss": 0.4222756273350171,
+      "state_loss": 1.6258553116773604,
+      "car_acc": 0.8250073035349109,
+      "state_acc": 0.3082091732398481,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.482472388977216,
+      "state_loss": 1.3220006361124121,
+      "car_acc": 0.2397336293007769,
+      "state_acc": 0.39289678135405104,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 14,
+    "train": {
+      "car_loss": 0.39863152435882515,
+      "state_loss": 1.6125689370570182,
+      "car_acc": 0.8258837277242185,
+      "state_acc": 0.32164767747589834,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.380012448037769,
+      "state_loss": 1.347300954849421,
+      "car_acc": 0.2563817980022198,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 15,
+    "train": {
+      "car_loss": 0.38791252561664497,
+      "state_loss": 1.6545775102795894,
+      "car_acc": 0.8384458077709611,
+      "state_acc": 0.3105463044113351,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.091378872190808,
+      "state_loss": 1.261910507073016,
+      "car_acc": 0.2630410654827969,
+      "state_acc": 0.41731409544950054,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 16,
+    "train": {
+      "car_loss": 0.3360243386477711,
+      "state_loss": 1.6431289236342876,
+      "car_acc": 0.8553900087642419,
+      "state_acc": 0.3377154542798715,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.6332861826766476,
+      "state_loss": 1.3481723195837023,
+      "car_acc": 0.25305216426193117,
+      "state_acc": 0.38845726970033295,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 17,
+    "train": {
+      "car_loss": 0.31974003616129487,
+      "state_loss": 1.7185310873064492,
+      "car_acc": 0.8653228162430616,
+      "state_acc": 0.3020742039146947,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.031283363253374,
+      "state_loss": 1.3899152007007705,
+      "car_acc": 0.2641509433962264,
+      "state_acc": 0.3762486126526082,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 18,
+    "train": {
+      "car_loss": 0.31725937379249314,
+      "state_loss": 1.677936976045814,
+      "car_acc": 0.8758399065147532,
+      "state_acc": 0.30295062810400236,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.756667005632085,
+      "state_loss": 1.322009228839726,
+      "car_acc": 0.25305216426193117,
+      "state_acc": 0.38845726970033295,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 19,
+    "train": {
+      "car_loss": 0.2810387661690918,
+      "state_loss": 1.7065725828728548,
+      "car_acc": 0.8857727139935729,
+      "state_acc": 0.3082091732398481,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.688658336820401,
+      "state_loss": 1.363617599870468,
+      "car_acc": 0.2619311875693674,
+      "state_acc": 0.3873473917869034,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 20,
+    "train": {
+      "car_loss": 0.2709525368156539,
+      "state_loss": 1.7802176080946681,
+      "car_acc": 0.892491966111598,
+      "state_acc": 0.2927256792287467,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.841980452542829,
+      "state_loss": 1.4182721756142331,
+      "car_acc": 0.2807991120976693,
+      "state_acc": 0.3762486126526082,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 21,
+    "train": {
+      "car_loss": 0.2498592029633384,
+      "state_loss": 1.7358139906575936,
+      "car_acc": 0.8959976628688285,
+      "state_acc": 0.30528775927548935,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.829029682606095,
+      "state_loss": 1.3608584262422398,
+      "car_acc": 0.2619311875693674,
+      "state_acc": 0.38401775804661487,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 22,
+    "train": {
+      "car_loss": 0.2515428873258413,
+      "state_loss": 1.7016537086398775,
+      "car_acc": 0.8951212386795209,
+      "state_acc": 0.31200701139351444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.663679668297381,
+      "state_loss": 1.4302188381635388,
+      "car_acc": 0.2641509433962264,
+      "state_acc": 0.3662597114317425,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 23,
+    "train": {
+      "car_loss": 0.21424764521004266,
+      "state_loss": 1.7611624599373763,
+      "car_acc": 0.901840490797546,
+      "state_acc": 0.3125912941863862,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.258258063705859,
+      "state_loss": 1.399148466849036,
+      "car_acc": 0.2619311875693674,
+      "state_acc": 0.3729189789123196,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 24,
+    "train": {
+      "car_loss": 0.2108219254096976,
+      "state_loss": 1.7813525022625958,
+      "car_acc": 0.9106047326906223,
+      "state_acc": 0.3236926672509495,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.045259292858687,
+      "state_loss": 1.4067048192950384,
+      "car_acc": 0.27968923418423974,
+      "state_acc": 0.39178690344062156,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 25,
+    "train": {
+      "car_loss": 0.2152727905540065,
+      "state_loss": 1.7723899976642306,
+      "car_acc": 0.9050540461583406,
+      "state_acc": 0.3102541630148992,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 3.984203634860116,
+      "state_loss": 1.4270410111688747,
+      "car_acc": 0.27968923418423974,
+      "state_acc": 0.36847946725860153,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 26,
+    "train": {
+      "car_loss": 0.2002197470937143,
+      "state_loss": 1.7733166198997932,
+      "car_acc": 0.9173239848086474,
+      "state_acc": 0.3082091732398481,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.1055210839365746,
+      "state_loss": 1.4132723242011371,
+      "car_acc": 0.28412874583795783,
+      "state_acc": 0.3706992230854606,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 27,
+    "train": {
+      "car_loss": 0.17967786328454063,
+      "state_loss": 1.784570432008793,
+      "car_acc": 0.9240432369266726,
+      "state_acc": 0.3152205667543091,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.4675622388604745,
+      "state_loss": 1.4192249096194065,
+      "car_acc": 0.2563817980022198,
+      "state_acc": 0.38290788013318533,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 28,
+    "train": {
+      "car_loss": 0.18234532555440627,
+      "state_loss": 1.8254525686891463,
+      "car_acc": 0.9208296815658779,
+      "state_acc": 0.30791703184341224,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.438256128382074,
+      "state_loss": 1.3752789928698779,
+      "car_acc": 0.26748057713651496,
+      "state_acc": 0.39289678135405104,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 29,
+    "train": {
+      "car_loss": 0.17079552503102988,
+      "state_loss": 1.8192219800012974,
+      "car_acc": 0.9263803680981595,
+      "state_acc": 0.3041191936897458,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.206596964339702,
+      "state_loss": 1.41943397135634,
+      "car_acc": 0.27524972253052166,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 30,
+    "train": {
+      "car_loss": 0.17142202876445115,
+      "state_loss": 1.8410913832104767,
+      "car_acc": 0.9357288927841075,
+      "state_acc": 0.2971078001752848,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.383003693177353,
+      "state_loss": 1.449422859722184,
+      "car_acc": 0.2541620421753607,
+      "state_acc": 0.38290788013318533,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 31,
+    "train": {
+      "car_loss": 0.15232644030313341,
+      "state_loss": 1.8657052442409683,
+      "car_acc": 0.9339760444054923,
+      "state_acc": 0.3011977797253871,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.724115020559313,
+      "state_loss": 1.4840802987592996,
+      "car_acc": 0.2630410654827969,
+      "state_acc": 0.3806881243063263,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 32,
+    "train": {
+      "car_loss": 0.15385947734761787,
+      "state_loss": 1.8477175441221505,
+      "car_acc": 0.9354367513876717,
+      "state_acc": 0.317849839322232,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.729877055948238,
+      "state_loss": 1.472484039545853,
+      "car_acc": 0.2486126526082131,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 33,
+    "train": {
+      "car_loss": 0.13909858831520355,
+      "state_loss": 1.8517976427788696,
+      "car_acc": 0.9409874379199532,
+      "state_acc": 0.30295062810400236,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.731671157608286,
+      "state_loss": 1.4788680199645337,
+      "car_acc": 0.27968923418423974,
+      "state_acc": 0.3795782463928968,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 34,
+    "train": {
+      "car_loss": 0.14046954165729486,
+      "state_loss": 1.8741766699496467,
+      "car_acc": 0.9427402862985685,
+      "state_acc": 0.30178206251825884,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.591767300114648,
+      "state_loss": 1.4243519546982981,
+      "car_acc": 0.2807991120976693,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 35,
+    "train": {
+      "car_loss": 0.1344686989029562,
+      "state_loss": 1.8626922378406308,
+      "car_acc": 0.9409874379199532,
+      "state_acc": 0.3125912941863862,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.946528120522494,
+      "state_loss": 1.4328490047158464,
+      "car_acc": 0.27081021087680357,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 36,
+    "train": {
+      "car_loss": 0.13650514393731442,
+      "state_loss": 1.866487183976236,
+      "car_acc": 0.9465381244522348,
+      "state_acc": 0.30382705229331,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.615227780516748,
+      "state_loss": 1.3925067190324825,
+      "car_acc": 0.26748057713651496,
+      "state_acc": 0.3951165371809101,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 37,
+    "train": {
+      "car_loss": 0.1462798302809798,
+      "state_loss": 1.8467790978086507,
+      "car_acc": 0.9386503067484663,
+      "state_acc": 0.30002921413964356,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.960179473927759,
+      "state_loss": 1.4297580892317303,
+      "car_acc": 0.28412874583795783,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 38,
+    "train": {
+      "car_loss": 0.12661755356634008,
+      "state_loss": 1.816904845099821,
+      "car_acc": 0.9503359626059013,
+      "state_acc": 0.3073327490505405,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.60726192577036,
+      "state_loss": 1.381288313309969,
+      "car_acc": 0.2785793562708102,
+      "state_acc": 0.39844617092119866,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 39,
+    "train": {
+      "car_loss": 0.12645907185562533,
+      "state_loss": 1.8247127357436104,
+      "car_acc": 0.9465381244522348,
+      "state_acc": 0.2950628104002337,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.296425042882744,
+      "state_loss": 1.411391142602766,
+      "car_acc": 0.27081021087680357,
+      "state_acc": 0.38401775804661487,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 40,
+    "train": {
+      "car_loss": 0.11689684386146093,
+      "state_loss": 1.8418907018352801,
+      "car_acc": 0.9515045281916448,
+      "state_acc": 0.29944493134677186,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.744383630027517,
+      "state_loss": 1.4214330177328298,
+      "car_acc": 0.2597114317425083,
+      "state_acc": 0.38845726970033295,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 41,
+    "train": {
+      "car_loss": 0.11682776785492374,
+      "state_loss": 1.839408059827842,
+      "car_acc": 0.9506281040023371,
+      "state_acc": 0.30966988022202746,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.676905634665198,
+      "state_loss": 1.4231167535538414,
+      "car_acc": 0.2763596004439512,
+      "state_acc": 0.39289678135405104,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 42,
+    "train": {
+      "car_loss": 0.12250132910121507,
+      "state_loss": 1.8277103990760422,
+      "car_acc": 0.9497516798130295,
+      "state_acc": 0.3020742039146947,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.577570184354116,
+      "state_loss": 1.411096160075773,
+      "car_acc": 0.2685904550499445,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 43,
+    "train": {
+      "car_loss": 0.12234879898251827,
+      "state_loss": 1.8261009295224238,
+      "car_acc": 0.9503359626059013,
+      "state_acc": 0.2979842243645925,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.712241367018316,
+      "state_loss": 1.4612832363120194,
+      "car_acc": 0.27081021087680357,
+      "state_acc": 0.39844617092119866,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 44,
+    "train": {
+      "car_loss": 0.11010215466930753,
+      "state_loss": 1.8140429691581603,
+      "car_acc": 0.9553023663453112,
+      "state_acc": 0.310838445807771,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.7711034730060256,
+      "state_loss": 1.429072304650496,
+      "car_acc": 0.27192008879023305,
+      "state_acc": 0.40066592674805773,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 45,
+    "train": {
+      "car_loss": 0.11464626008381873,
+      "state_loss": 1.7986624863911818,
+      "car_acc": 0.9567630733274906,
+      "state_acc": 0.31580484954718085,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.948055539094119,
+      "state_loss": 1.4318738515580798,
+      "car_acc": 0.2830188679245283,
+      "state_acc": 0.39844617092119866,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 46,
+    "train": {
+      "car_loss": 0.10088791859505157,
+      "state_loss": 1.847761914634649,
+      "car_acc": 0.9591002044989775,
+      "state_acc": 0.29593923458954136,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.61243074570062,
+      "state_loss": 1.3959095089073055,
+      "car_acc": 0.2885682574916759,
+      "state_acc": 0.40843507214206437,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 47,
+    "train": {
+      "car_loss": 0.11066008815196325,
+      "state_loss": 1.8562959841807056,
+      "car_acc": 0.9576394975167981,
+      "state_acc": 0.29681565877884897,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.977105621624734,
+      "state_loss": 1.4984909732651366,
+      "car_acc": 0.2807991120976693,
+      "state_acc": 0.38179800221975585,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 48,
+    "train": {
+      "car_loss": 0.11120109734150739,
+      "state_loss": 1.8408809502222996,
+      "car_acc": 0.957931638913234,
+      "state_acc": 0.2985685071574642,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.692898627655884,
+      "state_loss": 1.460721448576543,
+      "car_acc": 0.2830188679245283,
+      "state_acc": 0.39844617092119866,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 49,
+    "train": {
+      "car_loss": 0.0932790174614502,
+      "state_loss": 1.887116603255098,
+      "car_acc": 0.9596844872918493,
+      "state_acc": 0.2909728308501315,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.496834707842286,
+      "state_loss": 1.5303746211806624,
+      "car_acc": 0.2952275249722531,
+      "state_acc": 0.39178690344062156,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 50,
+    "train": {
+      "car_loss": 0.08920762561242064,
+      "state_loss": 1.8963712415185339,
+      "car_acc": 0.9608530528775927,
+      "state_acc": 0.2938942448144902,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.677398627394444,
+      "state_loss": 1.4969326835890588,
+      "car_acc": 0.293007769145394,
+      "state_acc": 0.3951165371809101,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 51,
+    "train": {
+      "car_loss": 0.09682380425788108,
+      "state_loss": 1.8718043185798807,
+      "car_acc": 0.9570552147239264,
+      "state_acc": 0.3114227286006427,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.69677817861195,
+      "state_loss": 1.4975945377984932,
+      "car_acc": 0.29633740288568255,
+      "state_acc": 0.39178690344062156,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 52,
+    "train": {
+      "car_loss": 0.07971302198973658,
+      "state_loss": 1.9051968457230064,
+      "car_acc": 0.9640666082383874,
+      "state_acc": 0.3090855974291557,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.81953762546099,
+      "state_loss": 1.4790670731488396,
+      "car_acc": 0.28412874583795783,
+      "state_acc": 0.38623751387347394,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 53,
+    "train": {
+      "car_loss": 0.1002841875884326,
+      "state_loss": 1.9151935810726566,
+      "car_acc": 0.9564709319310546,
+      "state_acc": 0.29214139643587494,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.7824399987283215,
+      "state_loss": 1.510564806061765,
+      "car_acc": 0.29411764705882354,
+      "state_acc": 0.3795782463928968,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 54,
+    "train": {
+      "car_loss": 0.09553834739359644,
+      "state_loss": 1.8440767078416376,
+      "car_acc": 0.9652351738241309,
+      "state_acc": 0.30966988022202746,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.877354030471531,
+      "state_loss": 1.4883463313920913,
+      "car_acc": 0.2830188679245283,
+      "state_acc": 0.3873473917869034,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 55,
+    "train": {
+      "car_loss": 0.09237676188502088,
+      "state_loss": 1.8158473642534796,
+      "car_acc": 0.9631901840490797,
+      "state_acc": 0.3187262635115396,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.034771739047322,
+      "state_loss": 1.4899085199131685,
+      "car_acc": 0.28523862375138737,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 56,
+    "train": {
+      "car_loss": 0.08066455759880768,
+      "state_loss": 1.8635422905529935,
+      "car_acc": 0.9652351738241309,
+      "state_acc": 0.31113058720420683,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.907981196201337,
+      "state_loss": 1.463246484972396,
+      "car_acc": 0.27192008879023305,
+      "state_acc": 0.39178690344062156,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 57,
+    "train": {
+      "car_loss": 0.09449060186482541,
+      "state_loss": 1.866316208427077,
+      "car_acc": 0.9652351738241309,
+      "state_acc": 0.31814198071866784,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.03461706889721,
+      "state_loss": 1.4970130653148486,
+      "car_acc": 0.27081021087680357,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 58,
+    "train": {
+      "car_loss": 0.07373658249118228,
+      "state_loss": 1.8841271681845484,
+      "car_acc": 0.9675723049956179,
+      "state_acc": 0.31989482909728306,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.9115030466517915,
+      "state_loss": 1.4922245332059532,
+      "car_acc": 0.28190899001109876,
+      "state_acc": 0.390677025527192,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 59,
+    "train": {
+      "car_loss": 0.0834020079172584,
+      "state_loss": 1.892084381610303,
+      "car_acc": 0.969617294770669,
+      "state_acc": 0.3055799006719252,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.79232111490527,
+      "state_loss": 1.5187715440161618,
+      "car_acc": 0.28634850166481685,
+      "state_acc": 0.37735849056603776,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 60,
+    "train": {
+      "car_loss": 0.08688569641469376,
+      "state_loss": 1.8982062288240282,
+      "car_acc": 0.9664037394098743,
+      "state_acc": 0.3125912941863862,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.86573570497028,
+      "state_loss": 1.461688027927005,
+      "car_acc": 0.293007769145394,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 61,
+    "train": {
+      "car_loss": 0.08496852900931928,
+      "state_loss": 1.842294792908867,
+      "car_acc": 0.9637744668419514,
+      "state_acc": 0.30791703184341224,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.084742468813813,
+      "state_loss": 1.517300638321634,
+      "car_acc": 0.3052164261931188,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 62,
+    "train": {
+      "car_loss": 0.07818658389488473,
+      "state_loss": 1.8207189011497174,
+      "car_acc": 0.9661115980134385,
+      "state_acc": 0.31463628396143734,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.877777203338657,
+      "state_loss": 1.5198233400147976,
+      "car_acc": 0.29189789123196447,
+      "state_acc": 0.3806881243063263,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 63,
+    "train": {
+      "car_loss": 0.07676445330587563,
+      "state_loss": 1.8301362700536172,
+      "car_acc": 0.9707858603564125,
+      "state_acc": 0.32281624306164186,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.784101166550513,
+      "state_loss": 1.5405293091817385,
+      "car_acc": 0.30632630410654826,
+      "state_acc": 0.38290788013318533,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 64,
+    "train": {
+      "car_loss": 0.07560640121416985,
+      "state_loss": 1.886500292481855,
+      "car_acc": 0.9699094361671049,
+      "state_acc": 0.3047034764826176,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.903410460258297,
+      "state_loss": 1.5458886808613428,
+      "car_acc": 0.3174250832408435,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 65,
+    "train": {
+      "car_loss": 0.07308096637916155,
+      "state_loss": 1.883125760594969,
+      "car_acc": 0.9661115980134385,
+      "state_acc": 0.3073327490505405,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.914469811813151,
+      "state_loss": 1.5415579799012789,
+      "car_acc": 0.3074361820199778,
+      "state_acc": 0.37846836847946724,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 66,
+    "train": {
+      "car_loss": 0.08254456774418967,
+      "state_loss": 1.8482545270858506,
+      "car_acc": 0.9655273152205668,
+      "state_acc": 0.3137598597721297,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.049568429374271,
+      "state_loss": 1.503644788569536,
+      "car_acc": 0.28190899001109876,
+      "state_acc": 0.38401775804661487,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 67,
+    "train": {
+      "car_loss": 0.06770150100672467,
+      "state_loss": 1.8162981467465715,
+      "car_acc": 0.9704937189599766,
+      "state_acc": 0.310838445807771,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.150243785616825,
+      "state_loss": 1.5825335656630741,
+      "car_acc": 0.293007769145394,
+      "state_acc": 0.38179800221975585,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 68,
+    "train": {
+      "car_loss": 0.06461595799289632,
+      "state_loss": 1.8921190656279738,
+      "car_acc": 0.9704937189599766,
+      "state_acc": 0.3160969909436167,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.0868438811730865,
+      "state_loss": 1.535857165957926,
+      "car_acc": 0.293007769145394,
+      "state_acc": 0.39289678135405104,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 69,
+    "train": {
+      "car_loss": 0.07993985721017058,
+      "state_loss": 1.891958536685227,
+      "car_acc": 0.9666958808063103,
+      "state_acc": 0.31317557697925796,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.031054910623802,
+      "state_loss": 1.5348552305346457,
+      "car_acc": 0.29189789123196447,
+      "state_acc": 0.38623751387347394,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 70,
+    "train": {
+      "car_loss": 0.06035284411783564,
+      "state_loss": 1.8884893469458046,
+      "car_acc": 0.9748758399065147,
+      "state_acc": 0.3090855974291557,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.389303090437403,
+      "state_loss": 1.507117550195785,
+      "car_acc": 0.28634850166481685,
+      "state_acc": 0.37735849056603776,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 71,
+    "train": {
+      "car_loss": 0.06977790908269277,
+      "state_loss": 1.9046738599428406,
+      "car_acc": 0.9713701431492843,
+      "state_acc": 0.30704060765410457,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.983423611697028,
+      "state_loss": 1.5007787606824647,
+      "car_acc": 0.28523862375138737,
+      "state_acc": 0.38290788013318533,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 72,
+    "train": {
+      "car_loss": 0.07190985994572932,
+      "state_loss": 1.8618003010157775,
+      "car_acc": 0.9699094361671049,
+      "state_acc": 0.3137598597721297,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.045253497514291,
+      "state_loss": 1.4354266068514656,
+      "car_acc": 0.29411764705882354,
+      "state_acc": 0.39844617092119866,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 73,
+    "train": {
+      "car_loss": 0.05907103391769613,
+      "state_loss": 1.8705023708588682,
+      "car_acc": 0.9739994157172072,
+      "state_acc": 0.32486123283669294,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.005309637590465,
+      "state_loss": 1.5251721122553292,
+      "car_acc": 0.29411764705882354,
+      "state_acc": 0.3940066592674806,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 74,
+    "train": {
+      "car_loss": 0.05438802879343961,
+      "state_loss": 1.8738960704363266,
+      "car_acc": 0.9801343850423605,
+      "state_acc": 0.32836692959392344,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.393937814513533,
+      "state_loss": 1.54491217340137,
+      "car_acc": 0.2807991120976693,
+      "state_acc": 0.390677025527192,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 75,
+    "train": {
+      "car_loss": 0.05606628827295768,
+      "state_loss": 1.8799105658017157,
+      "car_acc": 0.9780893952673094,
+      "state_acc": 0.3254455156295647,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.3789396622072445,
+      "state_loss": 1.534616932620219,
+      "car_acc": 0.293007769145394,
+      "state_acc": 0.3873473917869034,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 76,
+    "train": {
+      "car_loss": 0.06319989084875309,
+      "state_loss": 1.8982716934255366,
+      "car_acc": 0.9713701431492843,
+      "state_acc": 0.32486123283669294,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.4774731835567465,
+      "state_loss": 1.5798997233366463,
+      "car_acc": 0.28967813540510545,
+      "state_acc": 0.390677025527192,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 77,
+    "train": {
+      "car_loss": 0.0749721258058121,
+      "state_loss": 1.914841164944989,
+      "car_acc": 0.9713701431492843,
+      "state_acc": 0.30966988022202746,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.699658499441454,
+      "state_loss": 1.6001620537432926,
+      "car_acc": 0.31520532741398444,
+      "state_acc": 0.38179800221975585,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 78,
+    "train": {
+      "car_loss": 0.062108005289006854,
+      "state_loss": 1.9087565196316179,
+      "car_acc": 0.9754601226993865,
+      "state_acc": 0.310838445807771,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.224748010772976,
+      "state_loss": 1.5766729752840134,
+      "car_acc": 0.2874583795782464,
+      "state_acc": 0.38179800221975585,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 79,
+    "train": {
+      "car_loss": 0.0627952845178908,
+      "state_loss": 1.9116077981704236,
+      "car_acc": 0.9739994157172072,
+      "state_acc": 0.3169734151329243,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.39783295357267,
+      "state_loss": 1.5627530796017155,
+      "car_acc": 0.29189789123196447,
+      "state_acc": 0.3795782463928968,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 80,
+    "train": {
+      "car_loss": 0.07354983075552086,
+      "state_loss": 1.8725995342877049,
+      "car_acc": 0.9690330119777972,
+      "state_acc": 0.31668127373648847,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.9270969014056645,
+      "state_loss": 1.4843960809919334,
+      "car_acc": 0.2985571587125416,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 81,
+    "train": {
+      "car_loss": 0.06096536986989094,
+      "state_loss": 1.8485222439511004,
+      "car_acc": 0.9754601226993865,
+      "state_acc": 0.31901840490797545,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.973164803179996,
+      "state_loss": 1.5133864551484915,
+      "car_acc": 0.2985571587125416,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 82,
+    "train": {
+      "car_loss": 0.057417026612381995,
+      "state_loss": 1.8962791844693117,
+      "car_acc": 0.9725387087350278,
+      "state_acc": 0.3128834355828221,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.8724848922428885,
+      "state_loss": 1.5808024643263991,
+      "car_acc": 0.30077691453940064,
+      "state_acc": 0.38623751387347394,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 83,
+    "train": {
+      "car_loss": 0.050559513488517255,
+      "state_loss": 1.9142977381671968,
+      "car_acc": 0.9810108092316682,
+      "state_acc": 0.31668127373648847,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.846996513508533,
+      "state_loss": 1.6007127572640727,
+      "car_acc": 0.30965593784683687,
+      "state_acc": 0.3751387347391787,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 84,
+    "train": {
+      "car_loss": 0.07091040092077201,
+      "state_loss": 1.8750192305514453,
+      "car_acc": 0.9731229915278995,
+      "state_acc": 0.31580484954718085,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.2261829905451735,
+      "state_loss": 1.5108324274768046,
+      "car_acc": 0.3052164261931188,
+      "state_acc": 0.39178690344062156,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 85,
+    "train": {
+      "car_loss": 0.06335545971166869,
+      "state_loss": 1.915503250030687,
+      "car_acc": 0.9760444054922582,
+      "state_acc": 0.31668127373648847,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.174417186392002,
+      "state_loss": 1.5199285425435953,
+      "car_acc": 0.290788013318535,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 86,
+    "train": {
+      "car_loss": 0.05276749315711074,
+      "state_loss": 1.9022461861641895,
+      "car_acc": 0.9754601226993865,
+      "state_acc": 0.3140520011685656,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.965850812613501,
+      "state_loss": 1.5329222983446027,
+      "car_acc": 0.31409544950055496,
+      "state_acc": 0.3851276359600444,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 87,
+    "train": {
+      "car_loss": 0.07303442183817788,
+      "state_loss": 1.9074909355847278,
+      "car_acc": 0.9690330119777972,
+      "state_acc": 0.317849839322232,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.15845159870406,
+      "state_loss": 1.523656235154011,
+      "car_acc": 0.30632630410654826,
+      "state_acc": 0.39622641509433965,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 88,
+    "train": {
+      "car_loss": 0.051238817359796136,
+      "state_loss": 1.8824190047272735,
+      "car_acc": 0.97662868828513,
+      "state_acc": 0.32515337423312884,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 4.893411378352412,
+      "state_loss": 1.5624292383712617,
+      "car_acc": 0.31409544950055496,
+      "state_acc": 0.3795782463928968,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  },
+  {
+    "epoch": 89,
+    "train": {
+      "car_loss": 0.05307065598446829,
+      "state_loss": 1.9314044896113813,
+      "car_acc": 0.9792579608530528,
+      "state_acc": 0.3187262635115396,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    },
+    "val": {
+      "car_loss": 5.170658240440021,
+      "state_loss": 1.5342730615829654,
+      "car_acc": 0.3029966703662597,
+      "state_acc": 0.3895671476137625,
+      "family_loss": 0.0,
+      "family_acc": 0.0
+    }
+  }
+]

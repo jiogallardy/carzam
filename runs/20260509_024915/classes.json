@@ -1,0 +1,22 @@
+{
+  "cars": [
+    "na_v12",
+    "na_v8_flat",
+    "tt_v8_flat",
+    "tt_v6_hybrid",
+    "na_v10",
+    "na_flat6",
+    "tt_v8_cross",
+    "tt_inline6",
+    "turbo_boxer4",
+    "turbo_inline4",
+    "supercharged_v8",
+    "other"
+  ],
+  "states": [
+    "idle",
+    "accel",
+    "decel"
+  ],
+  "families_as_classes": true
+}
