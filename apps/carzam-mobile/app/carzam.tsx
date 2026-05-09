@@ -78,16 +78,45 @@ export default function CarzamModal() {
   async function start() {
     try {
       setErrorMsg(null);
-      const perm = await Audio.requestPermissionsAsync();
+
+      // 1. Permission request. This MUST trigger the system prompt the first
+      //    time. If NSMicrophoneUsageDescription isn't in the built Info.plist,
+      //    iOS rejects with an NSError before showing any UI — a tell-tale
+      //    sign that the build wasn't generated with the right app.json.
+      let perm: Awaited<ReturnType<typeof Audio.requestPermissionsAsync>>;
+      try {
+        perm = await Audio.requestPermissionsAsync();
+      } catch (e) {
+        const raw = e instanceof Error ? e.message : String(e);
+        throw new Error(
+          `Mic permission request failed at OS level (${raw}). ` +
+            `This usually means NSMicrophoneUsageDescription is missing from ` +
+            `Info.plist — rebuild the dev client with EAS so it picks up ` +
+            `app.json plugins.`,
+        );
+      }
       if (!perm.granted) {
-        setErrorMsg("Mic permission denied. Enable it in Settings to use Carzam.");
+        setErrorMsg(
+          perm.canAskAgain
+            ? "Tap Allow when iOS asks for mic access."
+            : "Mic permission denied. Settings → Carzam → Microphone, then re-open Carzam.",
+        );
         setPhase("error");
         return;
       }
+
+      // 2. Audio session: switch into a recording-friendly mode BEFORE creating
+      //    the Recording. Doing it after sometimes silently produces empty
+      //    files on iOS when the app was previously playing audio.
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
       });
+
+      // 3. Recording.
       const rec = new Audio.Recording();
       await rec.prepareToRecordAsync(recordingOptions);
       recordingRef.current = rec;
@@ -95,17 +124,16 @@ export default function CarzamModal() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
       setPhase("recording");
       setSecondsLeft(RECORD_SECONDS);
-      // tick the visible countdown
+
+      // visible countdown
       tickRef.current = setInterval(() => {
-        setSecondsLeft((s) => {
-          if (s <= 1) return 0;
-          return s - 1;
-        });
+        setSecondsLeft((s) => (s <= 1 ? 0 : s - 1));
       }, 1000);
-      // schedule auto-stop
+      // auto-stop
       setTimeout(() => stopAndRecognize(), RECORD_SECONDS * 1000);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Couldn't start recording.";
+      console.warn("[carzam] start() failed:", msg, e);
       setErrorMsg(msg);
       setPhase("error");
     }

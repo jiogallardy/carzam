@@ -28,26 +28,39 @@
     },
     "android": {
       "package": "com.carzam.app",
-      "permissions": ["RECORD_AUDIO"]
+      "permissions": [
+        "RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-apple-authentication",
       [
         "expo-av",
-        { "microphonePermission": "Carzam listens to engine sound to identify the car." }
+        {
+          "microphonePermission": "Carzam listens to engine sound to identify the car."
+        }
       ],
       [
         "@react-native-google-signin/google-signin",
-        { "iosUrlScheme": "com.googleusercontent.apps.28068275828-6ia8mpkvm9m0rmvnsbkbcmr84qd7e0kn" }
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.28068275828-6ia8mpkvm9m0rmvnsbkbcmr84qd7e0kn"
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "router": { "origin": false },
-      "eas": { "projectId": "REPLACE_WITH_EAS_PROJECT_ID" }
-    }
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a780971e-51f2-4fa3-be6a-03b1824cb8ee"
+      }
+    },
+    "owner": "jiogallardy"
   }
 }
