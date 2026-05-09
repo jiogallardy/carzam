@@ -124,13 +124,14 @@ PAGE = """<!DOCTYPE html>
   <button onclick="loadNext(true)">skip without save (S)</button>
 </div>
 <div class="keys">
-  Quick approve: <b>b</b> mark whole video as the class &amp; advance &middot;
-  <b>[</b> set range-start at current time &middot; <b>]</b> set range-end &middot; <b>e</b> save range &amp; advance
-  <br>Per-state labels: <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
-  <b>x</b> close current &middot; <b>u</b> undo
-  <br>Workflow: <b>n</b> save (state-labeled) &amp; next &middot; <b>S</b> next without save
-  <br>Playback: <b>space</b> play/pause &middot; <b>j</b>/<b>l</b> &plusmn;10s &middot;
-  <b>←</b>/<b>→</b> &plusmn;5s &middot; <b>m</b> mute
+  Quick approve: <b>b</b> mark whole video &amp; advance &middot;
+  <b>[</b> mark range-start at current time &middot;
+  <b>]</b> commit range start..now and continue (repeat for multiple segments) &middot;
+  <b>e</b> save all collected ranges &amp; advance
+  <br>Per-state labels (advanced): <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
+  <b>x</b> close current &middot; <b>u</b> undo &middot; <b>n</b> save state-labeled &amp; next
+  <br>Skip / playback: <b>S</b> next without save &middot; <b>space</b> play/pause &middot;
+  <b>j</b>/<b>l</b> &plusmn;10s &middot; <b>←</b>/<b>→</b> &plusmn;5s &middot; <b>m</b> mute
 </div>
 <div class="ranges" id="ranges"></div>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -292,17 +293,33 @@ function quickApproveWhole() {
   saveAndNext();
 }
 
-function quickApproveRange() {
+function appendQuickRange() {
+  // ] press: commit a range from quickStart..currentTime to ranges[]
+  if (!playerReady || !player || !player.getCurrentTime) return false;
+  if (quickStart == null) return false;
+  const t = player.getCurrentTime();
+  if (t <= quickStart + 0.05) {
+    console.warn('range too short, ignoring');
+    return false;
+  }
+  ranges.push({start: quickStart, end: t, label: 'idle'});
+  quickStart = null; quickEnd = null;
+  updateQuickStatus();
+  renderRanges();
+  return true;
+}
+
+function saveQuickRanges() {
+  // e press: save accumulated ranges (and any open one) and advance
   if (!playerReady || !player || !player.getDuration) return;
-  const dur = player.getDuration();
-  if (!dur || dur <= 0) return;
-  const s = quickStart != null ? quickStart : 0;
-  const e_ = quickEnd != null ? quickEnd : dur;
-  if (e_ <= s) {
-    alert('range-end must be > range-start');
+  // If there's still an open quickStart, close it at current time
+  if (quickStart != null) {
+    appendQuickRange();
+  }
+  if (ranges.length === 0) {
+    console.warn('no ranges to save');
     return;
   }
-  ranges = [{start: s, end: e_, label: 'idle'}];
   currentMode = null;
   saveAndNext();
   quickStart = null; quickEnd = null;
@@ -333,11 +350,10 @@ window.addEventListener('keydown', (e) => {
   }
   else if (e.code === 'BracketRight' || k === ']') {
     if (!player || !player.getCurrentTime) return;
-    quickEnd = player.getCurrentTime();
-    updateQuickStatus();
+    appendQuickRange();
     e.preventDefault();
   }
-  else if (k === 'e' && quickStart != null) { quickApproveRange(); e.preventDefault(); }
+  else if (k === 'e') { saveQuickRanges(); e.preventDefault(); }
   // Per-state label keys
   else if (k === 'i') { setMode('idle'); e.preventDefault(); }
   else if (k === 'a') { setMode('accel'); e.preventDefault(); }
