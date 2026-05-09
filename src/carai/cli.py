@@ -16,11 +16,31 @@ def main() -> None:
 @main.command()
 @click.option("--sources", type=click.Path(path_type=Path), default=Path("config/sources.yaml"))
 @click.option("--out", type=click.Path(path_type=Path), default=Path("data/raw"))
-def download(sources: Path, out: Path) -> None:
-    """Download videos listed in sources.yaml as 16kHz mono WAVs."""
-    from carai.data.download import download_all
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"),
+              help="Only download URLs that have a regions YAML (= approved in review).")
+@click.option("--all-sources", is_flag=True,
+              help="Download every URL in sources.yaml regardless of approval state.")
+def download(sources: Path, out: Path, regions: Path, all_sources: bool) -> None:
+    """Download videos listed in sources.yaml as 16kHz mono WAVs.
 
-    download_all(sources, out)
+    By default, only approved videos (those with a regions YAML) are pulled.
+    Pass --all-sources to grab everything in sources.yaml.
+    """
+    from carai.data.download import download_all
+    from carai.data.regions import regions_path_for
+
+    filter_fn = None
+    if not all_sources:
+        def is_approved(car: str, url: str) -> bool:
+            from carai.data.download import video_id_from_url
+            try:
+                vid = video_id_from_url(url)
+            except ValueError:
+                return False
+            return regions_path_for(regions, car, vid).exists()
+        filter_fn = is_approved
+
+    download_all(sources, out, filter_fn=filter_fn)
 
 
 @main.command()

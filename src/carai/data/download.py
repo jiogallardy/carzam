@@ -59,11 +59,18 @@ def download_one(url: str, out_path: Path) -> None:
             candidates[0].rename(out_path)
 
 
-def download_all(sources_yaml: Path, raw_dir: Path) -> None:
+def download_all(
+    sources_yaml: Path,
+    raw_dir: Path,
+    filter_fn: "callable | None" = None,
+) -> None:
     sources = yaml.safe_load(Path(sources_yaml).read_text())
     failed: list[tuple[str, str]] = []
     for car, urls in sources.items():
         for url in urls:
+            if filter_fn is not None and not filter_fn(car, url):
+                console.print(f"[dim]not approved[/dim] {car} {url}")
+                continue
             if is_already_downloaded(raw_dir, car, url):
                 console.print(f"[dim]skip[/dim] {car} {url}")
                 continue

@@ -10,7 +10,13 @@ from carai.models.backbone import build_backbone
 # the 982 GT4 RS uses literally the same engine as the 992 GT3, exhaust routing
 # + cabin acoustics differ enough that the model picks up the distinction.
 CARS = (
-    "ferrari_812",
+    "ferrari_812",       # NA V12 6.5L (Superfast/GTS/Competizione)
+    "ferrari_f12",       # NA V12 6.3L (F12 Berlinetta/tdf, GTC4Lusso)
+    "ferrari_458",       # NA V8 4.5L flat-plane (Italia/Speciale/Spider)
+    "ferrari_488",       # TT V8 3.9L flat-plane (488 GTB/Pista/Spider)
+    "ferrari_f8",        # TT V8 3.9L (F8 Tributo/Spider — same engine as 488)
+    "ferrari_sf90",      # TT V8 + hybrid (SF90 Stradale)
+    "ferrari_296",       # TT V6 + hybrid (296 GTB/GTS)
     "lamborghini_huracan",
     "porsche_gt3",
     "porsche_gt4",
@@ -18,6 +24,9 @@ CARS = (
     "bmw_m3_s58",
     "subaru_wrx_sti",
     "civic_type_r_k20c1",
+    "corvette_c6_zr1",
+    "corvette_c7_zr1",
+    "corvette_c7_z06",
     "other",
 )
 STATES = ("idle", "accel", "decel")

@@ -14,10 +14,15 @@ def test_backbone_output_shape():
 
 
 def test_class_constants():
-    assert len(CARS) == 9
+    assert len(CARS) == 18
     assert "other" in CARS
-    assert "porsche_gt3" in CARS
-    assert "porsche_gt4" in CARS
+    assert "ferrari_812" in CARS
+    assert "ferrari_f12" in CARS
+    assert "ferrari_458" in CARS
+    assert "ferrari_488" in CARS
+    assert "ferrari_f8" in CARS
+    assert "ferrari_sf90" in CARS
+    assert "ferrari_296" in CARS
     assert STATES == ("idle", "accel", "decel")
 
 
@@ -27,7 +32,7 @@ def test_multihead_forward_shapes():
     x = torch.randn(3, 501, 64)
     with torch.no_grad():
         car_logits, state_logits = model(x)
-    assert car_logits.shape == (3, 9)
+    assert car_logits.shape == (3, 18)
     assert state_logits.shape == (3, 3)
 
 

@@ -93,8 +93,15 @@ PAGE = """<!DOCTYPE html>
   button { background: #2a2a2a; color: #eee; border: 1px solid #3a3a3a; padding: 6px 14px;
            border-radius: 4px; cursor: pointer; font-size: 13px; }
   button:hover { background: #353535; }
+  button:focus { outline: none; }  /* avoid persistent focus on transport buttons */
+  body.loading { cursor: wait; }
+  .loading-banner { position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+                    background: #b04a1a; color: #fff; padding: 5px 12px; border-radius: 4px;
+                    font-size: 12px; display: none; z-index: 100; }
+  body.loading .loading-banner { display: block; }
   .done { padding: 40px; text-align: center; font-size: 16px; }
 </style></head><body>
+<div class="loading-banner">loading next video — keystrokes ignored…</div>
 <h1>carAI region reviewer</h1>
 <div class="meta" id="meta">loading...</div>
 <div id="player-wrap">
@@ -112,13 +119,16 @@ PAGE = """<!DOCTYPE html>
 <div class="row">
   <span>mode: <span id="current-mode" class="mode none">none</span></span>
   <span class="time" id="time">0.0 / 0.0s</span>
+  <span id="quick-status" style="font-family: monospace; font-size: 12px; opacity: 0.85;">range: — / —</span>
   <button id="next-btn" onclick="saveAndNext()">save & next (n)</button>
   <button onclick="loadNext(true)">skip without save (S)</button>
 </div>
 <div class="keys">
-  Labels: <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
+  Quick approve: <b>b</b> mark whole video as the class &amp; advance &middot;
+  <b>[</b> set range-start at current time &middot; <b>]</b> set range-end &middot; <b>e</b> save range &amp; advance
+  <br>Per-state labels: <b>i</b> idle &middot; <b>a</b> accel &middot; <b>d</b> decel &middot; <b>s</b> skip &middot;
   <b>x</b> close current &middot; <b>u</b> undo
-  <br>Workflow: <b>n</b> save &amp; next &middot; <b>S</b> next without save
+  <br>Workflow: <b>n</b> save (state-labeled) &amp; next &middot; <b>S</b> next without save
   <br>Playback: <b>space</b> play/pause &middot; <b>j</b>/<b>l</b> &plusmn;10s &middot;
   <b>←</b>/<b>→</b> &plusmn;5s &middot; <b>m</b> mute
 </div>
@@ -127,8 +137,22 @@ PAGE = """<!DOCTYPE html>
 <script>
 let player = null, queue = [], idx = -1;
 let currentMode = null, modeStart = 0, ranges = [];
+let playerReady = false;  // gates keystrokes during async video loads
 
 document.body.tabIndex = 0;  // allow body to receive focus
+
+// Helper: any time a button is clicked, drop focus back to body
+// so the next keypress reaches our handler instead of the button.
+document.addEventListener('click', (e) => {
+  if (e.target.tagName === 'BUTTON') {
+    setTimeout(() => { e.target.blur(); document.body.focus(); }, 0);
+  }
+}, true);
+
+function setLoading(on) {
+  playerReady = !on;
+  document.body.classList.toggle('loading', on);
+}
 
 fetch('/api/queue').then(r => r.json()).then(q => {
   queue = q.filter(v => !v.reviewed);
@@ -144,16 +168,30 @@ window.onYouTubeIframeAPIReady = function() {
 };
 
 function ensurePlayer(videoId, onReady) {
+  setLoading(true);
+  const markReady = () => { setLoading(false); onReady && onReady(); };
   if (player && player.loadVideoById) {
     player.loadVideoById(videoId);
-    onReady();
+    // loadVideoById doesn't refire onReady; wait until duration is known.
+    let tries = 0;
+    const wait = setInterval(() => {
+      tries++;
+      try {
+        if (player.getDuration && player.getDuration() > 0) {
+          clearInterval(wait);
+          markReady();
+        } else if (tries > 60) {  // 6s timeout
+          clearInterval(wait);
+          markReady();  // proceed anyway; button checks will guard
+        }
+      } catch (e) {}
+    }, 100);
     return;
   }
   player = new YT.Player('player', {
     height: '480', width: '854', videoId,
     playerVars: { rel: 0, modestbranding: 1 },
-    events: { onReady: onReady,
-              onStateChange: () => { /* nothing for now */ } }
+    events: { onReady: markReady, onStateChange: () => {} }
   });
 }
 
@@ -170,11 +208,12 @@ function loadNext(autoIncrement = true) {
     '[' + (idx+1) + '/' + queue.length + ']  ' + v.car + ' / ' + v.video_id +
     '  (' + (queue.length - idx - 1) + ' remaining)';
   ranges = []; currentMode = null; modeStart = 0;
+  quickStart = null; quickEnd = null;
   renderRanges();
   setModeBadge(null);
+  if (typeof updateQuickStatus === 'function') updateQuickStatus();
   ensurePlayer(v.video_id, () => {
     document.body.focus();
-    refreshFocusBadge();
   });
 }
 
@@ -240,11 +279,67 @@ function toggleMute() {
   document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
 }
 
+// Bulk-approve state: when [ and ] are pressed, store a custom range,
+// then `e` saves it and advances. `b` is whole-video shortcut.
+let quickStart = null, quickEnd = null;
+
+function quickApproveWhole() {
+  if (!playerReady || !player || !player.getDuration) return;
+  const dur = player.getDuration();
+  if (!dur || dur <= 0) return;  // duration not yet available, ignore
+  ranges = [{start: 0, end: dur, label: 'idle'}];
+  currentMode = null;
+  saveAndNext();
+}
+
+function quickApproveRange() {
+  if (!playerReady || !player || !player.getDuration) return;
+  const dur = player.getDuration();
+  if (!dur || dur <= 0) return;
+  const s = quickStart != null ? quickStart : 0;
+  const e_ = quickEnd != null ? quickEnd : dur;
+  if (e_ <= s) {
+    alert('range-end must be > range-start');
+    return;
+  }
+  ranges = [{start: s, end: e_, label: 'idle'}];
+  currentMode = null;
+  saveAndNext();
+  quickStart = null; quickEnd = null;
+  updateQuickStatus();
+}
+
+function updateQuickStatus() {
+  const el = document.getElementById('quick-status');
+  if (!el) return;
+  const s = quickStart != null ? quickStart.toFixed(1) + 's' : '—';
+  const e = quickEnd   != null ? quickEnd.toFixed(1)   + 's' : '—';
+  el.textContent = 'range: ' + s + ' / ' + e;
+}
+
 window.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  // Drop everything except S (skip without save) while a video is loading.
+  // Otherwise stale duration / player state causes silent bugs.
+  if (!playerReady && e.key !== 'S') return;
   const k = e.key;
-  // Label keys
-  if (k === 'i') { setMode('idle'); e.preventDefault(); }
+  // Quick approve — use e.code for brackets so layout/shift doesn't matter
+  if (k === 'b') { quickApproveWhole(); e.preventDefault(); }
+  else if (e.code === 'BracketLeft' || k === '[') {
+    if (!player || !player.getCurrentTime) return;
+    quickStart = player.getCurrentTime();
+    updateQuickStatus();
+    e.preventDefault();
+  }
+  else if (e.code === 'BracketRight' || k === ']') {
+    if (!player || !player.getCurrentTime) return;
+    quickEnd = player.getCurrentTime();
+    updateQuickStatus();
+    e.preventDefault();
+  }
+  else if (k === 'e' && quickStart != null) { quickApproveRange(); e.preventDefault(); }
+  // Per-state label keys
+  else if (k === 'i') { setMode('idle'); e.preventDefault(); }
   else if (k === 'a') { setMode('accel'); e.preventDefault(); }
   else if (k === 'd') { setMode('decel'); e.preventDefault(); }
   else if (k === 's') { setMode('skip'); e.preventDefault(); }
