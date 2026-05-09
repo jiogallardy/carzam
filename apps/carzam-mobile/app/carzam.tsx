@@ -15,9 +15,11 @@ import {
 import Animated, {
   Easing,
   cancelAnimation,
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -234,11 +236,9 @@ export default function CarzamModal() {
           <ResultView
             result={result}
             onDone={() => { cleanup(); router.back(); }}
-            onWrong={async () => {
-              Alert.alert(
-                "Submit as new car",
-                "Tap and we'll save this clip for review with the specs you enter next. (Coming soon — just close for now.)",
-              );
+            onWrong={() => {
+              cleanup();
+              router.replace(`/submit-new-car/${result.clip_id}`);
             }}
           />
         )}
@@ -271,53 +271,151 @@ function BackgroundGlow() {
   );
 }
 
-function ListeningView({ secondsLeft, uploading }: { secondsLeft: number; uploading: boolean }) {
-  const r1 = useSharedValue(0.4);
-  const r2 = useSharedValue(0.4);
-  const r3 = useSharedValue(0.4);
+function ListeningView({
+  secondsLeft,
+  uploading,
+  liveDb,
+}: {
+  secondsLeft: number;
+  uploading: boolean;
+  liveDb: number;
+}) {
+  // 4 rings, staggered phase, continuous sine ease via withRepeat+linear timing.
+  const t = useSharedValue(0);
+  const sweep = useSharedValue(0);
+  const level = useSharedValue(0); // 0..1 audio reactive level
 
   useEffect(() => {
-    r1.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.out(Easing.quad) }), -1);
-    r2.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.out(Easing.quad) }), -1, false);
-    r3.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.out(Easing.quad) }), -1, false);
-    const t1 = setTimeout(() => (r2.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.out(Easing.quad) }), -1)), 600);
-    const t2 = setTimeout(() => (r3.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.out(Easing.quad) }), -1)), 1200);
+    t.value = withRepeat(
+      withTiming(1, { duration: 3200, easing: Easing.linear }),
+      -1,
+      false,
+    );
+    sweep.value = withRepeat(
+      withTiming(1, { duration: 5200, easing: Easing.linear }),
+      -1,
+      false,
+    );
     return () => {
-      clearTimeout(t1); clearTimeout(t2);
-      cancelAnimation(r1); cancelAnimation(r2); cancelAnimation(r3);
+      cancelAnimation(t);
+      cancelAnimation(sweep);
     };
-  }, [r1, r2, r3]);
+  }, [t, sweep]);
 
-  const s1 = useAnimatedStyle(() => ({
-    transform: [{ scale: 0.9 + r1.value * 1.4 }],
-    opacity: 1 - r1.value,
-  }));
-  const s2 = useAnimatedStyle(() => ({
-    transform: [{ scale: 0.9 + r2.value * 1.4 }],
-    opacity: 1 - r2.value,
-  }));
-  const s3 = useAnimatedStyle(() => ({
-    transform: [{ scale: 0.9 + r3.value * 1.4 }],
-    opacity: 1 - r3.value,
-  }));
+  // Smooth the audio level toward the target. -60 dB ≈ silence, -10 dB ≈ loud.
+  useEffect(() => {
+    const norm = Math.max(0, Math.min(1, (liveDb + 60) / 50));
+    level.value = withSpring(norm, { damping: 14, stiffness: 110, mass: 0.6 });
+  }, [liveDb, level]);
+
+  // Four staggered rings. Each is its own useAnimatedStyle so we obey Rules of Hooks.
+  const r1 = useAnimatedStyle(() => {
+    "worklet";
+    const p = (t.value + 0.0) % 1;
+    const reactive = 0.85 + level.value * 0.5;
+    return {
+      transform: [{ scale: (0.55 + p * 1.15) * reactive }],
+      opacity: (1 - p) * (0.35 + level.value * 0.65),
+    };
+  });
+  const r2 = useAnimatedStyle(() => {
+    "worklet";
+    const p = (t.value + 0.25) % 1;
+    const reactive = 0.85 + level.value * 0.5;
+    return {
+      transform: [{ scale: (0.55 + p * 1.15) * reactive }],
+      opacity: (1 - p) * (0.35 + level.value * 0.65),
+    };
+  });
+  const r3 = useAnimatedStyle(() => {
+    "worklet";
+    const p = (t.value + 0.5) % 1;
+    const reactive = 0.85 + level.value * 0.5;
+    return {
+      transform: [{ scale: (0.55 + p * 1.15) * reactive }],
+      opacity: (1 - p) * (0.35 + level.value * 0.65),
+    };
+  });
+  const r4 = useAnimatedStyle(() => {
+    "worklet";
+    const p = (t.value + 0.75) % 1;
+    const reactive = 0.85 + level.value * 0.5;
+    return {
+      transform: [{ scale: (0.55 + p * 1.15) * reactive }],
+      opacity: (1 - p) * (0.35 + level.value * 0.65),
+    };
+  });
+
+  const coreStyle = useAnimatedStyle(() => {
+    "worklet";
+    const breathe = 1 + Math.sin(t.value * Math.PI * 2) * 0.03;
+    const reactive = 1 + level.value * 0.18;
+    return {
+      transform: [{ scale: breathe * reactive }],
+    };
+  });
+
+  const sweepStyle = useAnimatedStyle(() => {
+    "worklet";
+    return {
+      transform: [{ rotate: `${sweep.value * 360}deg` }],
+      opacity: 0.55 + level.value * 0.35,
+    };
+  });
+
+  const meterStyle = useAnimatedStyle(() => {
+    "worklet";
+    return {
+      width: `${interpolate(level.value, [0, 1], [8, 100])}%`,
+      opacity: 0.35 + level.value * 0.55,
+    };
+  });
 
   return (
     <View style={lvStyles.wrap}>
-      <Text style={lvStyles.heading}>{uploading ? "Uploading" : "Listening"}</Text>
+      <Text style={lvStyles.heading}>{uploading ? "Identifying" : "Listening"}</Text>
       <Text style={lvStyles.timer}>{uploading ? "—" : `0:0${secondsLeft}`}</Text>
 
       <View style={lvStyles.pulseStack}>
-        <Animated.View style={[lvStyles.ring, s1]} />
-        <Animated.View style={[lvStyles.ring, s2]} />
-        <Animated.View style={[lvStyles.ring, s3]} />
-        <LinearGradient
-          colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
-          start={{ x: 0.3, y: 0.2 }}
-          end={{ x: 0.7, y: 1 }}
-          style={lvStyles.core}
-        >
-          {uploading ? <ActivityIndicator color="#fff" size="large" /> : <CarIcon size={56} color="#fff" />}
-        </LinearGradient>
+        <Animated.View style={[lvStyles.ring, lvStyles.ringOuter, r1]} />
+        <Animated.View style={[lvStyles.ring, lvStyles.ringMid, r2]} />
+        <Animated.View style={[lvStyles.ring, lvStyles.ringInner, r3]} />
+        <Animated.View style={[lvStyles.ring, lvStyles.ringFaint, r4]} />
+
+        <Animated.View style={[lvStyles.coreWrap, coreStyle]}>
+          <LinearGradient
+            colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
+            start={{ x: 0.25, y: 0.15 }}
+            end={{ x: 0.75, y: 1 }}
+            style={lvStyles.core}
+          >
+            <Animated.View style={[StyleSheet.absoluteFillObject, sweepStyle]}>
+              <LinearGradient
+                colors={["transparent", "rgba(255,255,255,0.55)", "transparent"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={lvStyles.sweep}
+              />
+            </Animated.View>
+            {uploading ? (
+              <ActivityIndicator color="#fff" size="large" />
+            ) : (
+              <CarIcon size={56} color="#fff" />
+            )}
+          </LinearGradient>
+        </Animated.View>
+      </View>
+
+      {/* Live audio meter — gives the user a visible signal that the mic is hearing them */}
+      <View style={lvStyles.meterTrack}>
+        <Animated.View style={[lvStyles.meterFill, meterStyle]}>
+          <LinearGradient
+            colors={["#ffd9b8", "#ff7e1a", "#ff3d3d"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </Animated.View>
       </View>
 
       <Text style={lvStyles.hint}>
@@ -415,28 +513,54 @@ const styles = StyleSheet.create({
 
 const lvStyles = StyleSheet.create({
   wrap: { flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 40 },
-  heading: { color: colors.textMuted, fontSize: 11, textTransform: "uppercase", letterSpacing: 2.5, fontWeight: "700" },
-  timer: { color: colors.text, fontSize: 64, fontWeight: "200", letterSpacing: -2, marginTop: 6, marginBottom: 32 },
-  pulseStack: { width: 220, height: 220, alignItems: "center", justifyContent: "center" },
+  heading: { color: colors.textMuted, fontSize: 11, textTransform: "uppercase", letterSpacing: 3, fontWeight: "700" },
+  timer: { color: colors.text, fontSize: 72, fontWeight: "200", letterSpacing: -2.5, marginTop: 8, marginBottom: 28 },
+  pulseStack: { width: 280, height: 280, alignItems: "center", justifyContent: "center" },
   ring: {
     position: "absolute",
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 240,
+    height: 240,
+    borderRadius: 120,
     borderWidth: 1.5,
-    borderColor: "rgba(255,126,26,0.55)",
   },
-  core: {
-    width: 110, height: 110,
-    borderRadius: 55,
-    alignItems: "center",
-    justifyContent: "center",
+  ringOuter: { borderColor: "rgba(255,126,26,0.55)" },
+  ringMid: { borderColor: "rgba(255,180,122,0.45)", borderWidth: 1.25 },
+  ringInner: { borderColor: "rgba(255,61,61,0.40)", borderWidth: 1 },
+  ringFaint: { borderColor: "rgba(255,255,255,0.18)", borderWidth: 1 },
+  coreWrap: {
     shadowColor: "#ff7e1a",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.7,
-    shadowRadius: 30,
+    shadowOpacity: 0.85,
+    shadowRadius: 36,
   },
-  hint: { color: colors.textMuted, fontSize: fontSize.small, textAlign: "center", marginTop: 32, lineHeight: 20 },
+  core: {
+    width: 130, height: 130,
+    borderRadius: 65,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  sweep: {
+    width: "200%",
+    height: "200%",
+    position: "absolute",
+    top: "-50%",
+    left: "-50%",
+  },
+  meterTrack: {
+    marginTop: 28,
+    width: "70%",
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    overflow: "hidden",
+  },
+  meterFill: {
+    height: "100%",
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  hint: { color: colors.textMuted, fontSize: fontSize.small, textAlign: "center", marginTop: 18, lineHeight: 20 },
 });
 
 const rvStyles = StyleSheet.create({

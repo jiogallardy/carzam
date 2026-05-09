@@ -1,7 +1,16 @@
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path } from "react-native-svg";
 
@@ -47,17 +56,41 @@ function TabIcon({ name, color }: { name: IconName; color: string }) {
 }
 
 function CenterCarzamButton({ onPress }: { onPress: () => void }) {
+  const t = useSharedValue(0);
+
+  useEffect(() => {
+    t.value = withRepeat(
+      withTiming(1, { duration: 2200, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
+    return () => cancelAnimation(t);
+  }, [t]);
+
+  const haloStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 1 + t.value * 0.35 }],
+    opacity: 0.55 - t.value * 0.45,
+  }));
+
+  const buttonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 1 + t.value * 0.04 }],
+  }));
+
   return (
     <Pressable onPress={onPress} hitSlop={12} style={styles.centerWrap}>
-      <LinearGradient
-        colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
-        start={{ x: 0.3, y: 0.2 }}
-        end={{ x: 0.7, y: 1 }}
-        style={styles.centerOuter}
-      >
-        <View style={styles.centerSpecular} />
-        <CarIcon size={36} color="#fff" />
-      </LinearGradient>
+      {/* Soft expanding halo behind the button */}
+      <Animated.View pointerEvents="none" style={[styles.centerHalo, haloStyle]} />
+      <Animated.View style={buttonStyle}>
+        <LinearGradient
+          colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
+          start={{ x: 0.3, y: 0.2 }}
+          end={{ x: 0.7, y: 1 }}
+          style={styles.centerOuter}
+        >
+          <View style={styles.centerSpecular} />
+          <CarIcon size={36} color="#fff" />
+        </LinearGradient>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -170,6 +203,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  centerHalo: {
+    position: "absolute",
+    top: -38,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "rgba(255,126,26,0.45)",
+  },
   centerOuter: {
     width: 72,
     height: 72,
@@ -181,8 +222,8 @@ const styles = StyleSheet.create({
     borderColor: "#050507",
     shadowColor: "#ff7e1a",
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.55,
-    shadowRadius: 20,
+    shadowOpacity: 0.65,
+    shadowRadius: 24,
   },
   centerSpecular: {
     position: "absolute",
