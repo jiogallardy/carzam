@@ -28,6 +28,11 @@ _model_run_id: str = "unknown"
 
 WINDOW_SECONDS = 5.0
 OTHER_THRESHOLD = 0.40
+# RMS amplitude on float32 [-1, 1] audio. Anything below this is treated as
+# silence/noise-floor and refused — the model otherwise returns confident
+# garbage on near-silent clips. Empirically: room tone at 1m is ~0.001-0.003;
+# a phone mic next to an idling car is ~0.02-0.10.
+SILENCE_RMS_THRESHOLD = 0.005
 
 
 def _ensure_local_files() -> None:
@@ -92,6 +97,20 @@ def predict_bytes(wav_bytes: bytes) -> dict[str, Any]:
     if _model is None:
         raise RuntimeError("model not loaded; call load_model() at startup")
     audio = _wav_bytes_to_window(wav_bytes)
+
+    rms = float(torch.sqrt(torch.mean(audio**2)).item())
+    if rms < SILENCE_RMS_THRESHOLD:
+        return {
+            "predicted_class_id": None,
+            "predicted_confidence": 0.0,
+            "predicted_state": _states[0] if _states else "idle",
+            "state_confidence": 0.0,
+            "top3": [],
+            "all_probs": {},
+            "model_run_id": _model_run_id,
+            "silence": True,
+        }
+
     logmel = compute_logmel(audio).unsqueeze(0).to(_DEVICE)
     with torch.no_grad():
         car_logits, state_logits = _model(logmel)

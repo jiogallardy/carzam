@@ -130,6 +130,7 @@ async def recognize(
         completion_percent=round(pct, 1),
         n_discovered=int(n_discovered),
         n_total=int(n_total),
+        silence=bool(result.get("silence", False)),
     )
 
 

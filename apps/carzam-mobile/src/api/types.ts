@@ -47,6 +47,7 @@ export type RecognizeResponse = {
   completion_percent: number;
   n_discovered: number;
   n_total: number;
+  silence?: boolean;
 };
 
 export type CarClass = {

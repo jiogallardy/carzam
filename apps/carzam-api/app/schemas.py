@@ -75,6 +75,7 @@ class RecognizeResponse(BaseModel):
     completion_percent: float
     n_discovered: int
     n_total: int
+    silence: bool = False
 
 
 class SubmitNewCarRequest(BaseModel):

@@ -30,6 +30,11 @@ import { colors, fontSize, radius, spacing } from "@/theme";
 
 const RECORD_SECONDS = 5;
 const SAMPLE_RATE = 16_000;
+// Below this peak dBFS we treat the clip as silence and refuse to upload.
+// iOS metering reports 0 dB = clipping, -160 dB = digital silence. A pocket
+// recording with no engine typically peaks around -55 to -65 dB; a car at
+// idle nearby is -25 to -15 dB.
+const SILENCE_PEAK_DBFS = -45;
 
 const recordingOptions: Audio.RecordingOptions = {
   isMeteringEnabled: true,
@@ -67,6 +72,9 @@ export default function CarzamModal() {
 
   const recordingRef = useRef<Audio.Recording | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const peakDbRef = useRef<number>(-160);
+  const liveDbRef = useRef<number>(-160);
+  const [liveDb, setLiveDb] = useState<number>(-160);
 
   // Auto-start recording on mount
   useEffect(() => {
@@ -119,6 +127,19 @@ export default function CarzamModal() {
       // 3. Recording.
       const rec = new Audio.Recording();
       await rec.prepareToRecordAsync(recordingOptions);
+      // Stream metering at ~10 Hz so the live core can react to mic level
+      // and so we can compute a peak for the silence gate.
+      rec.setProgressUpdateInterval(100);
+      rec.setOnRecordingStatusUpdate((status) => {
+        if (status.isRecording && typeof status.metering === "number") {
+          const db = status.metering;
+          liveDbRef.current = db;
+          setLiveDb(db);
+          if (db > peakDbRef.current) peakDbRef.current = db;
+        }
+      });
+      peakDbRef.current = -160;
+      liveDbRef.current = -160;
       recordingRef.current = rec;
       await rec.startAsync();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -152,8 +173,23 @@ export default function CarzamModal() {
       const uri = rec.getURI();
       recordingRef.current = null;
       if (!uri) throw new Error("Recording produced no file.");
+
+      // Silence gate. Refuse to upload if the loudest moment of the clip
+      // never even cleared the noise floor — otherwise the model just
+      // hallucinates a confident answer (typically "Lamborghini").
+      if (peakDbRef.current < SILENCE_PEAK_DBFS) {
+        throw new Error(
+          "Couldn't hear an engine. Hold the phone closer to the car and try again.",
+        );
+      }
+
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
       const res = await recognizeAudio(uri);
+      if (res.silence) {
+        throw new Error(
+          "Couldn't hear an engine. Hold the phone closer to the car and try again.",
+        );
+      }
       setResult(res);
       setPhase("result");
       Haptics.notificationAsync(
@@ -190,6 +226,7 @@ export default function CarzamModal() {
           <ListeningView
             secondsLeft={phase === "recording" ? secondsLeft : 0}
             uploading={phase === "uploading"}
+            liveDb={liveDb}
           />
         )}
 
