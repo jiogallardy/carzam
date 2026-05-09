@@ -16,6 +16,7 @@ from carai.audio import load_wav, resample_to
 from carai.data.dataset import SAMPLE_RATE, compute_logmel
 from carai.models.multihead import CarAudioModel
 
+from app import storage
 from app.config import settings
 
 
@@ -29,19 +30,33 @@ WINDOW_SECONDS = 5.0
 OTHER_THRESHOLD = 0.40
 
 
+def _ensure_local_files() -> None:
+    """Pull checkpoint + classes from R2 if they aren't on disk yet.
+    The /data dir is a persistent volume in production; first boot downloads,
+    subsequent boots skip.
+    """
+    cfg = settings()
+    cfg.checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    if not cfg.checkpoint_path.exists():
+        storage.download_to_path(cfg.model_r2_key, str(cfg.checkpoint_path))
+    if not cfg.classes_path.exists():
+        storage.download_to_path(cfg.classes_r2_key, str(cfg.classes_path))
+
+
 def load_model() -> None:
-    """Called once at startup. Loads checkpoint + classes from disk."""
+    """Called once at startup. Pulls checkpoint from R2 (first boot), then loads."""
     global _model, _cars, _states, _model_run_id
     cfg = settings()
+    _ensure_local_files()
     classes = json.loads(Path(cfg.classes_path).read_text())
     _cars = tuple(classes["cars"])
     _states = tuple(classes["states"])
     model = CarAudioModel(weights_path=None, n_cars=len(_cars), n_states=len(_states)).to(_DEVICE)
-    state = torch.load(cfg.checkpoint_path, map_location=_DEVICE)
+    state = torch.load(cfg.checkpoint_path, map_location=_DEVICE, weights_only=True)
     model.load_state_dict(state)
     model.eval()
     _model = model
-    _model_run_id = Path(cfg.checkpoint_path).parent.name
+    _model_run_id = cfg.model_run_id
 
 
 def classes() -> tuple[tuple[str, ...], tuple[str, ...]]:

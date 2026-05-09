@@ -34,6 +34,12 @@ def get_clip(key: str) -> bytes:
     return obj["Body"].read()
 
 
+def download_to_path(key: str, dest: str) -> None:
+    """Download an R2 object to a local path. Used for fetching the model checkpoint at boot."""
+    cfg = settings()
+    r2_client().download_file(cfg.r2_bucket, key, dest)
+
+
 def presigned_download_url(key: str, expires_seconds: int = 3600) -> str:
     cfg = settings()
     return r2_client().generate_presigned_url(

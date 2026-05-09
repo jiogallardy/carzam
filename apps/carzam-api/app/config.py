@@ -33,9 +33,13 @@ class Settings(BaseSettings):
     r2_bucket: str = Field(default="carzam-clips")
     r2_public_endpoint: str | None = None  # https://<account>.r2.cloudflarestorage.com
 
-    # Inference
+    # Inference — checkpoint is fetched from R2 on container start so the
+    # Docker image stays small and we can swap checkpoints without rebuilding.
     checkpoint_path: Path = Field(default=Path("/data/checkpoint.pt"))
     classes_path: Path = Field(default=Path("/data/classes.json"))
+    model_r2_key: str = Field(default="model/checkpoint.pt")
+    classes_r2_key: str = Field(default="model/classes.json")
+    model_run_id: str = Field(default="20260507_174723")
 
     # CORS
     cors_origins: list[str] = Field(default_factory=lambda: ["*"])

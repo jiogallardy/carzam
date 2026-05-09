@@ -20,6 +20,21 @@ If something doesn't match here, the code is the source of truth — this doc ge
    - TTL: forever
 4. Copy the **Access Key ID**, **Secret Access Key**, and your **Account ID** (the dashboard URL has it: `https://dash.cloudflare.com/<account-id>/r2`).
 
+### 1.1a Upload the checkpoint to R2 (one time)
+
+The container fetches the model from R2 on first boot. Upload it from your laptop:
+
+```bash
+R2_ACCOUNT_ID=<from above> \
+R2_ACCESS_KEY_ID=<from above> \
+R2_SECRET_ACCESS_KEY=<from above> \
+R2_BUCKET=carzam-clips \
+    uv run python apps/carzam-api/scripts/upload_model_to_r2.py runs/20260507_174723
+```
+
+This puts the 318 MB checkpoint at `s3://carzam-clips/model/checkpoint.pt` and
+`classes.json` next to it. Re-run this whenever you train a new checkpoint.
+
 ### 1.2 Apple Sign-In setup
 
 1. https://developer.apple.com → Identifiers → **+** → App IDs → App

@@ -29,11 +29,10 @@ COPY apps/carzam-api/pyproject.toml apps/carzam-api/
 COPY apps/carzam-api/app apps/carzam-api/app
 RUN pip install --no-cache-dir -e ./apps/carzam-api
 
-# Bake the checkpoint + classes into the image at build time.
-# (Alternative: pull from R2 on container start — cheaper image, slower cold start.)
-COPY runs/20260507_174723/checkpoint.pt /data/checkpoint.pt
-COPY runs/20260507_174723/classes.json /data/classes.json
-
+# The model checkpoint (~320MB) lives in R2, not the image — fetched on
+# container start. Keeps the image ~1GB instead of ~1.4GB and lets you swap
+# checkpoints by re-uploading to R2 + restarting the container.
+RUN mkdir -p /data
 ENV CHECKPOINT_PATH=/data/checkpoint.pt \
     CLASSES_PATH=/data/classes.json
 

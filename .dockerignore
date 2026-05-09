@@ -1,0 +1,47 @@
+# Keep build context small — Docker only reads .dockerignore at the build-context root.
+# Exclude everything that doesn't end up in the carzam-api image.
+
+# Python / build artifacts
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+
+# Node / Expo (mobile app, not part of the API image)
+**/node_modules/
+**/.expo/
+**/dist/
+**/ios/build/
+**/android/build/
+
+# Heavy local data the API doesn't need
+data/raw/
+data/windows/
+data/regions/
+
+# All training runs *except* the one we ship
+runs/*
+!runs/20260507_174723/
+!runs/20260507_174723/checkpoint.pt
+!runs/20260507_174723/classes.json
+!runs/20260507_174723/config.yaml
+
+# PANNs pretrained backbone weights — model code already has them baked into the
+# checkpoint we ship, so we don't need the .pth file at runtime.
+weights/
+
+# Repo / tooling
+.git/
+.github/
+.superpowers/
+.DS_Store
+*.log
+
+# Editor + system
+.idea/
+.vscode/
+*.swp
