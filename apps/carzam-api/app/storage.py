@@ -47,3 +47,31 @@ def presigned_download_url(key: str, expires_seconds: int = 3600) -> str:
         Params={"Bucket": cfg.r2_bucket, "Key": key},
         ExpiresIn=expires_seconds,
     )
+
+
+def object_exists(key: str) -> bool:
+    cfg = settings()
+    try:
+        r2_client().head_object(Bucket=cfg.r2_bucket, Key=key)
+        return True
+    except Exception:
+        return False
+
+
+def list_subdirs(prefix: str) -> list[str]:
+    """List immediate sub-prefixes (folder-like names) under `prefix`.
+
+    Used to enumerate model versions, e.g. list_subdirs("model/") returns
+    ["v5", "v6", "20260509_120000"].
+    """
+    cfg = settings()
+    if not prefix.endswith("/"):
+        prefix = prefix + "/"
+    out: list[str] = []
+    paginator = r2_client().get_paginator("list_objects_v2")
+    for page in paginator.paginate(Bucket=cfg.r2_bucket, Prefix=prefix, Delimiter="/"):
+        for cp in page.get("CommonPrefixes", []) or []:
+            sub = cp["Prefix"][len(prefix):].rstrip("/")
+            if sub:
+                out.append(sub)
+    return out

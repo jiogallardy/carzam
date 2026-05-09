@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import inference, init_db
 from app.config import settings
-from app.routers import admin, auth, classes, me, recognize
+from app.routers import admin, auth, classes, me, models, recognize
 
 log = structlog.get_logger()
 
@@ -38,12 +38,14 @@ def create_app() -> FastAPI:
         return {
             "status": "ok",
             "model_run_id": inference.model_run_id(),
+            "default_model_id": inference.default_id(),
         }
 
     app.include_router(auth.router)
     app.include_router(me.router)
     app.include_router(recognize.router)
     app.include_router(classes.router)
+    app.include_router(models.router)
     app.include_router(admin.router)
     return app
 

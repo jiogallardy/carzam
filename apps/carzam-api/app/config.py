@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     model_r2_key: str = Field(default="model/checkpoint.pt")
     classes_r2_key: str = Field(default="model/classes.json")
     model_run_id: str = Field(default="20260507_174723")
+    # If set, the API uses this as the active default model id (e.g. "v6" or
+    # "20260601_120000"). Falls back to the legacy `model/checkpoint.pt` when
+    # unset so existing deploys keep working unchanged.
+    default_model_id: str | None = None
 
     # CORS
     cors_origins: list[str] = Field(default_factory=lambda: ["*"])

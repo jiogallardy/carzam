@@ -76,6 +76,19 @@ class RecognizeResponse(BaseModel):
     n_discovered: int
     n_total: int
     silence: bool = False
+    model_id: str = "default"
+
+
+class ModelInfo(BaseModel):
+    id: str
+    label: str
+    is_default: bool
+    is_loaded: bool
+
+
+class ModelsResponse(BaseModel):
+    default_id: str
+    models: list[ModelInfo]
 
 
 class SubmitNewCarRequest(BaseModel):

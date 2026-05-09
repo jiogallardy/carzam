@@ -3,7 +3,7 @@ import uuid
 from io import BytesIO
 
 import soundfile as sf
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,6 +30,7 @@ def _wav_duration(wav_bytes: bytes) -> float:
 @router.post("/recognize", response_model=RecognizeResponse)
 async def recognize(
     audio: UploadFile = File(...),
+    model: str | None = Form(default=None),
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_session),
 ) -> RecognizeResponse:
@@ -47,7 +48,9 @@ async def recognize(
     storage.put_clip(r2_key, wav_bytes)
 
     try:
-        result = inference.predict_bytes(wav_bytes)
+        result = inference.predict_bytes(wav_bytes, model_id=model)
+    except FileNotFoundError as e:
+        raise HTTPException(404, f"unknown model: {model}") from e
     except ValueError as e:
         raise HTTPException(422, str(e)) from e
 
@@ -131,6 +134,7 @@ async def recognize(
         n_discovered=int(n_discovered),
         n_total=int(n_total),
         silence=bool(result.get("silence", False)),
+        model_id=str(result.get("model_id", "default")),
     )
 
 
