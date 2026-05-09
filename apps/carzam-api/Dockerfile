@@ -19,7 +19,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /srv
 
-# Install carai (the model lib) first — its layer cache rarely changes.
+# Install CPU-only PyTorch BEFORE carai so pip doesn't auto-resolve the
+# default torch wheel. As of torch 2.6+, the default Linux x86_64 wheel
+# bundles 2+ GB of CUDA 13 libraries (cublas, cudnn, nccl, triton, ...) —
+# useless on a CPU-only Hetzner box and enough to fill /var on the build
+# host. The CPU index serves a slim ~150 MB wheel with no CUDA deps.
+RUN pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu \
+        torch==2.5.1 torchaudio==2.5.1
+
+# Install carai (the model lib). torch is already satisfied so pip won't
+# pull a different version from PyPI.
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 RUN pip install --no-cache-dir -e .
