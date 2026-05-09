@@ -48,6 +48,19 @@ export type RecognizeResponse = {
   n_discovered: number;
   n_total: number;
   silence?: boolean;
+  model_id?: string;
+};
+
+export type ModelInfo = {
+  id: string;
+  label: string;
+  is_default: boolean;
+  is_loaded: boolean;
+};
+
+export type ModelsResponse = {
+  default_id: string;
+  models: ModelInfo[];
 };
 
 export type CarClass = {

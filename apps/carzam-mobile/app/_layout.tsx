@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useAuthStore } from "@/store/auth";
+import { useModelStore } from "@/store/model";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -24,12 +25,14 @@ export default function RootLayout() {
   const hydrated = useAuthStore((s) => s.hydrated);
   const hydrate = useAuthStore((s) => s.hydrate);
   const token = useAuthStore((s) => s.token);
+  const hydrateModel = useModelStore((s) => s.hydrate);
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
     if (!hydrated) hydrate();
-  }, [hydrated, hydrate]);
+    hydrateModel();
+  }, [hydrated, hydrate, hydrateModel]);
 
   useEffect(() => {
     if (!hydrated) return;

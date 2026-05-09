@@ -28,6 +28,7 @@ import { recognizeAudio, submitAsNewCar } from "@/api/recognize";
 import type { RecognizeResponse } from "@/api/types";
 import { CarIcon } from "@/components/CarIcon";
 import { GlassCard } from "@/components/GlassCard";
+import { useModelStore } from "@/store/model";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
 const RECORD_SECONDS = 5;
@@ -67,6 +68,7 @@ type Phase = "idle" | "recording" | "uploading" | "result" | "error";
 export default function CarzamModal() {
   const router = useRouter();
   const qc = useQueryClient();
+  const activeModelId = useModelStore((s) => s.activeModelId);
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(RECORD_SECONDS);
   const [result, setResult] = useState<RecognizeResponse | null>(null);
@@ -186,7 +188,7 @@ export default function CarzamModal() {
       }
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-      const res = await recognizeAudio(uri);
+      const res = await recognizeAudio(uri, activeModelId);
       if (res.silence) {
         throw new Error(
           "Couldn't hear an engine. Hold the phone closer to the car and try again.",
@@ -219,6 +221,16 @@ export default function CarzamModal() {
     <View style={styles.root}>
       <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
         <View style={styles.topBar}>
+          <Pressable
+            onPress={() => { cleanup(); router.push("/(tabs)/me"); }}
+            style={styles.modelChip}
+            hitSlop={8}
+          >
+            <Text style={styles.modelChipLabel}>MODEL</Text>
+            <Text style={styles.modelChipValue} numberOfLines={1}>
+              {activeModelId ?? "default"}
+            </Text>
+          </Pressable>
           <Pressable onPress={() => { cleanup(); router.back(); }} style={styles.close}>
             <Text style={styles.closeText}>×</Text>
           </Pressable>
@@ -446,6 +458,9 @@ function ResultView({
       <Text style={rvStyles.sub}>
         {result.predicted_state} · {Math.round(result.confidence * 100)}% confidence
       </Text>
+      {result.model_id && (
+        <Text style={rvStyles.byline}>via {result.model_id}</Text>
+      )}
 
       <GlassCard style={{ marginTop: spacing.lg }}>
         <View style={rvStyles.top3Inner}>
@@ -493,7 +508,12 @@ function ResultView({
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   safe: { flex: 1, paddingHorizontal: spacing.lg },
-  topBar: { flexDirection: "row", justifyContent: "flex-end", marginBottom: spacing.sm },
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
   close: {
     width: 44, height: 44,
     borderRadius: 22,
@@ -504,6 +524,30 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   closeText: { color: colors.text, fontSize: 24, lineHeight: 24, fontWeight: "300" },
+  modelChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: colors.glassFillStrong,
+    borderWidth: 1,
+    borderColor: colors.border,
+    maxWidth: "70%",
+  },
+  modelChipLabel: {
+    color: colors.textDim,
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 1.4,
+  },
+  modelChipValue: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: -0.2,
+  },
   errorWrap: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xl },
   errorTitle: { color: colors.text, fontSize: fontSize.large, fontWeight: "800", marginBottom: spacing.sm },
   errorBody: { color: colors.textMuted, fontSize: fontSize.body, textAlign: "center", marginBottom: spacing.lg },
@@ -568,6 +612,7 @@ const rvStyles = StyleSheet.create({
   eyebrow: { color: colors.accentHi, fontSize: 11, textTransform: "uppercase", letterSpacing: 2, fontWeight: "700" },
   title: { color: colors.text, fontSize: 30, fontWeight: "800", letterSpacing: -0.8, marginTop: 6 },
   sub: { color: colors.textMuted, fontSize: fontSize.small, marginTop: 4 },
+  byline: { color: colors.textDim, fontSize: 11, marginTop: 4, letterSpacing: 0.4, fontWeight: "600" },
 
   top3Inner: { padding: spacing.md },
   top3Label: { color: colors.textMuted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1.5, fontWeight: "700", marginBottom: 8 },
