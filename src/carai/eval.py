@@ -57,7 +57,7 @@ def evaluate(run_dir: Path, split: str = "test") -> None:
     with torch.no_grad():
         for batch in loader:
             logmel = batch["logmel"].to(device)
-            cl, sl = model(logmel)
+            cl, sl, _ = model(logmel)
             car_pred.extend(cl.argmax(1).cpu().tolist())
             state_pred.extend(sl.argmax(1).cpu().tolist())
             car_true.extend(batch["car_idx"].tolist())

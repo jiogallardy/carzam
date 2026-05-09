@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 
 from carai.audio import load_wav, resample_to
 from carai.data.manifest import ManifestRow
-from carai.models.multihead import CARS, STATES
+from carai.models.multihead import CARS, STATES, family_index_for_car
 
 SAMPLE_RATE = 32000
 N_MELS = 64
@@ -58,6 +58,20 @@ class CarAudioDataset(Dataset):
             gain_db = (self.rng.random() * 12.0) - 6.0
             audio_t = audio_t * (10.0 ** (gain_db / 20.0))
 
+            # Background noise injection (50% of windows). Gaussian + pink mix at
+            # random SNR; teaches the model to find engine signal under noise.
+            if self.rng.random() < 0.5:
+                snr_db = self.rng.uniform(0.0, 25.0)  # higher SNR = quieter noise
+                signal_rms = float(torch.sqrt(torch.mean(audio_t * audio_t)).item()) + 1e-8
+                noise_rms = signal_rms / (10.0 ** (snr_db / 20.0))
+                # Mix of white + pink-ish noise
+                noise = torch.randn_like(audio_t) * noise_rms
+                if self.rng.random() < 0.5:
+                    # Coarse "pink" approximation: low-pass filter the noise via cumsum
+                    noise = torch.cumsum(noise, dim=0) - torch.cumsum(noise, dim=0).mean()
+                    noise = noise / (noise.std() + 1e-8) * noise_rms
+                audio_t = audio_t + noise
+
         logmel = compute_logmel(audio_t)
 
         if self.train:
@@ -69,5 +83,6 @@ class CarAudioDataset(Dataset):
         return {
             "logmel": logmel,
             "car_idx": CARS.index(row.car),
+            "family_idx": family_index_for_car(row.car),
             "state_idx": STATES.index(row.label),  # type: ignore[arg-type]
         }

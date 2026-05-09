@@ -35,6 +35,55 @@ CARS = (
 )
 STATES = ("idle", "accel", "decel")
 
+# Coarse engine families (for hierarchical training).
+# Many fine classes share an engine architecture; the coarse head provides
+# stable supervision while the fine head learns the harder model-level split.
+ENGINE_FAMILIES = (
+    "na_v12",          # Ferrari 812 / F12
+    "na_v8_flat",      # Ferrari 458 (NA V8, flat-plane)
+    "tt_v8_flat",      # Ferrari 488/F8/SF90 + McLaren 720s/765lt/Senna (TT V8, flat-plane)
+    "tt_v6_hybrid",    # Ferrari 296 (TT V6, hybrid)
+    "na_v10",          # Audi R8 V10 + Lambo Huracán (literally same engine)
+    "na_flat6",        # Porsche GT3 / GT4 (mid- and rear-engine NA flat-6)
+    "tt_v8_cross",     # AMG C63 M177 (TT V8, cross-plane crank)
+    "tt_inline6",      # BMW M3/M4 S58
+    "turbo_boxer4",    # Subaru WRX STI EJ257
+    "turbo_inline4",   # Civic Type R K20C1
+    "supercharged_v8", # Corvette ZR1/Z06 (C6/C7) — supercharged 6.2L V8
+    "other",
+)
+
+# Map fine class name -> engine family. Keep in sync with CARS above.
+CAR_TO_FAMILY: dict[str, str] = {
+    "ferrari_812":         "na_v12",
+    "ferrari_f12":         "na_v12",
+    "ferrari_458":         "na_v8_flat",
+    "ferrari_488":         "tt_v8_flat",
+    "ferrari_f8":          "tt_v8_flat",
+    "ferrari_sf90":        "tt_v8_flat",     # also has hybrid but engine architecture is TT V8 flat-plane
+    "mclaren_720s":        "tt_v8_flat",
+    "mclaren_765lt":       "tt_v8_flat",
+    "mclaren_senna":       "tt_v8_flat",
+    "audi_r8_v10":         "na_v10",
+    "lamborghini_huracan": "na_v10",
+    "ferrari_296":         "tt_v6_hybrid",
+    "porsche_gt3":         "na_flat6",
+    "porsche_gt4":         "na_flat6",
+    "amg_c63_m177":        "tt_v8_cross",
+    "bmw_m3_s58":          "tt_inline6",
+    "subaru_wrx_sti":      "turbo_boxer4",
+    "civic_type_r_k20c1":  "turbo_inline4",
+    "corvette_c6_zr1":     "supercharged_v8",
+    "corvette_c7_zr1":     "supercharged_v8",
+    "corvette_c7_z06":     "supercharged_v8",
+    "other":               "other",
+}
+
+
+def family_index_for_car(car: str) -> int:
+    family = CAR_TO_FAMILY.get(car, "other")
+    return ENGINE_FAMILIES.index(family)
+
 
 class CarAudioModel(nn.Module):
     def __init__(
@@ -42,16 +91,30 @@ class CarAudioModel(nn.Module):
         weights_path: Path | str | None,
         n_cars: int = len(CARS),
         n_states: int = len(STATES),
+        n_families: int | None = None,
     ) -> None:
         super().__init__()
         self.backbone = build_backbone(weights_path)
         self.car_head = nn.Linear(2048, n_cars)
         self.state_head = nn.Linear(2048, n_states)
+        # Optional coarse engine-family head (hierarchical training).
+        # When loaded from older checkpoints without this head, n_families is None.
+        self.family_head: nn.Linear | None = (
+            nn.Linear(2048, n_families) if n_families is not None else None
+        )
         nn.init.xavier_uniform_(self.car_head.weight)
         nn.init.xavier_uniform_(self.state_head.weight)
         nn.init.zeros_(self.car_head.bias)
         nn.init.zeros_(self.state_head.bias)
+        if self.family_head is not None:
+            nn.init.xavier_uniform_(self.family_head.weight)
+            nn.init.zeros_(self.family_head.bias)
 
-    def forward(self, logmel: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    def forward(
+        self, logmel: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
         emb = self.backbone(logmel)
-        return self.car_head(emb), self.state_head(emb)
+        car_logits = self.car_head(emb)
+        state_logits = self.state_head(emb)
+        family_logits = self.family_head(emb) if self.family_head is not None else None
+        return car_logits, state_logits, family_logits

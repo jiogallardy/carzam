@@ -24,8 +24,18 @@ def _load_classes(checkpoint: Path) -> tuple[tuple[str, ...], tuple[str, ...]]:
 
 def _load_model(checkpoint: Path, device: torch.device) -> tuple[CarAudioModel, tuple[str, ...], tuple[str, ...]]:
     cars, states = _load_classes(checkpoint)
-    model = CarAudioModel(weights_path=None, n_cars=len(cars), n_states=len(states)).to(device)
-    model.load_state_dict(torch.load(checkpoint, map_location=device))
+    # Detect whether the saved state_dict has a family head and size accordingly.
+    sd = torch.load(checkpoint, map_location=device)
+    n_families = None
+    if "family_head.weight" in sd:
+        n_families = sd["family_head.weight"].shape[0]
+    model = CarAudioModel(
+        weights_path=None,
+        n_cars=len(cars),
+        n_states=len(states),
+        n_families=n_families,
+    ).to(device)
+    model.load_state_dict(sd)
     model.eval()
     return model, cars, states
 
@@ -104,7 +114,7 @@ def _predict_audio(
     model, cars, states = _load_model(checkpoint, device)
     logmel = compute_logmel(audio).unsqueeze(0).to(device)
     with torch.no_grad():
-        car_logits, state_logits = model(logmel)
+        car_logits, state_logits, _ = model(logmel)
         car_probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
         state_probs = F.softmax(state_logits, dim=-1).squeeze(0).cpu().numpy()
     car_top1 = int(np.argmax(car_probs))
@@ -182,7 +192,7 @@ def predict_clip(
     with torch.no_grad():
         for w, t in zip(windows, starts):
             logmel = compute_logmel(w).unsqueeze(0).to(device)
-            cl, sl = model(logmel)
+            cl, sl, _ = model(logmel)
             cp = F.softmax(cl, dim=-1).squeeze(0).cpu().numpy()
             sp = F.softmax(sl, dim=-1).squeeze(0).cpu().numpy()
             car_probs_list.append(cp)

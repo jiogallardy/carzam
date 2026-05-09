@@ -31,15 +31,28 @@ def test_multihead_forward_shapes():
     model.eval()
     x = torch.randn(3, 501, 64)
     with torch.no_grad():
-        car_logits, state_logits = model(x)
+        car_logits, state_logits, family_logits = model(x)
     assert car_logits.shape == (3, 22)
     assert state_logits.shape == (3, 3)
+    assert family_logits is None  # no family head when n_families is None
+
+
+def test_multihead_with_family_head():
+    model = CarAudioModel(weights_path=None, n_families=12)
+    model.eval()
+    x = torch.randn(3, 501, 64)
+    with torch.no_grad():
+        car_logits, state_logits, family_logits = model(x)
+    assert car_logits.shape == (3, 22)
+    assert state_logits.shape == (3, 3)
+    assert family_logits is not None
+    assert family_logits.shape == (3, 12)
 
 
 def test_multihead_grad_flows():
     model = CarAudioModel(weights_path=None)
     x = torch.randn(2, 501, 64)
-    car_logits, state_logits = model(x)
+    car_logits, state_logits, _ = model(x)
     loss = car_logits.sum() + state_logits.sum()
     loss.backward()
     assert model.car_head.weight.grad is not None

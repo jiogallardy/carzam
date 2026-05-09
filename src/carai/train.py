@@ -15,7 +15,13 @@ from collections import Counter
 from carai.data.dataset import CarAudioDataset
 from carai.data.manifest import read_manifest
 from carai.data.splits import split_by_video
-from carai.models.multihead import CARS, STATES, CarAudioModel
+from carai.models.multihead import (
+    CARS,
+    ENGINE_FAMILIES,
+    STATES,
+    CarAudioModel,
+    family_index_for_car,
+)
 
 console = Console()
 
@@ -40,18 +46,23 @@ def collate(batch: list[dict]) -> dict:
         "logmel": out,
         "car_idx": torch.tensor([b["car_idx"] for b in batch], dtype=torch.long),
         "state_idx": torch.tensor([b["state_idx"] for b in batch], dtype=torch.long),
+        "family_idx": torch.tensor(
+            [b.get("family_idx", 0) for b in batch], dtype=torch.long
+        ),
     }
 
 
 def make_optimizer(model: CarAudioModel, cfg: dict) -> torch.optim.Optimizer:
-    return torch.optim.AdamW(
-        [
-            {"params": model.backbone.parameters(), "lr": cfg["train"]["lr_backbone"]},
-            {"params": model.car_head.parameters(), "lr": cfg["train"]["lr_head"]},
-            {"params": model.state_head.parameters(), "lr": cfg["train"]["lr_head"]},
-        ],
-        weight_decay=cfg["train"]["weight_decay"],
-    )
+    groups = [
+        {"params": model.backbone.parameters(), "lr": cfg["train"]["lr_backbone"]},
+        {"params": model.car_head.parameters(), "lr": cfg["train"]["lr_head"]},
+        {"params": model.state_head.parameters(), "lr": cfg["train"]["lr_head"]},
+    ]
+    if model.family_head is not None:
+        groups.append(
+            {"params": model.family_head.parameters(), "lr": cfg["train"]["lr_head"]}
+        )
+    return torch.optim.AdamW(groups, weight_decay=cfg["train"]["weight_decay"])
 
 
 def cosine_lr(epoch: int, total: int, warmup: int) -> float:
@@ -67,6 +78,8 @@ class EpochStats:
     state_loss: float
     car_acc: float
     state_acc: float
+    family_loss: float = 0.0
+    family_acc: float = 0.0
 
 
 def compute_class_weights(rows, classes: tuple[str, ...], attr: str) -> torch.Tensor:
@@ -87,23 +100,31 @@ def run_epoch(
     device: torch.device,
     cfg: dict,
     car_weights: torch.Tensor | None = None,
+    family_weights: torch.Tensor | None = None,
 ) -> EpochStats:
     is_train = optimizer is not None
     model.train(is_train)
-    car_loss_sum = state_loss_sum = 0.0
-    car_correct = state_correct = total = 0
+    car_loss_sum = state_loss_sum = family_loss_sum = 0.0
+    car_correct = state_correct = family_correct = total = 0
     for batch in loader:
         logmel = batch["logmel"].to(device)
         car_y = batch["car_idx"].to(device)
         state_y = batch["state_idx"].to(device)
+        family_y = batch["family_idx"].to(device)
         with torch.set_grad_enabled(is_train):
-            car_logits, state_logits = model(logmel)
+            car_logits, state_logits, family_logits = model(logmel)
             car_loss = F.cross_entropy(car_logits, car_y, weight=car_weights)
             state_loss = F.cross_entropy(state_logits, state_y)
             loss = (
                 cfg["train"]["car_loss_weight"] * car_loss
                 + cfg["train"]["state_loss_weight"] * state_loss
             )
+            if family_logits is not None:
+                family_loss = F.cross_entropy(family_logits, family_y, weight=family_weights)
+                fam_w = cfg["train"].get("family_loss_weight", 0.5)
+                loss = loss + fam_w * family_loss
+                family_loss_sum += family_loss.item() * logmel.size(0)
+                family_correct += (family_logits.argmax(1) == family_y).sum().item()
             if is_train:
                 assert optimizer is not None
                 optimizer.zero_grad()
@@ -119,6 +140,8 @@ def run_epoch(
         state_loss=state_loss_sum / total,
         car_acc=car_correct / total,
         state_acc=state_correct / total,
+        family_loss=family_loss_sum / total if total else 0.0,
+        family_acc=family_correct / total if total else 0.0,
     )
 
 
@@ -156,7 +179,11 @@ def train(config_path: Path) -> Path:
 
     device = pick_device()
     weights_path = Path(cfg["paths"]["weights"])
-    model = CarAudioModel(weights_path if weights_path.exists() else None).to(device)
+    use_family = cfg["train"].get("family_loss_weight", 0.0) > 0.0
+    model = CarAudioModel(
+        weights_path if weights_path.exists() else None,
+        n_families=len(ENGINE_FAMILIES) if use_family else None,
+    ).to(device)
     optimizer = make_optimizer(model, cfg)
 
     car_weights = compute_class_weights(splits.train, CARS, "car").to(device)
@@ -165,12 +192,25 @@ def train(config_path: Path) -> Path:
         + ", ".join(f"{c}={w:.2f}" for c, w in zip(CARS, car_weights.cpu().tolist()))
     )
 
+    family_weights = None
+    if use_family:
+        # Inverse-frequency weighting at the family level
+        from collections import Counter
+        fam_counts = Counter(family_index_for_car(r.car) for r in splits.train if r.label is not None)
+        fam_w = torch.tensor(
+            [1.0 / max(fam_counts.get(i, 0), 1) for i in range(len(ENGINE_FAMILIES))],
+            dtype=torch.float32,
+        )
+        family_weights = (fam_w * (len(ENGINE_FAMILIES) / fam_w.sum())).to(device)
+        console.print(f"using hierarchical family head ({len(ENGINE_FAMILIES)} families)")
+
     run_dir = Path(cfg["paths"]["runs_dir"]) / time.strftime("%Y%m%d_%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(cfg))
-    (run_dir / "classes.json").write_text(
-        json.dumps({"cars": list(CARS), "states": list(STATES)}, indent=2)
-    )
+    classes_payload = {"cars": list(CARS), "states": list(STATES)}
+    if use_family:
+        classes_payload["families"] = list(ENGINE_FAMILIES)
+    (run_dir / "classes.json").write_text(json.dumps(classes_payload, indent=2))
 
     base_lrs = [
         cfg["train"]["lr_backbone"],
@@ -186,18 +226,24 @@ def train(config_path: Path) -> Path:
             group["lr"] = base * scale
 
         ts = time.time()
-        tr = run_epoch(model, train_loader, optimizer, device, cfg, car_weights=car_weights)
+        tr = run_epoch(
+            model, train_loader, optimizer, device, cfg,
+            car_weights=car_weights, family_weights=family_weights,
+        )
         va = (
-            run_epoch(model, val_loader, None, device, cfg, car_weights=car_weights)
+            run_epoch(
+                model, val_loader, None, device, cfg,
+                car_weights=car_weights, family_weights=family_weights,
+            )
             if len(val_ds) > 0
             else EpochStats(0.0, 0.0, 0.0, 0.0)
         )
         elapsed = time.time() - ts
+        fam_str = f" fam_acc={va.family_acc:.3f}" if use_family else ""
         console.print(
             f"epoch {epoch:02d}  "
-            f"train: car_loss={tr.car_loss:.3f} car_acc={tr.car_acc:.3f} "
-            f"state_acc={tr.state_acc:.3f}  "
-            f"val: car_acc={va.car_acc:.3f} state_acc={va.state_acc:.3f}  "
+            f"train: car_loss={tr.car_loss:.3f} car_acc={tr.car_acc:.3f}  "
+            f"val: car_acc={va.car_acc:.3f}{fam_str}  "
             f"({elapsed:.1f}s)"
         )
         history.append({"epoch": epoch, "train": tr.__dict__, "val": va.__dict__})
