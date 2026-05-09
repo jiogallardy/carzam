@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     # CORS
     cors_origins: list[str] = Field(default_factory=lambda: ["*"])
 
+    # Admin token for /admin/* routes. Generate with: openssl rand -hex 32.
+    # Anyone with this token can list user clips, accept/reject them, and
+    # create new car_classes — set it in Coolify env, never commit.
+    admin_token: str | None = None
+
     @property
     def r2_endpoint(self) -> str:
         return self.r2_public_endpoint or f"https://{self.r2_account_id}.r2.cloudflarestorage.com"

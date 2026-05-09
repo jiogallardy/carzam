@@ -63,6 +63,15 @@ export default function RootLayout() {
               name="add-car"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
+            <Stack.Screen
+              name="submit-new-car/[clipId]"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
+            <Stack.Screen
+              name="record-for-car/[id]"
+              options={{ presentation: "fullScreenModal", animation: "fade" }}
+            />
+            <Stack.Screen name="classes" options={{ animation: "slide_from_right" }} />
           </Stack>
         </QueryClientProvider>
       </SafeAreaProvider>

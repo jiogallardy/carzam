@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { listCarClasses, listDiscoveries } from "@/api/discoveries";
@@ -10,6 +11,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
 export default function FoundScreen() {
+  const router = useRouter();
   const classesQ = useQuery({ queryKey: ["car-classes"], queryFn: listCarClasses });
   const discQ = useQuery({ queryKey: ["discoveries"], queryFn: listDiscoveries });
 
@@ -29,8 +31,18 @@ export default function FoundScreen() {
       <AmbientBackground />
       <SafeAreaView style={styles.safe} edges={["top"]}>
         <View style={styles.header}>
-          <Text style={styles.title}>Found</Text>
-          <Text style={styles.sub}>{totalFound} / {totalAvail} discovered · {pct}%</Text>
+          <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>Found</Text>
+              <Text style={styles.sub}>{totalFound} / {totalAvail} discovered · {pct}%</Text>
+            </View>
+            <Pressable
+              onPress={() => router.push("/classes")}
+              style={({ pressed }) => [styles.browseBtn, pressed && { opacity: 0.85 }]}
+            >
+              <Text style={styles.browseBtnText}>Browse all</Text>
+            </Pressable>
+          </View>
           <View style={styles.progressTrack}>
             <View style={[styles.progressFill, { width: `${pct}%` }]} />
           </View>
@@ -90,6 +102,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: "100%", backgroundColor: colors.accent, borderRadius: 999 },
+  browseBtn: {
+    backgroundColor: colors.glassFillStrong,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+  },
+  browseBtnText: { color: colors.text, fontWeight: "700", fontSize: 13 },
 
   center: { flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: 100 },
 

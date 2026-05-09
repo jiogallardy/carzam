@@ -80,3 +80,12 @@ export type SubmitNewCarRequest = {
   trim?: string | null;
   notes?: string | null;
 };
+
+export type ClipOut = {
+  id: string;
+  source: string;
+  predicted_class_id: string | null;
+  predicted_confidence: number | null;
+  predicted_state: string | null;
+  created_at: string;
+};

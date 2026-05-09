@@ -62,6 +62,13 @@ export default function CarDetailScreen() {
               </GlassCard>
 
               <Pressable
+                onPress={() => router.push(`/record-for-car/${id}`)}
+                style={({ pressed }) => [styles.recordBtn, pressed && { opacity: 0.85 }]}
+              >
+                <Text style={styles.recordBtnText}>+ Record audio of this car</Text>
+              </Pressable>
+
+              <Pressable
                 onPress={onDelete}
                 style={({ pressed }) => [styles.delete, pressed && { opacity: 0.85 }]}
               >
@@ -92,8 +99,19 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 },
   rowLabel: { color: colors.textMuted, fontSize: fontSize.small, fontWeight: "600" },
   rowValue: { color: colors.text, fontSize: fontSize.body, flexShrink: 1, textAlign: "right", marginLeft: spacing.md },
-  delete: {
+  recordBtn: {
     marginTop: spacing.lg,
+    height: 50,
+    borderRadius: radius.md,
+    backgroundColor: "rgba(255,126,26,0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(255,126,26,0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recordBtnText: { color: colors.accentHi, fontWeight: "700" },
+  delete: {
+    marginTop: spacing.md,
     height: 50,
     borderRadius: radius.md,
     backgroundColor: "rgba(255,94,94,0.10)",
