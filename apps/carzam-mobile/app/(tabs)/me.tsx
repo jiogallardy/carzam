@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { GlassCard } from "@/components/GlassCard";
@@ -7,13 +7,14 @@ import { useAuthStore } from "@/store/auth";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
 export default function MeScreen() {
+  const insets = useSafeAreaInsets();
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
 
   return (
     <View style={{ flex: 1 }}>
       <AmbientBackground />
-      <SafeAreaView style={styles.safe} edges={["top"]}>
+      <View style={[styles.safe, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <Text style={styles.title}>Me</Text>
         </View>
@@ -40,14 +41,14 @@ export default function MeScreen() {
             <Text style={styles.signOutText}>Sign out</Text>
           </Pressable>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
   title: { color: colors.text, fontSize: fontSize.hero, fontWeight: "800", letterSpacing: -0.8 },
   body: { padding: spacing.lg, gap: spacing.lg },
 

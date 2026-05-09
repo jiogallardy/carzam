@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { listCarClasses, listDiscoveries } from "@/api/discoveries";
 import type { CarClass, Discovery } from "@/api/types";
@@ -12,6 +12,7 @@ import { colors, fontSize, radius, spacing } from "@/theme";
 
 export default function FoundScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const classesQ = useQuery({ queryKey: ["car-classes"], queryFn: listCarClasses });
   const discQ = useQuery({ queryKey: ["discoveries"], queryFn: listDiscoveries });
 
@@ -29,7 +30,7 @@ export default function FoundScreen() {
   return (
     <View style={{ flex: 1 }}>
       <AmbientBackground />
-      <SafeAreaView style={styles.safe} edges={["top"]}>
+      <View style={[styles.safe, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
             <View style={{ flex: 1 }}>
@@ -61,7 +62,7 @@ export default function FoundScreen() {
             renderItem={({ item }) => <Cell klass={item.klass} discovery={item.found} />}
           />
         )}
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -91,7 +92,7 @@ function Cell({ klass, discovery }: { klass: CarClass; discovery: Discovery | nu
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
+  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md },
   title: { color: colors.text, fontSize: fontSize.hero, fontWeight: "800", letterSpacing: -0.8 },
   sub: { color: colors.textMuted, fontSize: fontSize.small, marginTop: 2 },
   progressTrack: {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { fetchStats } from "@/api/discoveries";
 import { AmbientBackground } from "@/components/AmbientBackground";
@@ -8,12 +8,13 @@ import { GlassCard } from "@/components/GlassCard";
 import { colors, fontSize, spacing } from "@/theme";
 
 export default function StatsScreen() {
+  const insets = useSafeAreaInsets();
   const { data, isLoading } = useQuery({ queryKey: ["stats"], queryFn: fetchStats });
 
   return (
     <View style={{ flex: 1 }}>
       <AmbientBackground />
-      <SafeAreaView style={styles.safe} edges={["top"]}>
+      <View style={[styles.safe, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <Text style={styles.title}>Stats</Text>
           <Text style={styles.sub}>How you're doing.</Text>
@@ -42,7 +43,7 @@ export default function StatsScreen() {
             <Text style={{ color: colors.textMuted }}>No stats yet.</Text>
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -62,7 +63,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
   title: { color: colors.text, fontSize: fontSize.hero, fontWeight: "800", letterSpacing: -0.8 },
   sub: { color: colors.textMuted, fontSize: fontSize.small, marginTop: 2 },
   body: { padding: spacing.lg, gap: spacing.lg },

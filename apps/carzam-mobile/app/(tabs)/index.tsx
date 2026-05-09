@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { listCars } from "@/api/cars";
 import type { OwnedCar } from "@/api/types";
@@ -12,6 +12,7 @@ import { colors, fontSize, radius, spacing } from "@/theme";
 
 export default function GarageScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: ["cars"],
     queryFn: listCars,
@@ -20,7 +21,7 @@ export default function GarageScreen() {
   return (
     <View style={{ flex: 1 }}>
       <AmbientBackground />
-      <SafeAreaView style={styles.safe} edges={["top"]}>
+      <View style={[styles.safe, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <View>
             <Text style={styles.title}>Garage</Text>
@@ -58,7 +59,7 @@ export default function GarageScreen() {
             renderItem={({ item }) => <CarRow car={item} onPress={() => router.push(`/car/${item.id}`)} />}
           />
         )}
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -104,8 +105,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
   },
   title: { color: colors.text, fontSize: fontSize.hero, fontWeight: "800", letterSpacing: -0.8 },
   sub: { color: colors.textMuted, fontSize: fontSize.small, marginTop: 2 },
