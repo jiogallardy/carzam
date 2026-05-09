@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -18,6 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { submitAsNewCar } from "@/api/recognize";
 import { GlassCard } from "@/components/GlassCard";
 import { PrimaryButton } from "@/components/PrimaryButton";
+import { PICKER_OTHER, SearchablePicker, pickerValue } from "@/components/SearchablePicker";
+import { ENGINES, MAKES, modelsFor } from "@/data/vehicles";
 import { colors, fontSize, spacing } from "@/theme";
 
 export default function SubmitNewCarScreen() {
@@ -26,10 +28,15 @@ export default function SubmitNewCarScreen() {
   const qc = useQueryClient();
 
   const [year, setYear] = useState("");
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [trim, setTrim] = useState("");
+  const [make, setMake] = useState<string | null>(null);
+  const [model, setModel] = useState<string | null>(null);
+  const [trim, setTrim] = useState<string | null>(null);
+  const [engine, setEngine] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    setModel(null);
+  }, [make]);
 
   const m = useMutation({
     mutationFn: (body: {
@@ -57,16 +64,28 @@ export default function SubmitNewCarScreen() {
     Keyboard.dismiss();
     const yr = parseInt(year, 10);
     if (!yr || yr < 1900 || yr > 2100) return Alert.alert("Year required", "e.g. 2024");
-    if (!make.trim()) return Alert.alert("Make required");
-    if (!model.trim()) return Alert.alert("Model required");
+    const makeStr = pickerValue(make);
+    if (!makeStr) return Alert.alert("Make required");
+    const modelStr = pickerValue(model);
+    if (!modelStr) return Alert.alert("Model required");
+
+    const engineStr = pickerValue(engine);
+    const composedNotes = [
+      engineStr ? `Engine: ${engineStr}` : null,
+      notes.trim() || null,
+    ].filter(Boolean).join("\n") || null;
+
     m.mutate({
       year: yr,
-      make: make.trim(),
-      model: model.trim(),
-      trim: trim.trim() || null,
-      notes: notes.trim() || null,
+      make: makeStr,
+      model: modelStr,
+      trim: pickerValue(trim),
+      notes: composedNotes,
     });
   };
+
+  const modelOptions = make && make !== PICKER_OTHER ? modelsFor(make) : [];
+  const modelHint = !make ? "Pick a make first" : modelOptions.length === 0 ? "Type your own model below" : undefined;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -77,7 +96,7 @@ export default function SubmitNewCarScreen() {
           keyboardVerticalOffset={20}
         >
           <View style={styles.header}>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.eyebrow}>SUBMIT AS NEW CAR</Text>
               <Text style={styles.title}>Tell us what it is</Text>
               <Text style={styles.sub}>
@@ -90,17 +109,74 @@ export default function SubmitNewCarScreen() {
           </View>
 
           <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-            <Field label="Year" value={year} onChangeText={setYear} placeholder="2024" keyboardType="number-pad" maxLength={4} />
-            <Field label="Make" value={make} onChangeText={setMake} placeholder="Ford" autoCapitalize="words" />
-            <Field label="Model" value={model} onChangeText={setModel} placeholder="Mustang GT" autoCapitalize="words" />
-            <Field label="Trim (optional)" value={trim} onChangeText={setTrim} placeholder="Dark Horse" autoCapitalize="words" />
-            <Field
-              label="Notes (engine, mods, anything that helps)"
-              value={notes}
-              onChangeText={setNotes}
-              placeholder="5.0 Coyote, Borla S-Type, idle"
-              multiline
+            <View style={{ marginBottom: spacing.md }}>
+              <Text style={styles.fieldLabel}>YEAR</Text>
+              <GlassCard>
+                <TextInput
+                  value={year}
+                  onChangeText={setYear}
+                  placeholder="2024"
+                  placeholderTextColor={colors.textDim}
+                  keyboardType="number-pad"
+                  maxLength={4}
+                  style={styles.input}
+                />
+              </GlassCard>
+            </View>
+
+            <SearchablePicker
+              label="Make"
+              value={make}
+              options={MAKES}
+              placeholder="Pick a make"
+              onChange={setMake}
             />
+
+            <SearchablePicker
+              label="Model"
+              value={model}
+              options={modelOptions}
+              placeholder={make ? "Pick a model" : "Pick a make first"}
+              disabled={!make}
+              onChange={setModel}
+              hint={modelHint}
+            />
+
+            <SearchablePicker
+              label="Engine (helps the next model)"
+              value={engine}
+              options={ENGINES}
+              placeholder="V8 NA, I6 Turbo, …"
+              onChange={setEngine}
+            />
+
+            <View style={{ marginBottom: spacing.md }}>
+              <Text style={styles.fieldLabel}>TRIM (OPTIONAL)</Text>
+              <GlassCard>
+                <TextInput
+                  value={trim ?? ""}
+                  onChangeText={(t) => setTrim(t || null)}
+                  placeholder="e.g. Dark Horse, Black Series"
+                  placeholderTextColor={colors.textDim}
+                  autoCapitalize="words"
+                  style={styles.input}
+                />
+              </GlassCard>
+            </View>
+
+            <View style={{ marginBottom: spacing.md }}>
+              <Text style={styles.fieldLabel}>NOTES (OPTIONAL)</Text>
+              <GlassCard>
+                <TextInput
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder="5.0 Coyote, Borla S-Type, idle"
+                  placeholderTextColor={colors.textDim}
+                  multiline
+                  style={[styles.input, { minHeight: 90, paddingTop: 14 }]}
+                />
+              </GlassCard>
+            </View>
           </ScrollView>
 
           <View style={styles.footer}>
@@ -113,36 +189,6 @@ export default function SubmitNewCarScreen() {
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </View>
-  );
-}
-
-function Field(props: {
-  label: string;
-  value: string;
-  onChangeText: (v: string) => void;
-  placeholder?: string;
-  keyboardType?: "default" | "number-pad";
-  autoCapitalize?: "none" | "words";
-  maxLength?: number;
-  multiline?: boolean;
-}) {
-  return (
-    <View style={{ marginBottom: spacing.md }}>
-      <Text style={styles.fieldLabel}>{props.label}</Text>
-      <GlassCard>
-        <TextInput
-          value={props.value}
-          onChangeText={props.onChangeText}
-          placeholder={props.placeholder}
-          placeholderTextColor={colors.textDim}
-          keyboardType={props.keyboardType}
-          autoCapitalize={props.autoCapitalize}
-          maxLength={props.maxLength}
-          multiline={props.multiline}
-          style={[styles.input, props.multiline && { minHeight: 90, paddingTop: 14 }]}
-        />
-      </GlassCard>
     </View>
   );
 }
@@ -163,20 +209,8 @@ const styles = StyleSheet.create({
   cancel: { color: colors.textMuted, fontSize: fontSize.body, fontWeight: "600", paddingTop: 4 },
 
   body: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: 60 },
-  fieldLabel: {
-    color: colors.textMuted,
-    fontSize: fontSize.caption,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-    marginBottom: 6,
-  },
-  input: {
-    color: colors.text,
-    fontSize: fontSize.body,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
+  fieldLabel: { color: colors.textMuted, fontSize: fontSize.caption, fontWeight: "700", letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 6 },
+  input: { color: colors.text, fontSize: fontSize.body, paddingHorizontal: 14, paddingVertical: 14 },
 
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md },
 });
