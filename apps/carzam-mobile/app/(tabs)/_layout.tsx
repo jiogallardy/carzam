@@ -118,7 +118,7 @@ export default function TabsLayout() {
 
         return (
           <View pointerEvents="box-none" style={[styles.barWrap, { bottom: barBottom }]}>
-            <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFillObject} />
+            <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFillObject} />
             <View style={styles.barOverlay} />
             <View style={styles.specular} />
             <View style={styles.barRow}>

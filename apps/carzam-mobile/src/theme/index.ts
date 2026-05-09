@@ -1,13 +1,13 @@
-// Centralized design tokens. Liquid-glass + dark-first.
+// Centralized design tokens. iOS 26 Liquid Glass + dark-first.
 export const colors = {
   bg: "#050507",
   bgElev: "#0d0d12",
   text: "#ffffff",
-  textMuted: "rgba(255,255,255,0.65)",
-  textDim: "rgba(255,255,255,0.45)",
-  border: "rgba(255,255,255,0.10)",
+  textMuted: "rgba(255,255,255,0.68)",
+  textDim: "rgba(255,255,255,0.42)",
+  border: "rgba(255,255,255,0.12)",
   glassFill: "rgba(255,255,255,0.06)",
-  glassFillStrong: "rgba(255,255,255,0.12)",
+  glassFillStrong: "rgba(255,255,255,0.14)",
   accent: "#ff7e1a",
   accentHi: "#ffb47a",
   accentLo: "#c81848",
@@ -21,10 +21,10 @@ export const colors = {
 };
 
 export const radius = {
-  sm: 10,
-  md: 14,
-  lg: 22,
-  xl: 28,
+  sm: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
   pill: 999,
 };
 
@@ -32,18 +32,20 @@ export const spacing = {
   xs: 4,
   sm: 8,
   md: 12,
-  lg: 16,
-  xl: 24,
-  xxl: 32,
+  lg: 18,
+  xl: 26,
+  xxl: 36,
 };
 
+// iOS 26 type ramp. `display` = oversized hero numbers, `hero` = large title.
 export const fontSize = {
   caption: 11,
-  small: 12,
-  body: 14,
-  title: 18,
-  large: 22,
-  hero: 28,
+  small: 13,
+  body: 15,
+  title: 19,
+  large: 24,
+  hero: 34,
+  display: 56,
 };
 
 export const accentGradient = ["#ffb47a", "#ff7e1a", "#ff3d3d", "#8b0e2e"] as const;
