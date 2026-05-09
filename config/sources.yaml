@@ -57,15 +57,24 @@ ferrari_sf90:
   - https://www.youtube.com/watch?v=bzW1bknPuS8  # [Autowizja]         (118s) SF90 cold start, revs, launch, interior 4K
   - https://www.youtube.com/watch?v=Xd7G593VAFs  # [Automotive 4U]     (230s) 1000HP SF90 accelerations + Pure Sound
 
-# mclaren_720s: McLaren M840T 4.0L TT V8 (720S / 750S / 765LT family).
+# mclaren_720s: McLaren M840T 4.0L TT V8 (720S / 750S — base body).
 # Same engine config as Ferrari 488/F8 — direct flat-plane TT V8 comparison.
 mclaren_720s:
   - https://www.youtube.com/watch?v=dj2XC5lx9dE  # [Millionaire Motorsport] (300s) 720S Spider POV Pure Exhaust
   - https://www.youtube.com/watch?v=K_0jKeawP78  # [Automann-TV]            (213s) 720s Pure SOUND & SPEED
   - https://www.youtube.com/watch?v=DTMxj4_stns  # [Gintani]                (22s)  Gintani Stage 2 720s on DYNO
   - https://www.youtube.com/watch?v=VPf5eHr3Nns  # [ARMYTRIX]               (110s) 720S Dyno ARMYTRIX Full Exhaust
+
+# mclaren_765lt: McLaren 765LT — track-focused longtail variant of 720S.
+# Same M840T engine but 755hp, lighter, more aggressive aero, quad exhaust.
+mclaren_765lt:
   - https://www.youtube.com/watch?v=V8zczpE0kXM  # [Mr.Alexandre]           (22s)  765LT Titanium Exhaust
   - https://www.youtube.com/watch?v=_PC09EoOKvU  # [iPE]                    (41s)  765LT Tunnel Drive iPE Full Exhaust
+  - https://www.youtube.com/watch?v=Dc2lJ1Un4sc  # [NOVITEC]                (423s) POV Novitec 765LT spitting flames
+  - https://www.youtube.com/watch?v=3xc_isevP5U  # [AutoTopNL]              (529s) 765LT 326km/h on AUTOBAHN
+  - https://www.youtube.com/watch?v=CLtKDLM6TMc  # [Millionaire Motorsport] (385s) 765LT POV Drive Pure Exhaust
+  - https://www.youtube.com/watch?v=PqCJ2obcY1Q  # [NOVITEC]                (130s) Novitec 765LT Race Exhaust System
+  - https://www.youtube.com/watch?v=hQzvh8eUatY  # [Gumbal]                 (498s) 765LT Spider Engine Start, Accel, Flybys
 
 # mclaren_senna: McLaren Senna (track-focused 720S sibling — same M840T engine,
 # different exhaust + chassis tuning). Senna GTR included since it shares the

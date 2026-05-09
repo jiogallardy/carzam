@@ -14,7 +14,7 @@ def test_backbone_output_shape():
 
 
 def test_class_constants():
-    assert len(CARS) == 21
+    assert len(CARS) == 22
     assert "other" in CARS
     assert "ferrari_812" in CARS
     assert "ferrari_f12" in CARS
@@ -32,7 +32,7 @@ def test_multihead_forward_shapes():
     x = torch.randn(3, 501, 64)
     with torch.no_grad():
         car_logits, state_logits = model(x)
-    assert car_logits.shape == (3, 21)
+    assert car_logits.shape == (3, 22)
     assert state_logits.shape == (3, 3)
 
 

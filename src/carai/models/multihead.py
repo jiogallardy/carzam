@@ -17,8 +17,9 @@ CARS = (
     "ferrari_f8",        # TT V8 3.9L (F8 Tributo/Spider — same engine as 488)
     "ferrari_sf90",      # TT V8 + hybrid (SF90 Stradale)
     "ferrari_296",       # TT V6 + hybrid (296 GTB/GTS)
-    "mclaren_720s",      # M840T 4.0L TT V8 flat-plane (720S/750S/765LT family)
-    "mclaren_senna",     # M840T 4.0L TT V8 (Senna — track-focused variant, more aggressive)
+    "mclaren_720s",      # M840T 4.0L TT V8 (720S / 750S — base body)
+    "mclaren_765lt",     # M840T 4.0L TT V8 (765LT — track-focused longtail variant)
+    "mclaren_senna",     # M840T 4.0L TT V8 (Senna — most aggressive variant + GTR)
     "audi_r8_v10",       # 5.2L NA V10 — same physical engine as Lambo Huracán
     "lamborghini_huracan",
     "porsche_gt3",
