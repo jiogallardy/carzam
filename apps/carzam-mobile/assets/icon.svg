@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="78%">
+      <stop offset="0%"  stop-color="#FFE066"/>
+      <stop offset="55%" stop-color="#FFC417"/>
+      <stop offset="100%" stop-color="#C28200"/>
+    </radialGradient>
+    <linearGradient id="bodyMain" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#FF4438"/>
+      <stop offset="55%" stop-color="#D40010"/>
+      <stop offset="100%" stop-color="#7E0008"/>
+    </linearGradient>
+    <linearGradient id="bodyTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#FF6E5E"/>
+      <stop offset="100%" stop-color="#D6121F"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#1a1f2b"/>
+      <stop offset="100%" stop-color="#0a0d14"/>
+    </linearGradient>
+    <radialGradient id="wheel" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#3a3a3a"/>
+      <stop offset="60%" stop-color="#0e0e10"/>
+      <stop offset="100%" stop-color="#000"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#cfd3da"/>
+      <stop offset="100%" stop-color="#5b6068"/>
+    </radialGradient>
+    <linearGradient id="caliper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#FFE800"/>
+      <stop offset="100%" stop-color="#C9A300"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Soft ground shadow -->
+  <ellipse cx="512" cy="760" rx="380" ry="32" fill="#000" opacity="0.28"/>
+
+  <!-- Car body silhouette: low slung supercar, side profile cartoon -->
+  <!-- Lower body / sill -->
+  <path d="M 150 660
+           C 170 720, 230 740, 300 740
+           L 720 740
+           C 800 740, 860 715, 880 660
+           L 860 600
+           L 170 600 Z"
+        fill="url(#bodyMain)"/>
+
+  <!-- Main body curve -->
+  <path d="M 150 620
+           C 150 540, 200 480, 290 460
+           L 380 410
+           C 430 380, 500 370, 570 380
+           L 720 420
+           C 800 440, 870 510, 880 620
+           L 880 660
+           L 150 660 Z"
+        fill="url(#bodyTop)"/>
+
+  <!-- Cabin / greenhouse (dark glass) -->
+  <path d="M 350 460
+           C 380 415, 430 395, 490 395
+           L 600 395
+           C 660 395, 705 425, 730 470
+           L 740 510
+           L 320 510
+           L 340 470 Z"
+        fill="url(#glass)"/>
+
+  <!-- Roofline highlight -->
+  <path d="M 360 458
+           C 390 422, 432 408, 495 408
+           L 595 408
+           C 650 408, 690 432, 712 470"
+        fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Door cut -->
+  <path d="M 470 510 L 470 660" stroke="#5d0006" stroke-width="3" opacity="0.6"/>
+  <path d="M 540 510 L 540 660" stroke="#5d0006" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- Side intake (the Ferrari mid-engine signature) -->
+  <path d="M 560 560
+           L 720 560
+           C 740 560, 750 575, 740 590
+           L 720 615
+           L 560 615 Z"
+        fill="#170002" opacity="0.85"/>
+  <path d="M 575 588 L 720 588" stroke="#fff" stroke-opacity="0.18" stroke-width="2"/>
+
+  <!-- Front fender highlight -->
+  <path d="M 165 625
+           C 170 555, 215 500, 280 478"
+        fill="none" stroke="#ffd0c4" stroke-opacity="0.65" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Headlight -->
+  <path d="M 175 600
+           C 175 580, 195 568, 215 572
+           L 240 580
+           L 235 612
+           L 178 612 Z"
+        fill="#fff7d6"/>
+  <path d="M 188 588
+           L 230 595"
+        stroke="#ffe070" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Front splitter -->
+  <path d="M 150 660
+           L 200 700
+           L 290 700
+           L 280 670 Z"
+        fill="#0a0a0c"/>
+
+  <!-- Rear haunch shadow -->
+  <path d="M 720 410
+           C 800 432, 870 510, 880 620"
+        fill="none" stroke="#5e0008" stroke-opacity="0.55" stroke-width="5"/>
+
+  <!-- Tail light -->
+  <circle cx="855" cy="595" r="18" fill="#ff2a2a" stroke="#3a0006" stroke-width="3"/>
+  <circle cx="855" cy="595" r="7"  fill="#ffd6d6"/>
+
+  <!-- Rear diffuser -->
+  <path d="M 760 700
+           L 880 700
+           L 870 740
+           L 770 740 Z"
+        fill="#0a0a0c"/>
+  <path d="M 790 705 L 790 735 M 815 705 L 815 735 M 840 705 L 840 735" stroke="#2a2a2c" stroke-width="3"/>
+
+  <!-- Wheels: front + rear -->
+  <!-- Rear wheel well shadow -->
+  <ellipse cx="740" cy="730" rx="115" ry="22" fill="#000" opacity="0.35"/>
+  <!-- Front wheel well shadow -->
+  <ellipse cx="280" cy="730" rx="105" ry="20" fill="#000" opacity="0.35"/>
+
+  <!-- Rear wheel -->
+  <circle cx="740" cy="700" r="92" fill="url(#wheel)"/>
+  <circle cx="740" cy="700" r="62" fill="url(#rim)"/>
+  <g transform="translate(740 700)">
+    <g fill="#1a1c20">
+      <path d="M -8 -60 L 8 -60 L 4 -8 L -4 -8 Z"/>
+      <path d="M -8 -60 L 8 -60 L 4 -8 L -4 -8 Z" transform="rotate(72)"/>
+      <path d="M -8 -60 L 8 -60 L 4 -8 L -4 -8 Z" transform="rotate(144)"/>
+      <path d="M -8 -60 L 8 -60 L 4 -8 L -4 -8 Z" transform="rotate(216)"/>
+      <path d="M -8 -60 L 8 -60 L 4 -8 L -4 -8 Z" transform="rotate(288)"/>
+    </g>
+    <circle r="14" fill="#0e0e10" stroke="#2a2c30" stroke-width="2"/>
+  </g>
+  <!-- Yellow brake caliper visible behind rim -->
+  <path d="M 700 660
+           C 700 642, 720 628, 740 628
+           L 740 660 Z"
+        fill="url(#caliper)" opacity="0.95"/>
+
+  <!-- Front wheel -->
+  <circle cx="280" cy="700" r="88" fill="url(#wheel)"/>
+  <circle cx="280" cy="700" r="58" fill="url(#rim)"/>
+  <g transform="translate(280 700)">
+    <g fill="#1a1c20">
+      <path d="M -7 -56 L 7 -56 L 3 -8 L -3 -8 Z"/>
+      <path d="M -7 -56 L 7 -56 L 3 -8 L -3 -8 Z" transform="rotate(72)"/>
+      <path d="M -7 -56 L 7 -56 L 3 -8 L -3 -8 Z" transform="rotate(144)"/>
+      <path d="M -7 -56 L 7 -56 L 3 -8 L -3 -8 Z" transform="rotate(216)"/>
+      <path d="M -7 -56 L 7 -56 L 3 -8 L -3 -8 Z" transform="rotate(288)"/>
+    </g>
+    <circle r="13" fill="#0e0e10" stroke="#2a2c30" stroke-width="2"/>
+  </g>
+  <path d="M 244 660
+           C 244 644, 262 632, 280 632
+           L 280 660 Z"
+        fill="url(#caliper)" opacity="0.95"/>
+
+  <!-- Body specular highlight stripe -->
+  <path d="M 220 470
+           C 320 432, 470 410, 640 418
+           C 720 422, 790 450, 840 500"
+        fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Subtle vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
+    <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000" stop-opacity="0.35"/>
+  </radialGradient>
+  <rect width="1024" height="1024" fill="url(#vignette)"/>
+</svg>

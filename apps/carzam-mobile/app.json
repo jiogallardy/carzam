@@ -8,6 +8,12 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#050507",
     "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#050507"
+    },
     "ios": {
       "bundleIdentifier": "com.carzam.app",
       "supportsTablet": false,
@@ -28,6 +34,10 @@
     },
     "android": {
       "package": "com.carzam.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFC417"
+      },
       "permissions": [
         "RECORD_AUDIO",
         "android.permission.RECORD_AUDIO",
