@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Carzam",
+    "slug": "carzam",
+    "version": "0.1.0",
+    "scheme": "carzam",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#050507",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.carzam.app",
+      "supportsTablet": false,
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Carzam listens to engine sound to identify the car.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.carzam.app",
+      "permissions": ["RECORD_AUDIO"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      [
+        "expo-av",
+        { "microphonePermission": "Carzam listens to engine sound to identify the car." }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        { "iosUrlScheme": "com.googleusercontent.apps.REPLACE_WITH_REVERSED_CLIENT_ID" }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": { "origin": false },
+      "eas": { "projectId": "REPLACE_WITH_EAS_PROJECT_ID" }
+    }
+  }
+}
