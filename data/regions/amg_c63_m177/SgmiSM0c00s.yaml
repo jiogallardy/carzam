@@ -1,0 +1,12 @@
+video_id: SgmiSM0c00s
+duration: 80.4266875
+ranges:
+- start: 0.0
+  end: 19.0
+  label: skip
+- start: 19.0
+  end: 58.0
+  label: idle
+- start: 58.0
+  end: 80.4266875
+  label: skip

@@ -1,0 +1,9 @@
+video_id: MRNAOjVpBqg
+duration: 60.672
+ranges:
+- start: 0.0
+  end: 13.0
+  label: skip
+- start: 13.0
+  end: 60.672
+  label: idle
