@@ -199,7 +199,12 @@ def predict_bytes(wav_bytes: bytes, model_id: str | None = None) -> dict[str, An
 
     logmel = compute_logmel(audio).unsqueeze(0).to(_DEVICE)
     with torch.no_grad():
-        car_logits, state_logits = loaded.model(logmel)
+        # CarAudioModel.forward returns 3 outputs since the engine-family
+        # head was added: (car_logits, state_logits, family_logits | None).
+        # Older checkpoints (v6) trained without the family head still return
+        # the 3-tuple — family_logits is None in that case.
+        out = loaded.model(logmel)
+        car_logits, state_logits = out[0], out[1]
         car_probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
         state_probs = F.softmax(state_logits, dim=-1).squeeze(0).cpu().numpy()
 
