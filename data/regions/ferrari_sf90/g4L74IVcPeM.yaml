@@ -1,0 +1,15 @@
+video_id: g4L74IVcPeM
+duration: 186.121
+ranges:
+- start: 3.9475279275207518
+  end: 27.63723896948242
+  label: idle
+- start: 30.729808879837037
+  end: 56.22583905531311
+  label: idle
+- start: 65.10201108583068
+  end: 71.33871090844727
+  label: idle
+- start: 82.33249300381469
+  end: 157.29201789509582
+  label: idle
