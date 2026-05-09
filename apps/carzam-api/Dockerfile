@@ -37,7 +37,10 @@ ENV CHECKPOINT_PATH=/data/checkpoint.pt \
     CLASSES_PATH=/data/classes.json
 
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
+# start-period accounts for: 318MB checkpoint download from R2 (~10-30s) +
+# CNN14 weights load into RAM (~20-40s) + Postgres init + seed (~1-2s).
+# 180s gives headroom even on a cold CX21 with concurrent old/new containers.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=180s --retries=5 \
     CMD curl -fsS http://localhost:8000/health || exit 1
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
