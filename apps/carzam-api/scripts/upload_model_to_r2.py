@@ -1,20 +1,27 @@
-"""One-time: upload the trained checkpoint + classes.json to R2.
+"""Upload a trained checkpoint + classes.json to R2.
 
-The carzam-api container fetches these from R2 at startup. Re-run this
-script whenever you train a new checkpoint and want to ship it.
+The carzam-api container fetches these on startup. Re-run whenever you
+ship a new checkpoint.
 
-Usage (from monorepo root):
+Two modes:
+
+    # Versioned slot — shows up in the mobile picker as `v7`:
     R2_ACCOUNT_ID=... R2_ACCESS_KEY_ID=... R2_SECRET_ACCESS_KEY=... \\
-    R2_BUCKET=carzam-clips \\
         uv run python apps/carzam-api/scripts/upload_model_to_r2.py \\
-            runs/20260507_174723
+            runs/20260509_024915 --id v7
 
-That uploads:
-    runs/20260507_174723/checkpoint.pt  -> s3://<bucket>/model/checkpoint.pt
-    runs/20260507_174723/classes.json   -> s3://<bucket>/model/classes.json
+    # Legacy default slot (model/checkpoint.pt) — what the API treats
+    # as id "default" if no DEFAULT_MODEL_ID env is set:
+    R2_ACCOUNT_ID=... R2_ACCESS_KEY_ID=... R2_SECRET_ACCESS_KEY=... \\
+        uv run python apps/carzam-api/scripts/upload_model_to_r2.py \\
+            runs/20260509_024915
+
+You can also do both — pass --id and the script writes to BOTH locations
+so the new checkpoint is the versioned option AND the default.
 """
 from __future__ import annotations
 
+import argparse
 import os
 import sys
 from pathlib import Path
@@ -23,11 +30,30 @@ import boto3
 from botocore.config import Config
 
 
+def upload_pair(client, bucket: str, ckpt: Path, classes: Path, ckpt_key: str, classes_key: str) -> None:
+    print(f"  -> s3://{bucket}/{ckpt_key} ({ckpt.stat().st_size / 1e6:.1f} MB)")
+    client.upload_file(str(ckpt), bucket, ckpt_key)
+    print(f"  -> s3://{bucket}/{classes_key}")
+    client.upload_file(str(classes), bucket, classes_key)
+
+
 def main() -> int:
-    if len(sys.argv) != 2:
-        print(f"usage: {sys.argv[0]} <run_dir>", file=sys.stderr)
-        return 2
-    run_dir = Path(sys.argv[1]).resolve()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("run_dir", help="path to the training run dir containing checkpoint.pt + classes.json")
+    parser.add_argument(
+        "--id",
+        dest="model_id",
+        default=None,
+        help="versioned id, e.g. v7 or 20260509_024915. If set, uploads to model/<id>/.",
+    )
+    parser.add_argument(
+        "--also-default",
+        action="store_true",
+        help="When --id is set, ALSO upload to the legacy model/checkpoint.pt path so this checkpoint is the default.",
+    )
+    args = parser.parse_args()
+
+    run_dir = Path(args.run_dir).resolve()
     ckpt = run_dir / "checkpoint.pt"
     classes = run_dir / "classes.json"
     for p in (ckpt, classes):
@@ -48,10 +74,20 @@ def main() -> int:
         config=Config(signature_version="s3v4", region_name="auto"),
     )
 
-    print(f"uploading {ckpt} -> s3://{bucket}/model/checkpoint.pt ({ckpt.stat().st_size / 1e6:.1f} MB)")
-    client.upload_file(str(ckpt), bucket, "model/checkpoint.pt")
-    print(f"uploading {classes} -> s3://{bucket}/model/classes.json")
-    client.upload_file(str(classes), bucket, "model/classes.json")
+    if args.model_id:
+        print(f"uploading {run_dir.name} as version '{args.model_id}'")
+        upload_pair(
+            client, bucket, ckpt, classes,
+            f"model/{args.model_id}/checkpoint.pt",
+            f"model/{args.model_id}/classes.json",
+        )
+        if args.also_default:
+            print("also writing to legacy default slot")
+            upload_pair(client, bucket, ckpt, classes, "model/checkpoint.pt", "model/classes.json")
+    else:
+        print(f"uploading {run_dir.name} to legacy default slot (model/checkpoint.pt)")
+        upload_pair(client, bucket, ckpt, classes, "model/checkpoint.pt", "model/classes.json")
+
     print("done.")
     return 0
 
