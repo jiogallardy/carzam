@@ -58,6 +58,25 @@ def object_exists(key: str) -> bool:
         return False
 
 
+def head_etag(key: str) -> str | None:
+    """Return the R2 object's ETag (a content hash) or None if it doesn't exist.
+
+    Used by the model-cache to detect when a re-uploaded checkpoint at the
+    same key has changed, so we can re-download instead of silently serving
+    a stale cached file.
+    """
+    cfg = settings()
+    try:
+        resp = r2_client().head_object(Bucket=cfg.r2_bucket, Key=key)
+    except Exception:
+        return None
+    etag = resp.get("ETag")
+    if not etag:
+        return None
+    # boto returns it wrapped in quotes: '"abc123..."'. Strip.
+    return etag.strip('"')
+
+
 def list_subdirs(prefix: str) -> list[str]:
     """List immediate sub-prefixes (folder-like names) under `prefix`.
 

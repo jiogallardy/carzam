@@ -73,13 +73,38 @@ def _local_paths_for(model_id: str) -> tuple[Path, Path]:
 
 
 def _ensure_local(model_id: str) -> tuple[Path, Path]:
+    """Download checkpoint + classes from R2 to a local cache path.
+
+    If the local files exist, we compare R2's ETag against the locally-stored
+    ETag and re-download when they differ. Previously this was a pure
+    "if not exists" gate, which caused stale checkpoints to live forever once
+    cached on disk — re-uploading the same R2 key would be a no-op on the
+    container until someone manually deleted /data/checkpoint.pt.
+    """
     ckpt_key, classes_key = _r2_keys_for(model_id)
     ckpt_path, classes_path = _local_paths_for(model_id)
     ckpt_path.parent.mkdir(parents=True, exist_ok=True)
-    if not ckpt_path.exists():
-        storage.download_to_path(ckpt_key, str(ckpt_path))
-    if not classes_path.exists():
-        storage.download_to_path(classes_key, str(classes_path))
+
+    def _sync(key: str, local: Path) -> None:
+        etag_marker = local.with_suffix(local.suffix + ".etag")
+        remote_etag: str | None = None
+        try:
+            remote_etag = storage.head_etag(key)
+        except Exception:
+            # If we can't reach R2 to check, fall back to the cached copy
+            # rather than blowing up startup.
+            remote_etag = None
+        local_etag = etag_marker.read_text().strip() if etag_marker.exists() else None
+        if local.exists() and remote_etag is not None and remote_etag == local_etag:
+            return  # cached copy is current
+        if local.exists() and remote_etag is None:
+            return  # offline / R2 unreachable, keep what we have
+        storage.download_to_path(key, str(local))
+        if remote_etag:
+            etag_marker.write_text(remote_etag)
+
+    _sync(ckpt_key, ckpt_path)
+    _sync(classes_key, classes_path)
     return ckpt_path, classes_path
 
 
