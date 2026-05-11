@@ -26,6 +26,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { listCars } from "@/api/cars";
 import { uploadClipForCar } from "@/api/clips";
 import { CarIcon } from "@/components/CarIcon";
+import { MicPermissionGate } from "@/components/MicPermissionGate";
+import { useMicPermission } from "@/hooks/useMicPermission";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
 const RECORD_SECONDS = 5;
@@ -64,6 +66,7 @@ export default function RecordForCarScreen() {
 
   const carsQ = useQuery({ queryKey: ["cars"], queryFn: listCars });
   const car = carsQ.data?.find((c) => c.id === id);
+  const mic = useMicPermission();
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(RECORD_SECONDS);
@@ -87,11 +90,16 @@ export default function RecordForCarScreen() {
   async function startRecording() {
     try {
       setErrorMsg(null);
-      const perm = await Audio.requestPermissionsAsync();
-      if (!perm.granted) {
-        setErrorMsg("Mic permission denied. Settings → Carzam → Microphone.");
-        setPhase("error");
-        return;
+      // Gate on mic permission. If not yet granted, request it and bail —
+      // the user can tap Record again after they grant.
+      if (mic.status !== "granted") {
+        const next = await mic.request();
+        if (next !== "granted") {
+          // Don't render an error message here — the MicPermissionGate UI
+          // (see below) shows the right CTA based on next ("denied" =>
+          // "Allow Microphone", "blocked" => "Open Settings").
+          return;
+        }
       }
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -185,23 +193,31 @@ export default function RecordForCarScreen() {
         </View>
 
         {phase === "idle" && (
-          <View style={styles.center}>
-            <Pressable onPress={startRecording}>
-              <LinearGradient
-                colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
-                start={{ x: 0.3, y: 0.2 }}
-                end={{ x: 0.7, y: 1 }}
-                style={styles.bigButton}
-              >
-                <CarIcon size={56} color="#fff" />
-              </LinearGradient>
-            </Pressable>
-            <Text style={styles.bigHint}>Tap to record 5 seconds</Text>
+          mic.status === "denied" || mic.status === "blocked" ? (
+            <MicPermissionGate
+              status={mic.status}
+              onRequest={() => void mic.request()}
+              onOpenSettings={mic.openSettings}
+            />
+          ) : (
+            <View style={styles.center}>
+              <Pressable onPress={startRecording}>
+                <LinearGradient
+                  colors={["#ffd9b8", "#ff7e1a", "#ff3d3d", "#8b0e2e"]}
+                  start={{ x: 0.3, y: 0.2 }}
+                  end={{ x: 0.7, y: 1 }}
+                  style={styles.bigButton}
+                >
+                  <CarIcon size={56} color="#fff" />
+                </LinearGradient>
+              </Pressable>
+              <Text style={styles.bigHint}>Tap to record 5 seconds</Text>
 
-            <Pressable onPress={pickFromFiles} style={styles.altLink}>
-              <Text style={styles.altLinkText}>or pick a WAV from Files</Text>
-            </Pressable>
-          </View>
+              <Pressable onPress={pickFromFiles} style={styles.altLink}>
+                <Text style={styles.altLinkText}>or pick a WAV from Files</Text>
+              </Pressable>
+            </View>
+          )
         )}
 
         {(phase === "recording" || phase === "uploading") && (

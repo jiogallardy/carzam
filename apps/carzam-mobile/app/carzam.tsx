@@ -30,6 +30,8 @@ import { recognizeAudio, submitAsNewCar } from "@/api/recognize";
 import type { RecognizeResponse } from "@/api/types";
 import { CarIcon } from "@/components/CarIcon";
 import { GlassCard } from "@/components/GlassCard";
+import { MicPermissionGate } from "@/components/MicPermissionGate";
+import { useMicPermission } from "@/hooks/useMicPermission";
 import { useModelStore } from "@/store/model";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
@@ -65,12 +67,19 @@ const recordingOptions: Audio.RecordingOptions = {
   web: { mimeType: "audio/wav", bitsPerSecond: 128_000 },
 };
 
-type Phase = "idle" | "recording" | "uploading" | "result" | "error";
+type Phase =
+  | "idle"
+  | "permission" // mic perms not yet granted — show MicPermissionGate
+  | "recording"
+  | "uploading"
+  | "result"
+  | "error";
 
 export default function CarzamModal() {
   const router = useRouter();
   const qc = useQueryClient();
   const activeModelId = useModelStore((s) => s.activeModelId);
+  const mic = useMicPermission();
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(RECORD_SECONDS);
   const [result, setResult] = useState<RecognizeResponse | null>(null);
@@ -81,71 +90,63 @@ export default function CarzamModal() {
   const peakDbRef = useRef<number>(-160);
   const liveDbRef = useRef<number>(-160);
   const [liveDb, setLiveDb] = useState<number>(-160);
+  // Once we've kicked off recording for this modal session, don't auto-start
+  // it again even if mic state flips back to granted (which can happen after
+  // returning from Settings while phase===result/error).
+  const startedRef = useRef(false);
 
-  // Auto-start recording, but ONLY after the modal's present transition has
-  // completed AND the app reports as foreground-active. Starting earlier hits
-  // iOS' "experience is currently in the background, so the audio session
-  // could not be activated" because expo-av's setAudioModeAsync rejects when
-  // the scene hasn't finished foregrounding yet.
+  // Drive phase from permission status. We DON'T touch the Audio API until
+  // we know we have permission — calling requestPermissionsAsync inside a
+  // useEffect race was the source of the "no prompt ever shown" bug.
   useEffect(() => {
-    let cancelled = false;
-    const handle = InteractionManager.runAfterInteractions(() => {
-      if (cancelled) return;
-      // Belt + suspenders: if for any reason AppState still says inactive
-      // (e.g. the modal is presenting from a backgrounded app), wait for it
-      // to flip to "active" before kicking off recording.
-      if (AppState.currentState === "active") {
-        start();
-      } else {
-        const sub = AppState.addEventListener("change", (next) => {
-          if (next === "active") {
-            sub.remove();
-            if (!cancelled) start();
+    if (mic.status === "unknown") return; // still reading initial state
+
+    if (mic.status === "granted") {
+      // Auto-start once when permission is granted and we haven't yet started.
+      // For all other phases (recording / uploading / result / error) we leave
+      // the existing flow alone — the user might have returned from Settings
+      // mid-result and we don't want to clobber it.
+      if (!startedRef.current && (phase === "idle" || phase === "permission")) {
+        startedRef.current = true;
+        // Same scheduling guard as before: wait for interactions + foreground.
+        let cancelled = false;
+        const handle = InteractionManager.runAfterInteractions(() => {
+          if (cancelled) return;
+          if (AppState.currentState === "active") {
+            start();
+          } else {
+            const sub = AppState.addEventListener("change", (next) => {
+              if (next === "active") {
+                sub.remove();
+                if (!cancelled) start();
+              }
+            });
           }
         });
+        return () => {
+          cancelled = true;
+          handle.cancel?.();
+        };
       }
-    });
-    return () => {
-      cancelled = true;
-      handle.cancel?.();
-      cleanup();
-    };
+    } else {
+      // Anything other than granted — show the permission gate unless we're
+      // already showing a result/error from a prior successful run.
+      if (phase === "idle" || phase === "permission") {
+        setPhase("permission");
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [mic.status]);
+
+  useEffect(() => () => cleanup(), []);
 
   async function start() {
     try {
       setErrorMsg(null);
 
-      // 1. Permission request. This MUST trigger the system prompt the first
-      //    time. If NSMicrophoneUsageDescription isn't in the built Info.plist,
-      //    iOS rejects with an NSError before showing any UI — a tell-tale
-      //    sign that the build wasn't generated with the right app.json.
-      let perm: Awaited<ReturnType<typeof Audio.requestPermissionsAsync>>;
-      try {
-        perm = await Audio.requestPermissionsAsync();
-      } catch (e) {
-        const raw = e instanceof Error ? e.message : String(e);
-        throw new Error(
-          `Mic permission request failed at OS level (${raw}). ` +
-            `This usually means NSMicrophoneUsageDescription is missing from ` +
-            `Info.plist — rebuild the dev client with EAS so it picks up ` +
-            `app.json plugins.`,
-        );
-      }
-      if (!perm.granted) {
-        setErrorMsg(
-          perm.canAskAgain
-            ? "Tap Allow when iOS asks for mic access."
-            : "Mic permission denied. Settings → Carzam → Microphone, then re-open Carzam.",
-        );
-        setPhase("error");
-        return;
-      }
-
-      // 2. Audio session: switch into a recording-friendly mode BEFORE creating
-      //    the Recording. Doing it after sometimes silently produces empty
-      //    files on iOS when the app was previously playing audio.
+      // Audio session: switch into a recording-friendly mode BEFORE creating
+      // the Recording. Doing it after sometimes silently produces empty
+      // files on iOS when the app was previously playing audio.
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
@@ -154,7 +155,7 @@ export default function CarzamModal() {
         playThroughEarpieceAndroid: false,
       });
 
-      // 3. Recording.
+      // Recording.
       const rec = new Audio.Recording();
       await rec.prepareToRecordAsync(recordingOptions);
       // Stream metering at ~10 Hz so the live core can react to mic level
@@ -261,6 +262,22 @@ export default function CarzamModal() {
             <Text style={styles.closeText}>×</Text>
           </Pressable>
         </View>
+
+        {phase === "permission" && mic.status !== "unknown" && mic.status !== "granted" && (
+          <MicPermissionGate
+            status={mic.status}
+            onRequest={async () => {
+              const next = await mic.request();
+              // If the user just granted, the status-driven effect above will
+              // pick it up and auto-start recording.
+              if (next === "blocked") {
+                // We attempted, OS won't re-prompt — surface the Settings CTA
+                // by letting the gate re-render in "blocked" state.
+              }
+            }}
+            onOpenSettings={mic.openSettings}
+          />
+        )}
 
         {(phase === "recording" || phase === "uploading") && (
           <ListeningView
