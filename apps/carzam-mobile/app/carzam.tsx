@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  AppState,
+  InteractionManager,
   Pressable,
   StyleSheet,
   Text,
@@ -80,10 +82,34 @@ export default function CarzamModal() {
   const liveDbRef = useRef<number>(-160);
   const [liveDb, setLiveDb] = useState<number>(-160);
 
-  // Auto-start recording on mount
+  // Auto-start recording, but ONLY after the modal's present transition has
+  // completed AND the app reports as foreground-active. Starting earlier hits
+  // iOS' "experience is currently in the background, so the audio session
+  // could not be activated" because expo-av's setAudioModeAsync rejects when
+  // the scene hasn't finished foregrounding yet.
   useEffect(() => {
-    start();
-    return () => cleanup();
+    let cancelled = false;
+    const handle = InteractionManager.runAfterInteractions(() => {
+      if (cancelled) return;
+      // Belt + suspenders: if for any reason AppState still says inactive
+      // (e.g. the modal is presenting from a backgrounded app), wait for it
+      // to flip to "active" before kicking off recording.
+      if (AppState.currentState === "active") {
+        start();
+      } else {
+        const sub = AppState.addEventListener("change", (next) => {
+          if (next === "active") {
+            sub.remove();
+            if (!cancelled) start();
+          }
+        });
+      }
+    });
+    return () => {
+      cancelled = true;
+      handle.cancel?.();
+      cleanup();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
