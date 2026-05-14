@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Field-Reversed Configuration (Helion / direct-drive style).
+  Two compact toroids are accelerated from opposite ends of a linear formation
+  chamber, collide in the middle, merge into a single FRC plasmoid which is
+  then magnetically compressed. Loops at ~5s.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <!-- Compact toroid plasma -->
+    <radialGradient id="ct" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#a8d8ff"/>
+      <stop offset="75%" stop-color="#5a3fff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#5a3fff" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Merged FRC: hotter, more violet -->
+    <radialGradient id="frcPlasma" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#ffffff"/>
+      <stop offset="20%" stop-color="#ffe5a6"/>
+      <stop offset="45%" stop-color="#ff5ecf"/>
+      <stop offset="80%" stop-color="#5a3fff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#5a3fff" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Chamber wall -->
+    <linearGradient id="wall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#1a1f2e"/>
+      <stop offset="50%" stop-color="#2a3146"/>
+      <stop offset="100%" stop-color="#0a0d14"/>
+    </linearGradient>
+    <!-- Coil copper -->
+    <linearGradient id="cu" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#c89a5a"/>
+      <stop offset="100%" stop-color="#5a3a18"/>
+    </linearGradient>
+
+    <filter id="bloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="bloomXL" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Backdrop -->
+  <rect width="1200" height="400" fill="#05060c"/>
+
+  <!-- ── CHAMBER (linear cylindrical vessel, side view) ── -->
+  <!-- Outer wall (top + bottom) -->
+  <rect x="40" y="148" width="1120" height="14" fill="url(#wall)" rx="2"/>
+  <rect x="40" y="238" width="1120" height="14" fill="url(#wall)" rx="2"/>
+  <!-- End caps (circular formation regions) -->
+  <ellipse cx="80" cy="200" rx="32" ry="58" fill="none" stroke="url(#wall)" stroke-width="10"/>
+  <ellipse cx="1120" cy="200" rx="32" ry="58" fill="none" stroke="url(#wall)" stroke-width="10"/>
+
+  <!-- ── COILS along the chamber ── -->
+  <g>
+    <!-- Each coil = a vertical capsule -->
+    <rect x="180" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="290" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="400" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="510" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="620" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="730" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="840" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="950" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+    <rect x="1060" y="138" width="14" height="124" rx="7" fill="url(#cu)"/>
+  </g>
+
+  <!-- ── LABEL ── -->
+  <g font-family="-apple-system, SF Pro Display, sans-serif" fill="rgba(255,255,255,0.42)">
+    <text x="80" y="100" font-size="11" letter-spacing="2" font-weight="700">FORMATION</text>
+    <text x="600" y="100" font-size="11" letter-spacing="2" font-weight="700" text-anchor="middle">COMPRESSION / FUSION</text>
+    <text x="1120" y="100" font-size="11" letter-spacing="2" font-weight="700" text-anchor="end">FORMATION</text>
+  </g>
+
+  <!-- ── PHASE 1: TWO COMPACT TOROIDS LAUNCHED FROM EACH END ── -->
+  <!-- Left CT moving right -->
+  <g filter="url(#bloomXL)">
+    <ellipse cx="0" cy="200" rx="55" ry="48" fill="url(#ct)">
+      <animate attributeName="cx" keyTimes="0;0.4;0.5;0.9;1"
+        values="80;560;600;600;80" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="rx" keyTimes="0;0.4;0.5;0.9;1"
+        values="55;55;0;0;55" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="ry" keyTimes="0;0.4;0.5;0.9;1"
+        values="48;48;0;0;48" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <!-- Right CT moving left -->
+  <g filter="url(#bloomXL)">
+    <ellipse cx="0" cy="200" rx="55" ry="48" fill="url(#ct)">
+      <animate attributeName="cx" keyTimes="0;0.4;0.5;0.9;1"
+        values="1120;640;600;600;1120" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="rx" keyTimes="0;0.4;0.5;0.9;1"
+        values="55;55;0;0;55" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="ry" keyTimes="0;0.4;0.5;0.9;1"
+        values="48;48;0;0;48" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- ── PHASE 2: MERGED FRC IN THE CENTER (appears at t=0.4–0.5, brightest at compression, fades by 0.9) ── -->
+  <g filter="url(#bloomXL)">
+    <ellipse cx="600" cy="200" rx="0" ry="0" fill="url(#frcPlasma)">
+      <animate attributeName="rx"
+        keyTimes="0;0.4;0.5;0.6;0.85;0.9;1"
+        values="0;0;90;55;55;0;0" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="ry"
+        keyTimes="0;0.4;0.5;0.6;0.85;0.9;1"
+        values="0;0;70;42;42;0;0" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity"
+        keyTimes="0;0.4;0.5;0.6;0.85;0.9;1"
+        values="0;0;1;1;1;0;0" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- Compression flash — bright shockwave -->
+  <circle cx="600" cy="200" r="0" fill="none" stroke="#ffffff" stroke-width="2">
+    <animate attributeName="r" keyTimes="0;0.5;0.55;1" values="0;0;160;160" dur="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" keyTimes="0;0.5;0.55;0.7;1" values="0;1;0.6;0;0" dur="5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Field-line streaks behind each CT (motion blur sense) -->
+  <g stroke="#a8d8ff" stroke-width="1" stroke-linecap="round" opacity="0.55">
+    <line x1="0" y1="200" x2="0" y2="200">
+      <animate attributeName="x1" keyTimes="0;0.4;0.41;1" values="20;500;500;20" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="x2" keyTimes="0;0.4;0.41;1" values="60;540;540;60" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" keyTimes="0;0.4;0.41;1" values="0.8;0.8;0;0" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="1200" y1="200" x2="1160" y2="200">
+      <animate attributeName="x1" keyTimes="0;0.4;0.41;1" values="1180;700;700;1180" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="x2" keyTimes="0;0.4;0.41;1" values="1140;660;660;1140" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" keyTimes="0;0.4;0.41;1" values="0.8;0.8;0;0" dur="5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

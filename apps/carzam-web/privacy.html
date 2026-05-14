@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy · Carzam</title>
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png" />
+<style>
+  body {
+    margin: 0; background: #050507; color: #fff; line-height: 1.7;
+    font-family: -apple-system, "SF Pro Display", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 56px 28px 96px; }
+  h1 { font-size: 38px; letter-spacing: -1px; margin: 0 0 8px; font-weight: 800; }
+  .updated { color: rgba(255,255,255,0.48); font-size: 13px; margin-bottom: 36px; }
+  h2 { font-size: 22px; letter-spacing: -0.3px; margin: 36px 0 12px; font-weight: 800; }
+  p, li { color: rgba(255,255,255,0.78); font-size: 15px; }
+  a { color: #ffb47a; }
+  .back { display: inline-block; margin-bottom: 24px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; }
+  .back:hover { color: #fff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="/">← Back to Carzam</a>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Effective May 14, 2026</p>
+
+  <p>
+    Carzam (the "App") identifies cars by their engine sound. This page
+    explains what data the App collects, why, and how you can delete it.
+  </p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li><strong>Audio recordings.</strong> When you tap the Carzam button, the
+      app records ~5 seconds of audio at 16&nbsp;kHz mono and uploads it to our
+      server for classification. The clip is stored so the audio model can be
+      improved.</li>
+    <li><strong>Account identifier.</strong> When you sign in with Apple or
+      Google, we store the unique identifier they give us (an opaque string),
+      plus the email and display name they choose to share. We never see your
+      password.</li>
+    <li><strong>Your "garage."</strong> Cars you add (year, make, model,
+      trim, color, notes) are stored on our server tied to your account.</li>
+    <li><strong>Predictions and discoveries.</strong> The model's outputs
+      (which car classes you have heard, with what confidence) are stored so
+      your collection persists across devices.</li>
+  </ul>
+
+  <h2>What we do NOT collect</h2>
+  <ul>
+    <li>Location data.</li>
+    <li>Contacts, photos, calendars, or other personal content.</li>
+    <li>Advertising identifiers (IDFA / GAID). No third-party trackers.</li>
+    <li>Continuous background audio — recording is explicit, 5 seconds at a time, after a tap.</li>
+  </ul>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li><strong>App functionality.</strong> Classifying what you record and showing the result.</li>
+    <li><strong>Model improvement.</strong> Audio clips you submit (especially "Add as new car" submissions) are reviewed and may be added to future training datasets. Clips tied to your account ID are pseudonymous — your name and email are not associated with individual clips when the dataset is processed.</li>
+    <li><strong>Account management.</strong> Your sign-in identifier is used to authenticate you and tie your data to you.</li>
+  </ul>
+
+  <h2>Who we share it with</h2>
+  <p>
+    Nobody, with these exceptions:
+  </p>
+  <ul>
+    <li><strong>Cloudflare R2</strong> — stores audio clips. They process the
+      bytes but cannot access them without our credentials.</li>
+    <li><strong>Hetzner Cloud</strong> — hosts our API and database in Germany or the United States.</li>
+    <li><strong>Apple &amp; Google</strong> — only for the OAuth handshake when you sign in. They don't receive your audio.</li>
+  </ul>
+  <p>
+    We do not sell or rent your data. We do not share it with advertisers.
+  </p>
+
+  <h2>Your rights</h2>
+  <ul>
+    <li><strong>Delete your account.</strong> Email <a href="mailto:privacy@carzam.app">privacy@carzam.app</a>
+      with the subject "Delete my account" from the email address tied to your account.
+      We delete your user record, garage, predictions, discoveries, and all
+      audio clips you submitted within 30 days.</li>
+    <li><strong>Export your data.</strong> Same email, subject "Export my data."
+      We send a JSON dump of everything tied to your account within 30 days.</li>
+    <li><strong>Stop sending clips.</strong> Audio is only uploaded when you tap the Carzam button. Don't tap it and nothing leaves the device.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>
+    Carzam is not directed to children under 13. If you believe a child
+    under 13 has created an account, email us and we'll delete it.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    If we change this policy materially, we'll post the new version here
+    and update the "Effective" date above. Material changes will also be
+    announced in-app.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions: <a href="mailto:privacy@carzam.app">privacy@carzam.app</a>.
+  </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Carzam — Identify any car by its engine sound</title>
+<meta name="description" content="A 5-second listen tells you what you're hearing. Ferrari V12, Porsche flat-6, AMG twin-turbo V8 — Carzam knows the difference." />
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="/assets/icon-512.png" />
+<meta property="og:title" content="Carzam — Identify any car by its engine sound" />
+<meta property="og:description" content="Shazam, but for engines. Coming to the App Store." />
+<meta property="og:image" content="/assets/icon-1024.png" />
+<meta name="theme-color" content="#050507" />
+<style>
+:root {
+  --bg: #050507;
+  --bg-elev: #0c0c12;
+  --text: #ffffff;
+  --text-mute: rgba(255,255,255,0.72);
+  --text-dim: rgba(255,255,255,0.48);
+  --border: rgba(255,255,255,0.10);
+  --glass-fill: rgba(255,255,255,0.05);
+  --accent: #ff7e1a;
+  --accent-hi: #ffb47a;
+  --accent-lo: #c81848;
+  --shadow-lift: 0 16px 48px rgba(0,0,0,0.4);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "SF Pro Display", "SF Pro", BlinkMacSystemFont,
+               "Inter", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+/* Tokamak background — full-bleed, behind everything */
+.bg-tokamak {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: slow-rot 60s linear infinite;
+}
+.bg-tokamak svg { width: 100%; height: 100%; display: block; }
+.bg-veil {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(5,5,7,0.0) 0%, rgba(5,5,7,0.55) 60%, rgba(5,5,7,0.85) 100%);
+  z-index: -1; pointer-events: none;
+}
+@keyframes slow-rot {
+  from { transform: rotate(0deg) scale(1.05); }
+  to   { transform: rotate(360deg) scale(1.05); }
+}
+
+/* Layout */
+.container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: rgba(5,5,7,0.55);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 800; letter-spacing: -0.5px; font-size: 19px;
+}
+.brand-mark { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 22px rgba(255,126,26,0.4); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  color: var(--text-mute); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: #fff; color: #050507; padding: 8px 16px; border-radius: 999px;
+  text-decoration: none; font-weight: 700; font-size: 13px;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.nav-cta:hover { transform: translateY(-1px); }
+
+/* Hero */
+.hero {
+  display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px;
+  align-items: center; padding: 88px 0 120px;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--accent-hi); font-size: 12px; letter-spacing: 1.8px;
+  font-weight: 700; text-transform: uppercase; margin-bottom: 22px;
+}
+.eyebrow::before {
+  content: ""; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: #6fdc8c; box-shadow: 0 0 10px #6fdc8c;
+}
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1.02; letter-spacing: -2px; margin: 0 0 18px;
+  font-weight: 800;
+  background: linear-gradient(180deg, #fff 0%, #fff 60%, rgba(255,255,255,0.65) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero h1 .accent {
+  background: linear-gradient(135deg, #ffd9b8, #ff7e1a, #ff3d3d);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero .lede {
+  font-size: 19px; color: var(--text-mute);
+  max-width: 540px; margin: 0 0 36px;
+}
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn {
+  padding: 14px 22px; border-radius: 14px; font-weight: 700; font-size: 15px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+  transition: transform 0.15s, opacity 0.15s, border-color 0.15s;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: #fff; color: #050507;
+  box-shadow: 0 8px 24px rgba(255,255,255,0.15);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--glass-fill); color: var(--text);
+  border: 1px solid var(--border); backdrop-filter: blur(20px);
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.20); }
+
+/* Phone mockup on the right */
+.phone-wrap { display: flex; justify-content: center; position: relative; }
+.phone {
+  width: 320px; height: 660px;
+  background: #050507;
+  border: 8px solid #1a1a1f; border-radius: 52px;
+  box-shadow: 0 50px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  overflow: hidden; position: relative;
+  display: flex; flex-direction: column;
+}
+.phone::before {
+  content: ""; position: absolute; top: 12px; left: 50%;
+  transform: translateX(-50%); width: 115px; height: 32px;
+  background: #000; border-radius: 0 0 16px 16px; z-index: 10;
+}
+.phone .screen {
+  flex: 1; position: relative;
+  background:
+    radial-gradient(circle at 60% 8%, rgba(255,80,30,0.45), transparent 50%),
+    radial-gradient(circle at 15% 100%, rgba(106,58,255,0.30), transparent 55%),
+    #050507;
+  padding: 60px 22px 100px; color: #fff;
+}
+.phone .meta-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: rgba(255,255,255,0.7);
+}
+.phone .listening-label {
+  margin-top: 18px; color: rgba(255,255,255,0.55);
+  font-size: 10px; letter-spacing: 2.5px; font-weight: 700;
+}
+.phone .timer { font-size: 56px; font-weight: 200; letter-spacing: -2px; margin: 8px 0 20px; }
+.frc-stack {
+  width: 260px; height: 90px; margin: 14px auto 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.frc-stack img { width: 100%; height: 100%; display: block; }
+.phone .result-card {
+  position: absolute; left: 22px; right: 22px; bottom: 96px;
+  padding: 14px 16px; border-radius: 18px;
+  background: rgba(20,20,28,0.55); backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30);
+}
+.phone .result-card .badge {
+  color: #ffb47a; font-size: 10px; letter-spacing: 1.8px; font-weight: 700;
+}
+.phone .result-card .name {
+  font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin-top: 4px;
+}
+.phone .result-card .conf {
+  display: inline-block; margin-top: 6px; padding: 2px 8px;
+  background: rgba(111,220,140,0.15); color: #6fdc8c;
+  border: 1px solid rgba(111,220,140,0.30); border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+}
+.phone .nav-bar {
+  position: absolute; bottom: 14px; left: 14px; right: 14px; height: 60px;
+  border-radius: 30px; backdrop-filter: blur(28px);
+  background: rgba(20,20,28,0.5); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-around;
+}
+.phone .nav-tab { color: var(--text-dim); font-size: 9px; font-weight: 600; }
+.phone .nav-tab.on { color: #fff; }
+.phone .center-btn {
+  width: 60px; height: 60px; border-radius: 50%; margin-top: -34px;
+  background: radial-gradient(circle at 35% 30%, #ffd9b8, #ff7e1a 35%, #ff3d3d 75%, #8b0e2e);
+  box-shadow: 0 8px 24px rgba(255,80,30,0.55), inset 0 1px 0 rgba(255,255,255,0.5);
+  border: 4px solid #050507;
+  display: flex; align-items: center; justify-content: center;
+}
+.phone .center-btn img { width: 28px; height: 28px; }
+
+/* Section base */
+section { padding: 88px 0; }
+section h2 {
+  font-size: clamp(32px, 4vw, 48px); letter-spacing: -1px;
+  margin: 0 0 12px; font-weight: 800;
+}
+section .section-sub {
+  color: var(--text-mute); font-size: 17px;
+  max-width: 600px; margin: 0 0 56px;
+}
+
+/* "How it works" — three step cards */
+.steps {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+}
+.glass {
+  position: relative; padding: 26px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lift);
+}
+.glass::before {
+  content: ""; position: absolute; top: 0; left: 8%; right: 8%;
+  height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+}
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,126,26,0.15); color: var(--accent-hi);
+  font-weight: 800; margin-bottom: 14px; font-size: 14px;
+  border: 1px solid rgba(255,126,26,0.30);
+}
+.step h3 { margin: 0 0 8px; font-size: 19px; letter-spacing: -0.3px; }
+.step p { color: var(--text-mute); margin: 0; font-size: 15px; }
+
+/* "What it can identify" */
+.classes-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.class-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,126,26,0.08), rgba(106,58,255,0.04));
+  border: 1px solid var(--border);
+}
+.class-card .label {
+  color: var(--accent-hi); font-size: 10px; letter-spacing: 1.5px;
+  font-weight: 700; text-transform: uppercase; margin-bottom: 6px;
+}
+.class-card .title { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; }
+.class-card .ex { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
+
+/* CTA */
+.cta {
+  margin: 0 auto; max-width: 720px; text-align: center;
+  padding: 56px 28px; border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,126,26,0.18), rgba(106,58,255,0.10));
+  backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), var(--shadow-lift);
+  position: relative; overflow: hidden;
+}
+.cta::before {
+  content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+}
+.cta h2 { font-size: 36px; margin: 0 0 10px; letter-spacing: -0.8px; }
+.cta p { color: var(--text-mute); margin: 0 0 24px; }
+.cta-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; }
+.cta-form input {
+  flex: 1; padding: 14px 18px; border-radius: 12px;
+  background: rgba(0,0,0,0.30); border: 1px solid var(--border);
+  color: #fff; font-size: 15px; outline: none;
+}
+.cta-form input::placeholder { color: var(--text-dim); }
+.cta-form input:focus { border-color: rgba(255,126,26,0.55); }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border); padding: 32px 0 48px;
+  color: var(--text-dim); font-size: 13px;
+}
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-inner a { color: var(--text-mute); text-decoration: none; margin-left: 22px; }
+.footer-inner a:hover { color: var(--text); }
+
+/* Mobile */
+@media (max-width: 880px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; padding: 56px 0 72px; }
+  .steps { grid-template-columns: 1fr; }
+  .classes-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-tokamak"><img src="/assets/tokamak.svg" alt=""/></div>
+<div class="bg-veil"></div>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <div class="brand">
+      <img class="brand-mark" src="/assets/icon-192.png" alt="Carzam"/>
+      Carzam
+    </div>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#identify">What it knows</a>
+      <a href="#beta">Beta</a>
+    </nav>
+    <a class="nav-cta" href="#beta">Join the beta</a>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Now in beta · iOS</div>
+      <h1>Identify any car<br/>by its <span class="accent">engine sound.</span></h1>
+      <p class="lede">
+        Five seconds is all it takes. Hold your phone near the car. Carzam
+        listens, then tells you what's revving — Ferrari V12, Porsche flat-6,
+        AMG twin-turbo V8. Built on a neural network that knows the difference.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#beta">Get early access</a>
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="meta-row"><span>9:41</span><span>•••</span></div>
+          <div style="text-align:center;">
+            <div class="listening-label">LISTENING</div>
+            <div class="timer">0:03</div>
+            <div class="frc-stack">
+              <img src="/assets/frc.svg" alt="Field-reversed configuration animation"/>
+            </div>
+          </div>
+          <div class="result-card">
+            <div class="badge">MATCH FOUND</div>
+            <div class="name">Ferrari 812 Superfast</div>
+            <div class="conf">V12 NA · 95% confidence</div>
+          </div>
+          <div class="nav-bar">
+            <div class="nav-tab on">Garage</div>
+            <div class="nav-tab">Found</div>
+            <div class="center-btn"><img src="/assets/icon-192.png" alt=""/></div>
+            <div class="nav-tab">Stats</div>
+            <div class="nav-tab">Me</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <h2>How it works.</h2>
+    <p class="section-sub">Three taps. The model does the rest.</p>
+    <div class="steps">
+      <div class="glass step">
+        <div class="step-num">1</div>
+        <h3>Tap to listen.</h3>
+        <p>One button. Five-second recording at 16 kHz. Hold the phone near the engine bay or exhaust.</p>
+      </div>
+      <div class="glass step">
+        <div class="step-num">2</div>
+        <h3>The model thinks.</h3>
+        <p>A CNN14 audio backbone trained on supercar and tuner clips classifies the engine family in ~200 ms.</p>
+      </div>
+      <div class="glass step">
+        <div class="step-num">3</div>
+        <h3>Collect them all.</h3>
+        <p>Every match unlocks the car in your "Found" collection. Like Shazam for engines, with a Pokédex.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT IT KNOWS -->
+  <section id="identify">
+    <h2>It knows the difference.</h2>
+    <p class="section-sub">21 engine families today. New ones added every training run, driven by what users submit.</p>
+    <div class="classes-grid">
+      <div class="class-card"><div class="label">V12 NA</div><div class="title">Ferrari 812 / F12</div><div class="ex">flat-plane &amp; Aston DB12 V12</div></div>
+      <div class="class-card"><div class="label">V10 NA</div><div class="title">Lambo Huracán / R8</div><div class="ex">5.2L NA, same physical engine</div></div>
+      <div class="class-card"><div class="label">FLAT-6 NA</div><div class="title">Porsche GT3 / GT4 RS</div><div class="ex">992 / Cayman family</div></div>
+      <div class="class-card"><div class="label">V8 NA FLAT</div><div class="title">Ferrari 458 / GT350</div><div class="ex">flat-plane crank</div></div>
+      <div class="class-card"><div class="label">V8 TT FLAT</div><div class="title">Ferrari F8 / McLaren 720S</div><div class="ex">488, SF90, 765LT</div></div>
+      <div class="class-card"><div class="label">V8 TT CROSS</div><div class="title">AMG C63 (M177)</div><div class="ex">cross-plane crank</div></div>
+      <div class="class-card"><div class="label">V8 SC</div><div class="title">Corvette ZR1 / Hellcat</div><div class="ex">supercharged 6.2L</div></div>
+      <div class="class-card"><div class="label">V6 TT HYBRID</div><div class="title">Ferrari 296 / Artura</div><div class="ex">+ electric assist</div></div>
+      <div class="class-card"><div class="label">I6 TT</div><div class="title">BMW M3 (S58) / Supra</div><div class="ex">M256 also</div></div>
+      <div class="class-card"><div class="label">I4 TURBO</div><div class="title">Civic Type R K20C1</div><div class="ex">EVO X 4B11T, Focus RS</div></div>
+      <div class="class-card"><div class="label">FLAT-4 TURBO</div><div class="title">Subaru WRX STI</div><div class="ex">EJ20 / EJ25</div></div>
+      <div class="class-card"><div class="label">OTHER</div><div class="title">Submit a clip</div><div class="ex">help us add new classes</div></div>
+    </div>
+  </section>
+
+  <!-- BETA CTA -->
+  <section id="beta">
+    <div class="cta">
+      <h2>Join the beta.</h2>
+      <p>Carzam is in private beta for iOS. Drop your email and we'll send a TestFlight invite.</p>
+      <form class="cta-form" onsubmit="handleSubmit(event)">
+        <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"/>
+        <button type="submit" class="btn btn-primary">Request invite</button>
+      </form>
+      <p id="submit-msg" style="color: #6fdc8c; margin-top: 16px; min-height: 1.4em;"></p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <span>© 2026 Carzam. Built on a neural net that's still learning.</span>
+    <span>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="mailto:hello@carzam.app">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // Stub form handler — replace with a real endpoint later.
+  function handleSubmit(e) {
+    e.preventDefault();
+    const email = e.target.email.value.trim();
+    const msg = document.getElementById("submit-msg");
+    if (!email) return;
+    msg.textContent = "Got it — we'll be in touch.";
+    e.target.reset();
+  }
+</script>
+</body>
+</html>
