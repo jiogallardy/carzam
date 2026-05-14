@@ -36,7 +36,7 @@
       "package": "com.carzam.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFC417"
+        "backgroundColor": "#F5E9D9"
       },
       "permissions": [
         "RECORD_AUDIO",
