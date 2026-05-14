@@ -183,6 +183,171 @@ def mark(audio_path: Path, start: float, end: float | None, label: str, regions:
     )
 
 
+@main.command(name="auto-label")
+@click.argument("url")
+@click.option("--car", required=True, help="Target car class — must have reference photos under --refs/<car>/")
+@click.option("--raw", type=click.Path(path_type=Path), default=Path("data/raw"))
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
+@click.option("--refs", type=click.Path(path_type=Path), default=Path("data/references"))
+@click.option("--video-cache", type=click.Path(path_type=Path), default=Path("data/video_cache"))
+@click.option("--keep-video", is_flag=True, help="Don't delete the mp4 after labeling (useful for debugging).")
+@click.option("--min-target-ratio", type=float, default=0.30,
+              help="Fraction of non-empty prefilter frames that must match target car. Below this, the whole video is dropped.")
+def auto_label_cmd(
+    url: str, car: str, raw: Path, regions: Path, refs: Path,
+    video_cache: Path, keep_video: bool, min_target_ratio: float,
+) -> None:
+    """Auto-label one YouTube video for the given car.
+
+    Downloads the video + audio, runs a video-level visual prefilter using
+    YOLOv8 + DINOv2 against reference photos in --refs/<car>/, then walks
+    5s windows applying VAD + CLAP audio gates and per-window visual checks.
+    Emits a regions.yaml drop-in for `carai window`.
+    """
+    import torch
+
+    from carai.data.auto_label import auto_label_video
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    auto_label_video(
+        url=url, car=car,
+        raw_dir=raw, regions_dir=regions, refs_dir=refs,
+        video_cache_dir=video_cache,
+        device=device,
+        min_prefilter_target_ratio=min_target_ratio,
+        keep_video_file=keep_video,
+    )
+
+
+@main.command(name="auto-label-batch")
+@click.option("--sources", type=click.Path(path_type=Path), default=Path("config/sources.yaml"),
+              help="Same format as the manual pipeline — car name → list of YouTube URLs.")
+@click.option("--cars", default=None,
+              help="Comma-separated subset of cars to process (default: all cars in sources).")
+@click.option("--raw", type=click.Path(path_type=Path), default=Path("data/raw"))
+@click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
+@click.option("--refs", type=click.Path(path_type=Path), default=Path("data/references"))
+@click.option("--video-cache", type=click.Path(path_type=Path), default=Path("data/video_cache"))
+@click.option("--keep-video", is_flag=True)
+@click.option("--skip-existing", is_flag=True,
+              help="Skip URLs that already have a regions.yaml.")
+def auto_label_batch_cmd(
+    sources: Path, cars: str | None, raw: Path, regions: Path, refs: Path,
+    video_cache: Path, keep_video: bool, skip_existing: bool,
+) -> None:
+    """Run auto-label across every URL in sources.yaml. Builds the reference
+    index once and reuses it for all videos."""
+    import torch
+    import yaml
+
+    from carai.data.auto_label import auto_label_video
+    from carai.data.download import video_id_from_url
+    from carai.data.regions import regions_path_for
+    from carai.data.visual import build_reference_index
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    src = yaml.safe_load(Path(sources).read_text())
+
+    if cars:
+        wanted = {c.strip() for c in cars.split(",")}
+        src = {k: v for k, v in src.items() if k in wanted}
+
+    console.print("[bold]building reference index[/bold]")
+    ref_index = build_reference_index(refs, device)
+    console.print(f"  indexed {len(ref_index.car_per_embedding)} photos "
+                  f"across {len(ref_index.cars)} cars")
+
+    n_total = sum(len(v) for v in src.values())
+    n_done = 0
+    n_kept = 0
+    for car, urls in src.items():
+        if car not in ref_index.cars:
+            console.print(f"[yellow]no reference photos for {car} — skipping its videos[/yellow]")
+            n_done += len(urls)
+            continue
+        for url in urls:
+            n_done += 1
+            try:
+                vid = video_id_from_url(url)
+            except ValueError:
+                console.print(f"[red]bad url[/red] {url}")
+                continue
+            if skip_existing and regions_path_for(regions, car, vid).exists():
+                console.print(f"[dim]skip existing[/dim] {car}/{vid}")
+                continue
+            console.print(f"\n[bold cyan]\\[{n_done}/{n_total}] {car}[/bold cyan] {url}")
+            try:
+                result = auto_label_video(
+                    url=url, car=car,
+                    raw_dir=raw, regions_dir=regions, refs_dir=refs,
+                    video_cache_dir=video_cache, device=device,
+                    ref_index=ref_index, keep_video_file=keep_video,
+                )
+                if result.video_kept:
+                    n_kept += 1
+            except Exception as e:
+                console.print(f"[red]failed[/red] {url}: {e}")
+    console.print(f"\n[green]done[/green] — kept {n_kept}/{n_total} videos")
+
+
+@main.command(name="visual-check")
+@click.argument("video", type=click.Path(path_type=Path, exists=True))
+@click.option("--car", required=True, help="Target car to check against.")
+@click.option("--refs", type=click.Path(path_type=Path), default=Path("data/references"))
+@click.option("--n-frames", type=int, default=10)
+def visual_check_cmd(video: Path, car: str, refs: Path, n_frames: int) -> None:
+    """Stand-alone visual prefilter on an existing video file. Prints what
+    the YOLO+DINOv2 stack thinks of each sampled frame — useful for
+    sanity-checking the reference photo library before running auto-label."""
+    import torch
+
+    from carai.data.visual import build_reference_index, load_car_detector, screen_video_for_target
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    ref_index = build_reference_index(refs, device)
+    detector = load_car_detector()
+    if car not in ref_index.cars:
+        raise click.UsageError(f"no reference photos for {car!r} under {refs}/{car}/")
+    result = screen_video_for_target(video, car, ref_index, detector, device, n_frames=n_frames)
+
+    table = Table(title=f"visual check: {video.name} (target={car})")
+    table.add_column("ts", justify="right")
+    table.add_column("cars")
+    table.add_column("best match")
+    table.add_column("score", justify="right")
+    table.add_column("interior", justify="right")
+    table.add_column("verdict")
+    for ts, v in zip(result["timestamps"], result["verdicts"]):
+        if v.is_target:
+            verdict = "[green]target[/green]"
+        elif v.is_empty and v.is_interior:
+            verdict = "[cyan]interior[/cyan]"
+        elif v.is_empty:
+            verdict = "[dim]unrelated[/dim]"
+        elif v.other_car_dominant:
+            verdict = "[red]other[/red]"
+        else:
+            verdict = "[yellow]weak[/yellow]"
+        table.add_row(
+            f"{ts:.1f}s",
+            str(v.n_cars_detected),
+            v.best_match_car or "-",
+            f"{v.best_match_score:.2f}",
+            f"{v.interior_score:.2f}" if v.is_empty else "-",
+            verdict,
+        )
+    console.print(table)
+    console.print(
+        f"target={result['target_ratio']:.2f}  "
+        f"interior={result['interior_ratio']:.2f}  "
+        f"acceptable={result['acceptable_ratio']:.2f}  "
+        f"other={result['other_ratio']:.2f}  "
+        f"majority={result['majority_car']}  "
+        f"=> [{'green' if result['keep'] else 'red'}]"
+        f"{'KEEP' if result['keep'] else 'DROP'}[/]"
+    )
+
+
 @main.command(name="review-web")
 @click.option("--sources", type=click.Path(path_type=Path), default=Path("config/sources.yaml"))
 @click.option("--regions", type=click.Path(path_type=Path), default=Path("data/regions"))
@@ -206,11 +371,14 @@ def label(manifest: Path) -> None:
 
 @main.command()
 @click.option("--config", type=click.Path(path_type=Path), default=Path("config/train.yaml"))
-def train(config: Path) -> None:
-    """Train the model."""
+@click.option("--family", default=None,
+              help="Specialist mode: train only on cars in this engine family "
+                   "(e.g. na_flat6, na_v12). Overrides the config's specialist_family.")
+def train(config: Path, family: str | None) -> None:
+    """Train the model. Use --family to train a v8 cascade specialist."""
     from carai.train import train as train_run
 
-    train_run(config)
+    train_run(config, specialist_family_override=family)
 
 
 @main.command(name="eval")
