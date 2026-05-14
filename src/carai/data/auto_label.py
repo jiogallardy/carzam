@@ -23,7 +23,9 @@ Notes:
 """
 from __future__ import annotations
 
+import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -56,16 +58,34 @@ console = Console()
 
 # ---------- download ----------
 
+def _yt_dlp_cmd() -> list[str]:
+    """Return the right argv prefix to invoke yt-dlp on this machine.
+
+    Prefers an absolute `yt-dlp` from PATH (covers venv-activated CLI usage),
+    falls back to `python -m yt_dlp` so callers from a non-activated venv
+    (e.g. a script run via `.venv/bin/python ...`) still work.
+    """
+    binary = shutil.which("yt-dlp")
+    if binary:
+        return [binary]
+    # Try venv-relative
+    venv_bin = Path(sys.executable).with_name("yt-dlp")
+    if venv_bin.exists():
+        return [str(venv_bin)]
+    return [sys.executable, "-m", "yt_dlp"]
+
+
 def _download_video_and_audio(url: str, video_out: Path, audio_out: Path) -> None:
     """One yt-dlp invocation that produces both an mp4 (for visuals) and
     a 16kHz mono WAV (for audio screening + downstream training)."""
     video_out.parent.mkdir(parents=True, exist_ok=True)
     audio_out.parent.mkdir(parents=True, exist_ok=True)
 
+    ytdlp = _yt_dlp_cmd()
+
     # Get a reasonably small mp4 — 360p is plenty for car detection.
-    # yt-dlp resolves the best match.
     cmd_video = [
-        "yt-dlp",
+        *ytdlp,
         "-f", "best[height<=480][ext=mp4]/best[ext=mp4]/best",
         "--no-warnings", "--quiet",
         "-o", str(video_out),
@@ -76,7 +96,7 @@ def _download_video_and_audio(url: str, video_out: Path, audio_out: Path) -> Non
     # Audio at 16kHz mono — same defaults as download.py
     tmp_audio = audio_out.with_suffix(".%(ext)s")
     cmd_audio = [
-        "yt-dlp",
+        *ytdlp,
         "-f", "bestaudio",
         "-x", "--audio-format", "wav",
         "--postprocessor-args", "-ac 1 -ar 16000",
@@ -192,6 +212,7 @@ def auto_label_video(
     audio_thresholds: ScreenThresholds = ScreenThresholds(),
     ref_index: ReferenceIndex | None = None,
     keep_video_file: bool = False,
+    require_window_visual: bool = True,
 ) -> AutoLabelResult:
     """Run the full auto-label pipeline on one YouTube URL.
 
@@ -286,6 +307,7 @@ def auto_label_video(
             visual = screen_window_visual(
                 video_path, start, window_s, car, ref_index, detector, device,
                 n_frames_per_window=n_window_frames,
+                require_acceptable=require_window_visual,
             )
         keep = audio_ok and visual["keep"]
         if keep:

@@ -31,6 +31,9 @@ import webbrowser
 from datetime import datetime
 from pathlib import Path
 
+import random
+import time as _time
+
 import requests
 import torch
 from PIL import Image, ImageDraw, ImageFont
@@ -57,104 +60,152 @@ from carai.data.visual import (
 
 console = Console()
 
-UA = {"User-Agent": "carAI-demo/0.1 (research; contact: localhost)"}
+UA = {"User-Agent": "carAI-research-bot/0.1 (https://github.com/local/carAI; contact: local)"}
+
+
+def _polite_get(url: str, params: dict | None = None, attempts: int = 4) -> requests.Response:
+    """GET with backoff on 429/5xx. Wikimedia rate-limits thumbnail generation
+    and bulk api.php hits, so we self-throttle: small jitter between every call
+    plus exponential backoff on errors."""
+    last_exc: Exception | None = None
+    for i in range(attempts):
+        _time.sleep(0.4 + random.random() * 0.3)
+        try:
+            r = requests.get(url, params=params, headers=UA, timeout=30)
+            if r.status_code in (429, 503):
+                # Honor Retry-After if provided, else exp backoff
+                ra = r.headers.get("Retry-After")
+                wait = float(ra) if ra and ra.isdigit() else (2 ** i) * 2.0
+                console.print(f"  [yellow]rate-limited, sleeping {wait:.1f}s[/yellow]")
+                _time.sleep(wait)
+                continue
+            r.raise_for_status()
+            return r
+        except requests.HTTPError as e:
+            last_exc = e
+            if e.response is not None and e.response.status_code in (429, 503):
+                _time.sleep((2 ** i) * 2.0)
+                continue
+            raise
+        except Exception as e:
+            last_exc = e
+            _time.sleep((2 ** i) * 1.0)
+    if last_exc:
+        raise last_exc
+    raise RuntimeError("polite_get exhausted attempts")
 
 
 # ---------- Wikimedia Commons scraper ----------
 
 def search_wikimedia_files(query: str, limit: int = 30) -> list[str]:
     """Return Commons File: titles matching `query`."""
-    r = requests.get(
+    r = _polite_get(
         "https://commons.wikimedia.org/w/api.php",
         params={
             "action": "query", "format": "json", "list": "search",
             "srsearch": query, "srnamespace": "6", "srlimit": str(limit),
         },
-        headers=UA, timeout=20,
     )
-    r.raise_for_status()
     return [hit["title"] for hit in r.json()["query"]["search"]]
 
 
-def resolve_file_urls(titles: list[str], thumb_width: int = 1024) -> list[str]:
-    """Get thumbnail URLs for File: titles."""
+def resolve_file_urls(titles: list[str]) -> list[str]:
+    """Get original-file URLs (not thumbnails — those go through a separate
+    rate-limited service). Original CDN is much more forgiving."""
     urls: list[str] = []
-    for i in range(0, len(titles), 30):
-        batch = "|".join(titles[i:i + 30])
-        r = requests.get(
+    for i in range(0, len(titles), 20):
+        batch = "|".join(titles[i:i + 20])
+        r = _polite_get(
             "https://commons.wikimedia.org/w/api.php",
             params={
                 "action": "query", "format": "json", "titles": batch,
-                "prop": "imageinfo", "iiprop": "url|mime",
-                "iiurlwidth": str(thumb_width),
+                "prop": "imageinfo", "iiprop": "url|mime|size",
             },
-            headers=UA, timeout=20,
         )
-        r.raise_for_status()
         for p in r.json()["query"]["pages"].values():
             for ii in p.get("imageinfo", []):
                 mime = ii.get("mime", "")
                 if "image" not in mime or "svg" in mime:
                     continue
-                url = ii.get("thumburl") or ii.get("url")
+                # Skip absurdly large originals (>15MB) — Wikimedia has some
+                # 50MB raw scans that would waste bandwidth.
+                if (ii.get("size") or 0) > 15_000_000:
+                    continue
+                url = ii.get("url")
                 if url:
                     urls.append(url)
     return urls
 
 
 def download_images(urls: list[str], out_dir: Path, max_n: int = 15) -> int:
-    """Download up to max_n images into out_dir. Returns count saved."""
+    """Download up to max_n images into out_dir, downscaling on save."""
     out_dir.mkdir(parents=True, exist_ok=True)
     saved = 0
-    for i, url in enumerate(urls):
+    for url in urls:
         if saved >= max_n:
             break
         try:
-            r = requests.get(url, headers=UA, timeout=20)
-            r.raise_for_status()
+            r = _polite_get(url)
             img = Image.open(io.BytesIO(r.content)).convert("RGB")
             if img.width < 200 or img.height < 200:
                 continue
-            ext = ".jpg"
-            img.save(out_dir / f"{saved:02d}{ext}", quality=85)
+            # Cap longest side at 1024 to keep DINOv2 inputs sane and disk small
+            if max(img.size) > 1024:
+                scale = 1024.0 / max(img.size)
+                img = img.resize(
+                    (int(img.width * scale), int(img.height * scale)),
+                    Image.LANCZOS,
+                )
+            img.save(out_dir / f"{saved:02d}.jpg", quality=85)
             saved += 1
         except Exception as e:
-            console.print(f"  [yellow]skip[/yellow] {url}: {e}")
+            console.print(f"  [yellow]skip[/yellow] {url[:80]}: {e}")
     return saved
+
+
+def _scrape_into(out_dir: Path, queries: list[str], min_count: int, max_count: int) -> None:
+    """Idempotently fill `out_dir` with images from Wikimedia. If the dir
+    already has >= min_count images, skip the network entirely."""
+    existing = list(out_dir.glob("*.jpg")) if out_dir.exists() else []
+    if len(existing) >= min_count:
+        console.print(f"  [dim]already have {len(existing)} in {out_dir}[/dim]")
+        return
+    out_dir.mkdir(parents=True, exist_ok=True)
+    titles: list[str] = []
+    for q in queries:
+        try:
+            titles.extend(search_wikimedia_files(q, limit=30))
+        except Exception as e:
+            console.print(f"  [yellow]search failed[/yellow] {q!r}: {e}")
+    seen: set[str] = set()
+    titles = [t for t in titles if not (t in seen or seen.add(t))]
+    try:
+        urls = resolve_file_urls(titles)
+    except Exception as e:
+        console.print(f"  [yellow]url resolve failed[/yellow]: {e}")
+        urls = []
+    # Pick from a wide range, not just the first N — searches tend to cluster
+    # similar shots up top.
+    random.shuffle(urls)
+    n = download_images(urls, out_dir, max_n=max_count)
+    console.print(f"  saved {n} photos -> {out_dir}")
 
 
 def ensure_references(refs_dir: Path) -> None:
     """Populate data/references/lexus_lfa/ and data/references/_interior/ if empty."""
-    lfa_dir = refs_dir / "lexus_lfa"
-    interior_dir = refs_dir / "_interior"
-
-    if not lfa_dir.exists() or len(list(lfa_dir.glob("*.jpg"))) < 5:
-        console.print("[bold]scraping Lexus LFA reference photos[/bold]")
-        # Multiple queries to maximize coverage of angles/colors
-        titles: list[str] = []
-        for q in ["Lexus LFA", "Lexus LFA Nurburgring", "Lexus LFA car"]:
-            titles.extend(search_wikimedia_files(q, limit=30))
-        # De-dup while preserving order
-        seen: set[str] = set()
-        titles = [t for t in titles if not (t in seen or seen.add(t))]
-        urls = resolve_file_urls(titles)
-        n = download_images(urls, lfa_dir, max_n=20)
-        console.print(f"  saved {n} LFA photos -> {lfa_dir}")
-
-    if not interior_dir.exists() or len(list(interior_dir.glob("*.jpg"))) < 5:
-        console.print("[bold]scraping interior reference photos[/bold]")
-        titles = []
-        for q in [
-            "car steering wheel interior",
-            "car dashboard cockpit",
-            "sports car interior driver POV",
-        ]:
-            titles.extend(search_wikimedia_files(q, limit=30))
-        seen = set()
-        titles = [t for t in titles if not (t in seen or seen.add(t))]
-        urls = resolve_file_urls(titles)
-        n = download_images(urls, interior_dir, max_n=15)
-        console.print(f"  saved {n} interior photos -> {interior_dir}")
+    console.print("[bold]ensuring Lexus LFA reference photos[/bold]")
+    _scrape_into(
+        refs_dir / "lexus_lfa",
+        ["Lexus LFA", "Lexus LFA Nurburgring", "Lexus LFA Spider"],
+        min_count=10, max_count=18,
+    )
+    console.print("[bold]ensuring interior reference photos[/bold]")
+    _scrape_into(
+        refs_dir / "_interior",
+        ["car steering wheel interior", "car dashboard cockpit",
+         "sports car interior", "car driver POV"],
+        min_count=8, max_count=14,
+    )
 
 
 # ---------- annotate frames with YOLO + DINO ----------
@@ -308,6 +359,13 @@ def main() -> None:
     ap.add_argument("--port", type=int, default=8011)
     ap.add_argument("--no-open", action="store_true")
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--min-target-ratio", type=float, default=0.30,
+                    help="Video-level prefilter: fraction of acceptable frames "
+                         "(target visible OR interior) needed to keep the video.")
+    ap.add_argument("--require-window-visual", action="store_true", default=False,
+                    help="Require each window to also pass the per-window visual "
+                         "check (target visible or interior). Default off — for "
+                         "the demo we just need the prefilter to admit the video.")
     args = ap.parse_args()
 
     refs_dir = Path("data/references")
@@ -341,6 +399,8 @@ def main() -> None:
         refs_dir=refs_dir, video_cache_dir=video_cache,
         device=device, ref_index=ref_index,
         keep_video_file=True,   # we need the mp4 for re-rendering frames
+        min_prefilter_target_ratio=args.min_target_ratio,
+        require_window_visual=args.require_window_visual,
     )
 
     video_id = result.video_id
