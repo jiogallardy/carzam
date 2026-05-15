@@ -146,11 +146,32 @@ def load_clap(model_id: str = "laion/clap-htsat-fused", device: torch.device | N
         for label, prompts in CLAP_PROMPTS.items():
             inputs = processor(text=prompts, return_tensors="pt", padding=True).to(device)
             emb = model.get_text_features(**inputs)
+            # transformers 5.x wraps the embedding in BaseModelOutputWithPooling;
+            # 4.x returned the raw tensor. Accept both.
+            emb = _as_pooled(emb)
             emb = torch.nn.functional.normalize(emb, dim=-1)
             text_embeds[label] = emb.mean(dim=0)  # prompt-ensemble
     payload = (model, processor, text_embeds, device)
     _CLAP_CACHE[cache_key] = payload
     return payload
+
+
+def _as_pooled(out) -> torch.Tensor:
+    """Extract the (B, D) embedding from a CLAP feature call.
+
+    transformers 4.x: tensor directly. 5.x: BaseModelOutputWithPooling.
+    """
+    if torch.is_tensor(out):
+        return out
+    if hasattr(out, "pooler_output") and out.pooler_output is not None:
+        return out.pooler_output
+    if hasattr(out, "text_embeds") and out.text_embeds is not None:
+        return out.text_embeds
+    if hasattr(out, "audio_embeds") and out.audio_embeds is not None:
+        return out.audio_embeds
+    if hasattr(out, "last_hidden_state"):
+        return out.last_hidden_state[:, 0]
+    raise TypeError(f"Cannot extract pooled embedding from {type(out).__name__}")
 
 
 @torch.no_grad()
@@ -165,6 +186,7 @@ def clap_label_scores(audio_48k: np.ndarray, clap_loaded) -> dict[str, float]:
     inputs = processor(audio=[audio_48k.astype(np.float32)],
                        sampling_rate=CLAP_SR, return_tensors="pt").to(device)
     audio_emb = model.get_audio_features(**inputs)
+    audio_emb = _as_pooled(audio_emb)
     audio_emb = torch.nn.functional.normalize(audio_emb, dim=-1).squeeze(0)
 
     labels = list(text_embeds.keys())

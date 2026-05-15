@@ -419,6 +419,71 @@ def listen(checkpoint: Path, duration: float, as_json: bool) -> None:
 
 
 @main.command()
+@click.argument("clip", type=click.Path(path_type=Path, exists=True))
+@click.option("--run-dir", type=click.Path(path_type=Path), required=True,
+              help="Path to a contrastive-trained run (must have prototypes.pt).")
+@click.option("--threshold", type=float, default=None,
+              help="Open-set cutoff: max cosine sim below this → 'unknown'. "
+                   "Default is the value baked into the embedding module.")
+@click.option("--json", "as_json", is_flag=True)
+def compare(clip: Path, run_dir: Path, threshold: float | None, as_json: bool) -> None:
+    """Embed CLIP and report the nearest known car prototype.
+
+    Unlike `infer` (which softmaxes over a fixed set), this can return
+    'unknown' when the closest prototype is too far away — useful for
+    handling cars the model has never been trained on.
+    """
+    import torch
+
+    from carai.embedding import DEFAULT_UNKNOWN_THRESHOLD, predict_clip_embedding
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    thresh = threshold if threshold is not None else DEFAULT_UNKNOWN_THRESHOLD
+    result = predict_clip_embedding(clip, run_dir, device=device, unknown_threshold=thresh)
+    if as_json:
+        # Trim embedding from JSON output by default — it's 128 floats
+        out = {k: v for k, v in result.items() if k != "embedding"}
+        click.echo(json.dumps(out, indent=2))
+        return
+
+    table = Table(show_header=False)
+    table.add_row("clip", str(clip))
+    table.add_row("nearest", f"{result['nearest_car']}  ({result['nearest_sim']:.3f})")
+    table.add_row("threshold", f"{result['threshold']:.3f}")
+    verdict_color = "green" if result["is_known"] else "yellow"
+    table.add_row(
+        "verdict",
+        f"[{verdict_color}]{result['verdict']}[/{verdict_color}]",
+    )
+    for name, sim in result["top_k"]:
+        table.add_row("", f"  {name}: {sim:.3f}")
+    console.print(table)
+
+
+@main.command()
+@click.argument("clip", type=click.Path(path_type=Path, exists=True))
+@click.option("--run-dir", type=click.Path(path_type=Path), required=True,
+              help="Path to a contrastive-trained run.")
+def embed(clip: Path, run_dir: Path) -> None:
+    """Print the 128-D L2-normalized embedding of CLIP as JSON.
+
+    Use this when you want to do your own nearest-neighbor lookups against
+    custom prototypes, run dimensionality reduction, or pipe embeddings
+    into another tool.
+    """
+    import torch
+
+    from carai.audio import load_wav
+    from carai.embedding import embed_audio, load_embedding_model
+
+    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+    model = load_embedding_model(run_dir, device)
+    audio, sr = load_wav(clip)
+    z = embed_audio(audio, sr, model, device)
+    click.echo(json.dumps({"clip": str(clip), "embedding": z.tolist()}))
+
+
+@main.command()
 @click.argument("clip")
 @click.option("--checkpoint", type=click.Path(path_type=Path), required=True)
 @click.option("--start", type=float, default=None,

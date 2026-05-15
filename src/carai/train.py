@@ -14,7 +14,9 @@ from collections import Counter
 
 from carai.data.dataset import CarAudioDataset
 from carai.data.manifest import read_manifest
+from carai.data.sampler import BalancedClassBatchSampler
 from carai.data.splits import split_by_video
+from carai.losses import supcon_loss
 from carai.models.multihead import (
     CARS,
     ENGINE_FAMILIES,
@@ -62,6 +64,10 @@ def make_optimizer(model: CarAudioModel, cfg: dict) -> torch.optim.Optimizer:
         groups.append(
             {"params": model.family_head.parameters(), "lr": cfg["train"]["lr_head"]}
         )
+    if model.embedding_head is not None:
+        groups.append(
+            {"params": model.embedding_head.parameters(), "lr": cfg["train"]["lr_head"]}
+        )
     return torch.optim.AdamW(groups, weight_decay=cfg["train"]["weight_decay"])
 
 
@@ -80,6 +86,7 @@ class EpochStats:
     state_acc: float
     family_loss: float = 0.0
     family_acc: float = 0.0
+    contrastive_loss: float = 0.0
 
 
 def compute_class_weights(rows, classes: tuple[str, ...], attr: str) -> torch.Tensor:
@@ -104,15 +111,22 @@ def run_epoch(
 ) -> EpochStats:
     is_train = optimizer is not None
     model.train(is_train)
-    car_loss_sum = state_loss_sum = family_loss_sum = 0.0
+    car_loss_sum = state_loss_sum = family_loss_sum = contrastive_loss_sum = 0.0
     car_correct = state_correct = family_correct = total = 0
+    contrastive_w = cfg["train"].get("contrastive_loss_weight", 0.0)
+    contrastive_t = cfg["train"].get("contrastive_temperature", 0.07)
+    has_embedding = model.embedding_head is not None
     for batch in loader:
         logmel = batch["logmel"].to(device)
         car_y = batch["car_idx"].to(device)
         state_y = batch["state_idx"].to(device)
         family_y = batch["family_idx"].to(device)
         with torch.set_grad_enabled(is_train):
-            car_logits, state_logits, family_logits = model(logmel)
+            if has_embedding:
+                car_logits, state_logits, family_logits, z = model.forward_with_embedding(logmel)
+            else:
+                car_logits, state_logits, family_logits = model(logmel)
+                z = None
             car_loss = F.cross_entropy(car_logits, car_y, weight=car_weights)
             state_loss = F.cross_entropy(state_logits, state_y)
             loss = (
@@ -125,6 +139,14 @@ def run_epoch(
                 loss = loss + fam_w * family_loss
                 family_loss_sum += family_loss.item() * logmel.size(0)
                 family_correct += (family_logits.argmax(1) == family_y).sum().item()
+            if z is not None and contrastive_w > 0.0:
+                # SupCon expects multiple same-class samples in batch — relies
+                # on BalancedClassBatchSampler at train time. At val time the
+                # default sampler may yield batches with no positives; that's
+                # fine because supcon_loss returns 0 in that case.
+                c_loss = supcon_loss(z, car_y, temperature=contrastive_t)
+                loss = loss + contrastive_w * c_loss
+                contrastive_loss_sum += c_loss.item() * logmel.size(0)
             if is_train:
                 assert optimizer is not None
                 optimizer.zero_grad()
@@ -142,11 +164,14 @@ def run_epoch(
         state_acc=state_correct / total,
         family_loss=family_loss_sum / total if total else 0.0,
         family_acc=family_correct / total if total else 0.0,
+        contrastive_loss=contrastive_loss_sum / total if total else 0.0,
     )
 
 
-def train(config_path: Path) -> Path:
+def train(config_path: Path, specialist_family_override: str | None = None) -> Path:
     cfg = yaml.safe_load(Path(config_path).read_text())
+    if specialist_family_override:
+        cfg.setdefault("train", {})["specialist_family"] = specialist_family_override
     torch.set_default_dtype(torch.float32)
 
     rows = read_manifest(cfg["paths"]["manifest"])
@@ -160,24 +185,66 @@ def train(config_path: Path) -> Path:
     )
 
     use_families_as_classes = cfg["train"].get("use_families_as_classes", False)
+    # Cascade-specialist mode: train only on rows for a specific family. The
+    # model output dimension equals the number of fine classes in that family.
+    specialist_family = cfg["train"].get("specialist_family")
+    cars_subset: tuple[str, ...] | None = None
+    if specialist_family:
+        from carai.models.multihead import CAR_TO_FAMILY
+        cars_subset = tuple(c for c, f in CAR_TO_FAMILY.items() if f == specialist_family)
+        if not cars_subset:
+            raise ValueError(f"no cars map to family {specialist_family!r}")
+        console.print(
+            f"[bold cyan]specialist mode: family={specialist_family}, "
+            f"cars={cars_subset}[/bold cyan]"
+        )
+
     if use_families_as_classes:
         console.print("[bold yellow]families-as-classes mode: training on 12 engine families[/bold yellow]")
     train_ds = CarAudioDataset(
         splits.train, train=True, seed=cfg["splits"]["seed"],
         use_families_as_classes=use_families_as_classes,
+        cars_subset=cars_subset,
     )
     val_ds = CarAudioDataset(
         splits.val, train=False,
         use_families_as_classes=use_families_as_classes,
+        cars_subset=cars_subset,
     )
 
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=cfg["train"]["batch_size"],
-        shuffle=True,
-        num_workers=cfg["train"]["num_workers"],
-        collate_fn=collate,
-    )
+    # Contrastive training needs balanced (K cars × N samples) batches so
+    # every anchor has ≥1 same-class positive. Falls back to plain shuffle
+    # when contrastive is disabled.
+    embedding_dim = cfg["train"].get("embedding_dim")
+    contrastive_w = cfg["train"].get("contrastive_loss_weight", 0.0)
+    use_balanced_sampler = embedding_dim is not None and contrastive_w > 0.0
+    if use_balanced_sampler:
+        K = cfg["train"].get("n_classes_per_batch", 8)
+        N = cfg["train"].get("n_samples_per_class", 4)
+        batch_sampler = BalancedClassBatchSampler(
+            train_ds.rows, n_classes_per_batch=K, n_samples_per_class=N,
+            seed=cfg["splits"]["seed"],
+        )
+        train_loader = DataLoader(
+            train_ds,
+            batch_sampler=batch_sampler,
+            num_workers=cfg["train"]["num_workers"],
+            collate_fn=collate,
+        )
+        console.print(
+            f"[bold cyan]contrastive mode:[/bold cyan] embedding_dim={embedding_dim}, "
+            f"batches of K={K} cars × N={N} samples, "
+            f"{batch_sampler.steps_per_epoch} steps/epoch"
+        )
+    else:
+        batch_sampler = None
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=cfg["train"]["batch_size"],
+            shuffle=True,
+            num_workers=cfg["train"]["num_workers"],
+            collate_fn=collate,
+        )
     val_loader = DataLoader(
         val_ds,
         batch_size=cfg["train"]["batch_size"],
@@ -188,21 +255,41 @@ def train(config_path: Path) -> Path:
 
     device = pick_device()
     weights_path = Path(cfg["paths"]["weights"])
-    # Family head only makes sense when fine classes != family classes.
+    # Family head only makes sense when fine classes != family classes AND
+    # we're not in specialist mode (specialist is already inside one family).
     use_family = (
         cfg["train"].get("family_loss_weight", 0.0) > 0.0
         and not use_families_as_classes
+        and not specialist_family
     )
-    active_classes = ENGINE_FAMILIES if use_families_as_classes else CARS
+    if cars_subset is not None:
+        active_classes = cars_subset
+    elif use_families_as_classes:
+        active_classes = ENGINE_FAMILIES
+    else:
+        active_classes = CARS
     model = CarAudioModel(
         weights_path if weights_path.exists() else None,
         n_cars=len(active_classes),
         n_families=len(ENGINE_FAMILIES) if use_family else None,
+        embedding_dim=embedding_dim,
     ).to(device)
     optimizer = make_optimizer(model, cfg)
 
     # Class weights for the (active) car head.
-    if use_families_as_classes:
+    if cars_subset is not None:
+        # Specialist mode: inverse-frequency weights over the subset only,
+        # computed from the rows that survive the subset filter.
+        from collections import Counter
+        allowed = set(cars_subset)
+        train_subset = [r for r in splits.train if r.label is not None and r.car in allowed]
+        counts = Counter(r.car for r in train_subset)
+        cw = torch.tensor(
+            [1.0 / max(counts.get(c, 0), 1) for c in cars_subset],
+            dtype=torch.float32,
+        )
+        car_weights = (cw * (len(cars_subset) / cw.sum())).to(device)
+    elif use_families_as_classes:
         from collections import Counter
         fam_counts = Counter(family_index_for_car(r.car) for r in splits.train if r.label is not None)
         cw = torch.tensor(
@@ -237,6 +324,10 @@ def train(config_path: Path) -> Path:
         classes_payload["families"] = list(ENGINE_FAMILIES)
     if use_families_as_classes:
         classes_payload["families_as_classes"] = True
+    if specialist_family:
+        classes_payload["specialist_family"] = specialist_family
+    if embedding_dim is not None:
+        classes_payload["embedding_dim"] = embedding_dim
     (run_dir / "classes.json").write_text(json.dumps(classes_payload, indent=2))
 
     base_lrs = [
@@ -267,9 +358,10 @@ def train(config_path: Path) -> Path:
         )
         elapsed = time.time() - ts
         fam_str = f" fam_acc={va.family_acc:.3f}" if use_family else ""
+        c_str = f" cl={tr.contrastive_loss:.3f}" if use_balanced_sampler else ""
         console.print(
             f"epoch {epoch:02d}  "
-            f"train: car_loss={tr.car_loss:.3f} car_acc={tr.car_acc:.3f}  "
+            f"train: car_loss={tr.car_loss:.3f} car_acc={tr.car_acc:.3f}{c_str}  "
             f"val: car_acc={va.car_acc:.3f}{fam_str}  "
             f"({elapsed:.1f}s)"
         )
@@ -286,5 +378,66 @@ def train(config_path: Path) -> Path:
                 break
 
     (run_dir / "history.json").write_text(json.dumps(history, indent=2))
+
+    # When we trained an embedding head, compute per-class prototypes by
+    # averaging the L2-normalized embeddings of train rows. These prototypes
+    # are the lookup table at inference time.
+    if embedding_dim is not None and model.embedding_head is not None:
+        console.print("[bold]computing prototypes from best checkpoint[/bold]")
+        best_ckpt = run_dir / "checkpoint.pt"
+        if best_ckpt.exists():
+            model.load_state_dict(torch.load(best_ckpt, map_location=device, weights_only=True))
+        prototypes = compute_prototypes(model, train_ds, active_classes, device)
+        torch.save(prototypes, run_dir / "prototypes.pt")
+        console.print(f"  wrote {run_dir / 'prototypes.pt'}  "
+                      f"shape={tuple(prototypes['embeddings'].shape)}, "
+                      f"{len(prototypes['cars'])} classes")
+
     console.print(f"[bold]done.[/bold] run dir: {run_dir}")
     return run_dir
+
+
+@torch.no_grad()
+def compute_prototypes(
+    model: CarAudioModel,
+    train_ds: CarAudioDataset,
+    cars: tuple[str, ...],
+    device: torch.device,
+    batch_size: int = 32,
+) -> dict:
+    """Per-class mean of L2-normalized embeddings, re-normalized. Returns
+    a dict suitable for torch.save:
+        {
+            "cars":      [class names],
+            "embeddings": (n_classes, embedding_dim) float32,
+            "n_samples": (n_classes,) int   — how many rows averaged
+        }
+    Classes with zero train samples land as a zero vector + n_samples=0.
+    """
+    if model.embedding_head is None:
+        raise RuntimeError("model has no embedding head")
+    model.eval()
+    loader = DataLoader(
+        train_ds, batch_size=batch_size, shuffle=False, collate_fn=collate,
+    )
+    sums = {c: torch.zeros(model.embedding_dim or 0, device=device) for c in cars}
+    counts = {c: 0 for c in cars}
+    for batch in loader:
+        logmel = batch["logmel"].to(device)
+        z = model.embed(logmel)
+        for emb, idx in zip(z, batch["car_idx"]):
+            c = cars[int(idx)]
+            sums[c] += emb
+            counts[c] += 1
+    embeddings = torch.zeros(len(cars), model.embedding_dim or 0, device=device)
+    n_samples = torch.zeros(len(cars), dtype=torch.long)
+    for i, c in enumerate(cars):
+        if counts[c] > 0:
+            avg = sums[c] / counts[c]
+            embeddings[i] = torch.nn.functional.normalize(avg, dim=-1)
+            n_samples[i] = counts[c]
+    return {
+        "cars": list(cars),
+        "embeddings": embeddings.cpu(),
+        "n_samples": n_samples,
+    }

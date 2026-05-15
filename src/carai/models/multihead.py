@@ -85,6 +85,9 @@ def family_index_for_car(car: str) -> int:
     return ENGINE_FAMILIES.index(family)
 
 
+BACKBONE_DIM = 2048
+
+
 class CarAudioModel(nn.Module):
     def __init__(
         self,
@@ -92,16 +95,30 @@ class CarAudioModel(nn.Module):
         n_cars: int = len(CARS),
         n_states: int = len(STATES),
         n_families: int | None = None,
+        embedding_dim: int | None = None,
     ) -> None:
         super().__init__()
         self.backbone = build_backbone(weights_path)
-        self.car_head = nn.Linear(2048, n_cars)
-        self.state_head = nn.Linear(2048, n_states)
+        self.car_head = nn.Linear(BACKBONE_DIM, n_cars)
+        self.state_head = nn.Linear(BACKBONE_DIM, n_states)
         # Optional coarse engine-family head (hierarchical training).
         # When loaded from older checkpoints without this head, n_families is None.
         self.family_head: nn.Linear | None = (
-            nn.Linear(2048, n_families) if n_families is not None else None
+            nn.Linear(BACKBONE_DIM, n_families) if n_families is not None else None
         )
+        # Optional projection head for contrastive / metric learning.
+        # Produces L2-normalized 128-D embeddings used for nearest-prototype
+        # inference and open-set rejection. Pre-existing checkpoints don't
+        # have this — load_state_dict with strict=False keeps them working.
+        self.embedding_dim = embedding_dim
+        self.embedding_head: nn.Sequential | None = None
+        if embedding_dim is not None:
+            self.embedding_head = nn.Sequential(
+                nn.Linear(BACKBONE_DIM, 512),
+                nn.ReLU(inplace=True),
+                nn.Linear(512, embedding_dim),
+            )
+
         nn.init.xavier_uniform_(self.car_head.weight)
         nn.init.xavier_uniform_(self.state_head.weight)
         nn.init.zeros_(self.car_head.bias)
@@ -109,12 +126,50 @@ class CarAudioModel(nn.Module):
         if self.family_head is not None:
             nn.init.xavier_uniform_(self.family_head.weight)
             nn.init.zeros_(self.family_head.bias)
+        if self.embedding_head is not None:
+            for m in self.embedding_head:
+                if isinstance(m, nn.Linear):
+                    nn.init.xavier_uniform_(m.weight)
+                    nn.init.zeros_(m.bias)
 
     def forward(
         self, logmel: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
+        """Returns (car_logits, state_logits, family_logits).
+
+        Kept stable for backwards compatibility with infer/eval. Callers that
+        want the embedding should use `forward_with_embedding` instead.
+        """
         emb = self.backbone(logmel)
         car_logits = self.car_head(emb)
         state_logits = self.state_head(emb)
         family_logits = self.family_head(emb) if self.family_head is not None else None
         return car_logits, state_logits, family_logits
+
+    def forward_with_embedding(
+        self, logmel: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None, torch.Tensor | None]:
+        """Same as forward but also returns the L2-normalized embedding when
+        an embedding head is configured. Returns None for the embedding when
+        the model is in classifier-only mode (so callers can detect that case)."""
+        emb = self.backbone(logmel)
+        car_logits = self.car_head(emb)
+        state_logits = self.state_head(emb)
+        family_logits = self.family_head(emb) if self.family_head is not None else None
+        z = None
+        if self.embedding_head is not None:
+            z = self.embedding_head(emb)
+            z = torch.nn.functional.normalize(z, dim=-1)
+        return car_logits, state_logits, family_logits, z
+
+    @torch.no_grad()
+    def embed(self, logmel: torch.Tensor) -> torch.Tensor:
+        """Convenience: return the L2-normalized embedding only. Errors if
+        the model wasn't built with an embedding head."""
+        if self.embedding_head is None:
+            raise RuntimeError(
+                "model has no embedding head — load a contrastive-trained checkpoint"
+            )
+        emb = self.backbone(logmel)
+        z = self.embedding_head(emb)
+        return torch.nn.functional.normalize(z, dim=-1)
