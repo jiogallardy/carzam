@@ -1,0 +1,27 @@
+paths:
+  manifest: data/manifest.csv
+  runs_dir: runs
+  weights: weights/Cnn14_mAP=0.431.pth
+splits:
+  ratios:
+  - 0.7
+  - 0.15
+  - 0.15
+  seed: 42
+train:
+  batch_size: 32
+  car_loss_weight: 1.0
+  contrastive_loss_weight: 1.0
+  contrastive_temperature: 0.2
+  early_stop_patience: 8
+  embedding_dim: 128
+  family_loss_weight: 0.3
+  lr_backbone: 5.0e-05
+  lr_head: 0.0003
+  max_epochs: 20
+  n_classes_per_batch: 8
+  n_samples_per_class: 4
+  num_workers: 0
+  state_loss_weight: 0.0
+  warmup_epochs: 2
+  weight_decay: 0.0001
