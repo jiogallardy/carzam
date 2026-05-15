@@ -1,0 +1,31 @@
+# Variant C: Variant A + wider batches (more negatives per anchor).
+# Hypothesis: with K=8 cars × N=4 samples, an anchor has 3 same-class
+# positives + 28 different-class negatives. More negatives = harder
+# contrastive task = more discriminative embeddings. K=12 × N=4 = 44-batch.
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  batch_size: 44                    # only used if contrastive off
+  num_workers: 0
+  max_epochs: 40
+  early_stop_patience: 12
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 2
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.3
+
+  embedding_dim: 128
+  contrastive_loss_weight: 1.0
+  contrastive_temperature: 0.20
+  n_classes_per_batch: 12           # ↑ from 8 — more negatives
+  n_samples_per_class: 4

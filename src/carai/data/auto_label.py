@@ -75,23 +75,29 @@ def _yt_dlp_cmd() -> list[str]:
     return [sys.executable, "-m", "yt_dlp"]
 
 
-def _download_video_and_audio(url: str, video_out: Path, audio_out: Path) -> None:
-    """One yt-dlp invocation that produces both an mp4 (for visuals) and
-    a 16kHz mono WAV (for audio screening + downstream training)."""
-    video_out.parent.mkdir(parents=True, exist_ok=True)
-    audio_out.parent.mkdir(parents=True, exist_ok=True)
+def _download_video_and_audio(
+    url: str, video_out: Path, audio_out: Path,
+    audio_only: bool = False,
+) -> None:
+    """yt-dlp invocation. When audio_only=True, skips the mp4 entirely —
+    a 150MB video download per URL is wasteful when the visual gate is off.
 
+    Returns once at least audio_out exists (and video_out too, if not audio_only).
+    """
+    audio_out.parent.mkdir(parents=True, exist_ok=True)
     ytdlp = _yt_dlp_cmd()
 
-    # Get a reasonably small mp4 — 360p is plenty for car detection.
-    cmd_video = [
-        *ytdlp,
-        "-f", "best[height<=480][ext=mp4]/best[ext=mp4]/best",
-        "--no-warnings", "--quiet",
-        "-o", str(video_out),
-        url,
-    ]
-    subprocess.run(cmd_video, check=True)
+    if not audio_only:
+        video_out.parent.mkdir(parents=True, exist_ok=True)
+        # 360-480p mp4 is plenty for car detection — keeps download small.
+        cmd_video = [
+            *ytdlp,
+            "-f", "best[height<=480][ext=mp4]/best[ext=mp4]/best",
+            "--no-warnings", "--quiet",
+            "-o", str(video_out),
+            url,
+        ]
+        subprocess.run(cmd_video, check=True)
 
     # Audio at 16kHz mono — same defaults as download.py
     tmp_audio = audio_out.with_suffix(".%(ext)s")
@@ -109,6 +115,13 @@ def _download_video_and_audio(url: str, video_out: Path, audio_out: Path) -> Non
         candidates = list(audio_out.parent.glob(f"{audio_out.stem}*.wav"))
         if candidates:
             candidates[0].rename(audio_out)
+
+
+def _wav_duration(path: Path) -> float:
+    """Get duration in seconds from a wav file header (cheap — no full decode)."""
+    import soundfile as sf
+    info = sf.info(str(path))
+    return info.frames / float(info.samplerate)
 
 
 # ---------- per-window iteration ----------
@@ -227,53 +240,68 @@ def auto_label_video(
     video_path = video_cache_dir / car / f"{video_id}.mp4"
     regions_path = regions_path_for(regions_dir, car, video_id)
 
-    # 1. Models
-    detector = load_car_detector()
-    if ref_index is None:
+    # Audio-only fast path: when both visual gates are disabled, skip the
+    # mp4 download entirely. A 150MB video per URL is wasteful when nothing
+    # consumes it.
+    audio_only = (
+        min_prefilter_target_ratio <= 0.0 and not require_window_visual
+    )
+
+    # 1. Models — only load detector when we'll actually use it.
+    detector = None
+    if not audio_only:
+        detector = load_car_detector()
+    if ref_index is None and not audio_only:
         console.print(f"[bold]building reference index[/bold] ({refs_dir})")
         ref_index = build_reference_index(refs_dir, device)
         console.print(f"  indexed {len(ref_index.car_per_embedding)} photos "
                       f"across {len(ref_index.cars)} cars")
-    if car not in ref_index.cars:
+    # ref_index existence is only enforced when the visual gate runs.
+    if ref_index is not None and car not in ref_index.cars and not audio_only:
         raise ValueError(
             f"target car {car!r} has no reference photos under {refs_dir}. "
             f"Add ~15 images to {refs_dir / car}/ first."
         )
 
-    # 2. Download (skip if both files already present)
-    if not (audio_path.exists() and video_path.exists()):
-        console.print(f"[bold]downloading[/bold] {url}")
-        _download_video_and_audio(url, video_path, audio_path)
+    # 2. Download — audio-only when visual is off.
+    need_video = (not audio_only) and (not video_path.exists())
+    need_audio = not audio_path.exists()
+    if need_video or need_audio:
+        console.print(f"[bold]downloading[/bold] {'audio only' if audio_only else 'video+audio'} {url}")
+        _download_video_and_audio(url, video_path, audio_path, audio_only=audio_only)
 
-    duration = probe_video_duration(video_path)
+    # Duration: from wav header in audio-only, ffprobe-on-mp4 otherwise.
+    duration = _wav_duration(audio_path) if audio_only else probe_video_duration(video_path)
 
-    # 3. Video-level visual prefilter
-    console.print(f"[bold]visual prefilter[/bold] target={car}, "
-                  f"{n_prefilter_frames} frames")
-    prefilter = screen_video_for_target(
-        video_path, car, ref_index, detector, device,
-        n_frames=n_prefilter_frames,
-        min_target_ratio=min_prefilter_target_ratio,
-    )
-    console.print(
-        f"  target={prefilter['n_target']}/{prefilter['n_frames']}  "
-        f"interior={prefilter['n_interior']}  "
-        f"other={prefilter['n_other']}  "
-        f"unrelated={prefilter['n_empty_unrelated']}  "
-        f"majority={prefilter['majority_car']}  "
-        f"keep={'yes' if prefilter['keep'] else 'NO'}"
-    )
-    if not prefilter["keep"]:
-        # Write an all-skip regions file so we don't re-process this video later
-        all_skip = [Region(0.0, duration, "skip")] if duration > 0 else []
-        write_regions(regions_path, video_id=video_id, duration=duration, regions=all_skip)
-        if not keep_video_file and video_path.exists():
-            video_path.unlink()
-        return AutoLabelResult(
-            url=url, car=car, video_id=video_id, duration=duration,
-            video_kept=False, video_prefilter=prefilter, decisions=[],
-            regions=all_skip, regions_path=regions_path,
+    # 3. Video-level visual prefilter — only when we have a video to look at.
+    if not audio_only:
+        console.print(f"[bold]visual prefilter[/bold] target={car}, "
+                      f"{n_prefilter_frames} frames")
+        prefilter = screen_video_for_target(
+            video_path, car, ref_index, detector, device,
+            n_frames=n_prefilter_frames,
+            min_target_ratio=min_prefilter_target_ratio,
         )
+        console.print(
+            f"  target={prefilter['n_target']}/{prefilter['n_frames']}  "
+            f"interior={prefilter['n_interior']}  "
+            f"other={prefilter['n_other']}  "
+            f"unrelated={prefilter['n_empty_unrelated']}  "
+            f"majority={prefilter['majority_car']}  "
+            f"keep={'yes' if prefilter['keep'] else 'NO'}"
+        )
+        if not prefilter["keep"]:
+            all_skip = [Region(0.0, duration, "skip")] if duration > 0 else []
+            write_regions(regions_path, video_id=video_id, duration=duration, regions=all_skip)
+            if not keep_video_file and video_path.exists():
+                video_path.unlink()
+            return AutoLabelResult(
+                url=url, car=car, video_id=video_id, duration=duration,
+                video_kept=False, video_prefilter=prefilter, decisions=[],
+                regions=all_skip, regions_path=regions_path,
+            )
+    else:
+        prefilter = None  # noqa — explicitly skipped in audio-only mode
 
     # 4. Audio screening models (heavy — loaded only past prefilter)
     console.print("[bold]loading audio models[/bold] (silero VAD + CLAP)")
@@ -300,9 +328,9 @@ def auto_label_video(
             break
 
         audio_verdict = screen_window(win_16k, win_48k, vad, clap_loaded, audio_thresholds)
-        visual = {"keep": True, "reason": "skipped"}
+        visual = {"keep": True, "reason": "audio-only" if audio_only else "skipped"}
         audio_ok = audio_verdict.is_clean
-        if audio_ok:
+        if audio_ok and not audio_only:
             # Only spend ffmpeg/YOLO/DINO cycles on windows that passed audio.
             visual = screen_window_visual(
                 video_path, start, window_s, car, ref_index, detector, device,
