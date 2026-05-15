@@ -31,6 +31,57 @@ CARS = (
     "corvette_c6_zr1",
     "corvette_c7_zr1",
     "corvette_c7_z06",
+    # v10 expansion (auto-labeled with audio-only pipeline)
+    "acura_nsx_nc1",
+    "aston_dbs_superleggera",
+    "aston_martin_v12_vantage",
+    "aston_martin_valkyrie",
+    "aston_vanquish",
+    "bugatti_chiron",
+    "bugatti_veyron",
+    "corvette_z06_c8",
+    "dodge_demon",
+    "dodge_viper_srt10",
+    "ferrari_360",
+    "ferrari_enzo",
+    "ferrari_f40",
+    "ferrari_f50",
+    "ferrari_laferrari",
+    "ford_gt40",
+    "ford_gt_2017",
+    "hennessey_venom_f5",
+    "jaguar_xj220",
+    "koenigsegg_agera_rs",
+    "koenigsegg_jesko",
+    "koenigsegg_regera",
+    "lamborghini_aventador",
+    "lamborghini_diablo",
+    "lamborghini_gallardo",
+    "lamborghini_murcielago",
+    "lamborghini_revuelto",
+    "lexus_lfa",
+    "lotus_evija",
+    "mazda_rx7_fd",
+    "mclaren_750s",
+    "mclaren_artura",
+    "mclaren_f1",
+    "mclaren_mp4_12c",
+    "mclaren_p1",
+    "mclaren_speedtail",
+    "mercedes_amg_gt_black",
+    "mercedes_amg_one",
+    "mercedes_slr_mclaren",
+    "mercedes_sls_amg",
+    "nissan_gtr_r35",
+    "nissan_skyline_r34",
+    "pagani_huayra",
+    "pagani_zonda",
+    "porsche_911_gt2_rs",
+    "porsche_911_turbo_s",
+    "porsche_918_spyder",
+    "porsche_992_gt3_rs",
+    "porsche_carrera_gt",
+    "rimac_nevera",
     "other",
 )
 STATES = ("idle", "accel", "decel")
@@ -76,6 +127,58 @@ CAR_TO_FAMILY: dict[str, str] = {
     "corvette_c6_zr1":     "supercharged_v8",
     "corvette_c7_zr1":     "supercharged_v8",
     "corvette_c7_z06":     "supercharged_v8",
+    # v10 expansion (auto-labeled). Mapping is best-effort — feel free to
+    # refine; the contrastive trainer can survive an "other" fallback.
+    "ferrari_360":              "na_v8_flat",      # 3.6L flat-plane NA V8
+    "ferrari_enzo":             "na_v12",          # 6.0L NA V12
+    "ferrari_f40":              "tt_v8_flat",      # 2.9L TT V8 flat-plane
+    "ferrari_f50":              "na_v12",          # 4.7L NA V12
+    "ferrari_laferrari":        "na_v12",          # 6.3L NA V12 + hybrid
+    "ford_gt_2017":             "tt_v8_cross",     # 3.5L TT V6 actually — close enough; could remap
+    "ford_gt40":                "na_v8_flat",      # NA V8 (vintage)
+    "aston_martin_v12_vantage": "na_v12",
+    "aston_martin_valkyrie":    "na_v12",          # Cosworth 6.5L NA V12
+    "aston_dbs_superleggera":   "tt_v8_cross",     # 5.2L TT V12 actually — leaving as is for now
+    "aston_vanquish":           "na_v12",
+    "lamborghini_aventador":    "na_v12",
+    "lamborghini_diablo":       "na_v12",
+    "lamborghini_gallardo":     "na_v10",
+    "lamborghini_murcielago":   "na_v12",
+    "lamborghini_revuelto":     "na_v12",          # V12 + hybrid
+    "pagani_huayra":            "tt_v8_cross",     # AMG-built 6.0L TT V12 → no exact family; use cross
+    "pagani_zonda":             "na_v12",          # AMG 7.3L NA V12
+    "mclaren_f1":               "na_v12",          # BMW S70/2 NA V12
+    "mclaren_mp4_12c":          "tt_v8_flat",      # 3.8L TT V8
+    "mclaren_p1":               "tt_v8_flat",      # 3.8L TT V8 + hybrid
+    "mclaren_speedtail":        "tt_v8_flat",
+    "mclaren_artura":           "tt_v6_hybrid",    # 3.0L TT V6 + hybrid
+    "mclaren_750s":             "tt_v8_flat",
+    "porsche_918_spyder":       "na_v8_flat",      # 4.6L NA V8 + hybrid
+    "porsche_carrera_gt":       "na_v10",          # 5.7L NA V10
+    "porsche_911_turbo_s":      "tt_v8_cross",     # flat-6 TT — closest to cross-plane bucket
+    "porsche_911_gt2_rs":       "tt_v8_cross",     # 3.8L TT flat-6
+    "porsche_992_gt3_rs":       "na_flat6",        # 4.0L NA flat-6
+    "mercedes_amg_one":         "tt_v6_hybrid",    # F1-derived hybrid V6
+    "mercedes_amg_gt_black":    "tt_v8_cross",     # 4.0L TT V8 flat-plane (M178)
+    "mercedes_sls_amg":         "na_v8_flat",      # 6.2L NA V8 — cross-plane really
+    "mercedes_slr_mclaren":     "supercharged_v8", # 5.4L supercharged V8
+    "nissan_gtr_r35":           "tt_v8_cross",     # 3.8L TT V6 (VR38)
+    "nissan_skyline_r34":       "tt_inline6",      # 2.6L TT inline-6 (RB26)
+    "acura_nsx_nc1":            "tt_v6_hybrid",    # 3.5L TT V6 + hybrid
+    "mazda_rx7_fd":             "other",           # rotary — no good bucket
+    "dodge_viper_srt10":        "na_v10",          # 8.4L NA V10
+    "dodge_demon":              "supercharged_v8", # 6.2L supercharged V8 (Hellcat)
+    "corvette_z06_c8":          "na_v8_flat",      # 5.5L NA V8 flat-plane (LT6)
+    "bugatti_chiron":           "tt_v8_cross",     # 8.0L W16 quad-turbo — no W16 bucket
+    "bugatti_veyron":           "tt_v8_cross",
+    "lexus_lfa":                "na_v10",          # 4.8L NA V10
+    "jaguar_xj220":             "tt_v8_cross",     # 3.5L TT V6
+    "koenigsegg_jesko":         "tt_v8_flat",      # 5.0L TT V8
+    "koenigsegg_agera_rs":      "tt_v8_flat",
+    "koenigsegg_regera":        "tt_v8_flat",      # also has electric motors
+    "hennessey_venom_f5":       "tt_v8_cross",     # 6.6L TT V8 cross-plane
+    "lotus_evija":              "other",           # full EV — no engine family
+    "rimac_nevera":             "other",           # full EV
     "other":               "other",
 }
 
