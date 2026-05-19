@@ -113,8 +113,30 @@ def _load(model_id: str) -> LoadedModel:
     classes = json.loads(Path(classes_path).read_text())
     cars = tuple(classes["cars"])
     states = tuple(classes["states"])
-    model = CarAudioModel(weights_path=None, n_cars=len(cars), n_states=len(states)).to(_DEVICE)
+
+    # Auto-detect optional heads from the saved state dict so this loader
+    # handles every model generation (v6 fine-only, v7 families-as-classes,
+    # v9+ family+contrastive). Without this, strict load fails on any model
+    # that has heads the constructor wasn't told about.
     state = torch.load(ckpt_path, map_location=_DEVICE, weights_only=True)
+    n_families = (
+        state["family_head.weight"].shape[0]
+        if "family_head.weight" in state else None
+    )
+    # The contrastive embedding head is a small MLP — its first Linear lives
+    # at embedding_head.0 in our nn.Sequential. classes.json also carries
+    # embedding_dim for contrastive runs; prefer that, fall back to state.
+    embedding_dim = classes.get("embedding_dim")
+    if embedding_dim is None and "embedding_head.2.weight" in state:
+        embedding_dim = state["embedding_head.2.weight"].shape[0]
+
+    model = CarAudioModel(
+        weights_path=None,
+        n_cars=len(cars),
+        n_states=len(states),
+        n_families=n_families,
+        embedding_dim=embedding_dim,
+    ).to(_DEVICE)
     model.load_state_dict(state)
     model.eval()
     return LoadedModel(id=model_id, model=model, cars=cars, states=states)

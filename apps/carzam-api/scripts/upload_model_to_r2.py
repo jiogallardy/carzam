@@ -37,6 +37,22 @@ def upload_pair(client, bucket: str, ckpt: Path, classes: Path, ckpt_key: str, c
     client.upload_file(str(classes), bucket, classes_key)
 
 
+def upload_optional_extras(
+    client, bucket: str, run_dir: Path, key_prefix: str,
+) -> None:
+    """Upload any extra artifacts the run dir might contain (prototypes for
+    contrastive runs, config.yaml). Each is optional — silently skipped if
+    not present so this is safe for non-contrastive runs."""
+    for filename in ("prototypes.pt", "config.yaml"):
+        path = run_dir / filename
+        if not path.exists():
+            continue
+        key = f"{key_prefix}{filename}"
+        size_mb = path.stat().st_size / 1e6
+        print(f"  -> s3://{bucket}/{key} ({size_mb:.1f} MB)")
+        client.upload_file(str(path), bucket, key)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("run_dir", help="path to the training run dir containing checkpoint.pt + classes.json")
@@ -81,12 +97,15 @@ def main() -> int:
             f"model/{args.model_id}/checkpoint.pt",
             f"model/{args.model_id}/classes.json",
         )
+        upload_optional_extras(client, bucket, run_dir, f"model/{args.model_id}/")
         if args.also_default:
             print("also writing to legacy default slot")
             upload_pair(client, bucket, ckpt, classes, "model/checkpoint.pt", "model/classes.json")
+            upload_optional_extras(client, bucket, run_dir, "model/")
     else:
         print(f"uploading {run_dir.name} to legacy default slot (model/checkpoint.pt)")
         upload_pair(client, bucket, ckpt, classes, "model/checkpoint.pt", "model/classes.json")
+        upload_optional_extras(client, bucket, run_dir, "model/")
 
     print("done.")
     return 0
