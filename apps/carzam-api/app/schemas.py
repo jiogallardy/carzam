@@ -79,6 +79,38 @@ class RecognizeResponse(BaseModel):
     model_id: str = "default"
 
 
+class AggregateRecognizeResponse(BaseModel):
+    """Shazam-style aggregated prediction across a sliding window.
+
+    The mobile app polls this endpoint with a growing audio buffer
+    (every 2s, capped at ~15s). It commits the result when
+    `is_confident` flips true on two consecutive polls; if
+    `couldnt_place` stays true through the cap, it shows the friendly
+    "Couldn't quite place that one" message.
+    """
+    predicted_class_id: str | None
+    predicted_display_name: str | None
+    confidence: float
+    # True when confidence >= 0.60 — the mobile may commit on stable hit.
+    is_confident: bool
+    # True when confidence < 0.40 — surface the friendly fallback copy.
+    couldnt_place: bool
+    # How many 5s windows the server actually scored. Useful for the
+    # client to know if its buffer is long enough to trust.
+    n_windows_aggregated: int
+    duration_seconds: float
+    top3: list[TopCandidate]
+    silence: bool = False
+    model_id: str = "default"
+    # Only set when commit=true: a real clip was saved + a discovery
+    # was processed. Identical shape to RecognizeResponse's fields.
+    clip_id: uuid.UUID | None = None
+    discovery_unlocked: bool = False
+    completion_percent: float | None = None
+    n_discovered: int | None = None
+    n_total: int | None = None
+
+
 class ModelInfo(BaseModel):
     id: str
     label: str

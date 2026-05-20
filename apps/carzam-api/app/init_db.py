@@ -17,10 +17,24 @@ async def create_tables() -> None:
         await conn.run_sync(Base.metadata.create_all)
 
 
+def _derive_image_url(seed: dict) -> str | None:
+    """Default image_url to the /car-classes/<id>/image proxy route unless
+    the seed explicitly provided one. 'other' has no real image — null it.
+    """
+    if "image_url" in seed:
+        return seed["image_url"]
+    car_id = seed["id"]
+    if car_id == "other":
+        return None
+    return f"/car-classes/{car_id}/image"
+
+
 async def seed_car_classes(session: AsyncSession) -> None:
-    """Upsert car_classes from seeds. Updates display_name/description/engine_family/sort_order."""
+    """Upsert car_classes from seeds. Updates display_name/description/
+    engine_family/sort_order/image_url on conflict."""
     for seed in CAR_CLASS_SEEDS:
-        stmt = pg_insert(CarClass).values(**seed)
+        values = {**seed, "image_url": _derive_image_url(seed)}
+        stmt = pg_insert(CarClass).values(**values)
         stmt = stmt.on_conflict_do_update(
             index_elements=["id"],
             set_={
@@ -28,6 +42,7 @@ async def seed_car_classes(session: AsyncSession) -> None:
                 "description": stmt.excluded.description,
                 "engine_family": stmt.excluded.engine_family,
                 "sort_order": stmt.excluded.sort_order,
+                "image_url": stmt.excluded.image_url,
             },
         )
         await session.execute(stmt)

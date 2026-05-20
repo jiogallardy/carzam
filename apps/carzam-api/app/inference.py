@@ -32,8 +32,26 @@ from app.config import settings
 _DEVICE = torch.device("cpu")  # Hetzner box has no GPU; CPU is fine for CNN14
 
 WINDOW_SECONDS = 5.0
-OTHER_THRESHOLD = 0.40
+HOP_SECONDS = 2.5             # window stride for sliding-window aggregate
+OTHER_THRESHOLD = 0.40        # confidence floor for the single-window endpoint
 SILENCE_RMS_THRESHOLD = 0.005
+
+# Aggregate (Shazam-style) thresholds. Raw softmax probs across 72 classes
+# top out around 0.20-0.30 even for confident predictions, so we use a
+# combined absolute-floor + margin-over-runner-up rule. Three knobs:
+#
+#   * AGG_MIN_WINDOWS_FOR_CONFIDENT — single 5s shot is too noisy. Require
+#     >=3 windows aggregated (=> >=10s of audio) before committing.
+#   * AGG_CONFIDENT_MIN_TOP1 — absolute floor on top-1 probability.
+#   * AGG_CONFIDENT_MARGIN_RATIO — top-1 must beat top-2 by this much.
+#
+# Random-noise calibration: random clips hit top-1 ~0.10-0.18 and margins
+# ~1.3-1.7 by chance, so we need both gates to be stricter than that.
+AGG_MIN_WINDOWS_FOR_CONFIDENT = 3
+AGG_CONFIDENT_MIN_TOP1 = 0.18
+AGG_CONFIDENT_MARGIN_RATIO = 1.7
+AGG_UNKNOWN_MAX_TOP1 = 0.08          # below this top-1 -> "couldn't place"
+AGG_UNKNOWN_MAX_MARGIN = 1.25        # if top1/top2 < this -> "couldn't place"
 
 # Hot LRU cap. Each CNN14 checkpoint is ~318 MB; 2 models ≈ 700 MB resident.
 # A CX22 (4 GB) handles 2 comfortably; bump if you upsize the box.
@@ -223,6 +241,17 @@ def _wav_bytes_to_window(wav_bytes: bytes) -> torch.Tensor:
     return torch.from_numpy(np.ascontiguousarray(audio))
 
 
+def _wav_bytes_to_mono_array(wav_bytes: bytes) -> np.ndarray:
+    """Decode WAV → float32 mono at SAMPLE_RATE (32 kHz). Resamples if needed.
+    Returns the full audio without trimming/padding so the caller can slide
+    its own windows."""
+    import soundfile as sf
+    audio, sr = sf.read(io.BytesIO(wav_bytes), dtype="float32", always_2d=False)
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)
+    return resample_to(audio, src_sr=sr, dst_sr=SAMPLE_RATE).astype(np.float32, copy=False)
+
+
 def predict_bytes(wav_bytes: bytes, model_id: str | None = None) -> dict[str, Any]:
     """Run inference. If model_id is None, uses the configured default."""
     chosen_id = model_id or _default_id
@@ -274,6 +303,124 @@ def predict_bytes(wav_bytes: bytes, model_id: str | None = None) -> dict[str, An
         "state_confidence": float(state_probs[state_top1]),
         "top3": top3,
         "all_probs": all_probs,
+        "model_run_id": settings().model_run_id,
+        "model_id": chosen_id,
+    }
+
+
+def predict_bytes_aggregate(
+    wav_bytes: bytes, model_id: str | None = None,
+) -> dict[str, Any]:
+    """Sliding-window inference for Shazam-style continuous listening.
+
+    Slides 5s windows at 2.5s hop across the input audio, runs the
+    classifier on each, averages softmax probabilities, returns the
+    aggregated top guess + a confidence verdict suitable for the mobile
+    "is the answer stable yet" UX.
+
+    For clips shorter than ~5s we fall back to single-window prediction.
+    Empty / silent clips return is_silent=True.
+    """
+    chosen_id = model_id or _default_id
+    loaded = _get(chosen_id)
+
+    audio = _wav_bytes_to_mono_array(wav_bytes)
+    if len(audio) < int(2.0 * SAMPLE_RATE):
+        raise ValueError(f"clip too short: {len(audio) / SAMPLE_RATE:.1f}s, need >= 2s")
+
+    # Whole-clip silence detection up front — saves window-by-window cycles.
+    rms = float(np.sqrt(np.mean(audio * audio)))
+    if rms < SILENCE_RMS_THRESHOLD:
+        return {
+            "predicted_class_id": None,
+            "predicted_display_name": None,
+            "predicted_confidence": 0.0,
+            "is_confident": False,
+            "couldnt_place": False,
+            "n_windows_aggregated": 0,
+            "duration_seconds": len(audio) / SAMPLE_RATE,
+            "top3": [],
+            "model_run_id": settings().model_run_id,
+            "model_id": chosen_id,
+            "silence": True,
+        }
+
+    win = int(WINDOW_SECONDS * SAMPLE_RATE)
+    hop = int(HOP_SECONDS * SAMPLE_RATE)
+
+    # Build the list of window start offsets. For <5s clips we use a
+    # single zero-padded window so we still return a meaningful answer.
+    if len(audio) < win:
+        starts = [0]
+        padded = np.concatenate([audio, np.zeros(win - len(audio), dtype=np.float32)])
+        windows = [padded]
+    else:
+        starts = list(range(0, len(audio) - win + 1, hop))
+        if not starts:
+            starts = [0]
+        windows = [audio[s:s + win] for s in starts]
+
+    # Run inference on each window and accumulate softmax probabilities.
+    n_cars = len(loaded.cars)
+    sum_probs = np.zeros(n_cars, dtype=np.float64)
+    n_windows = 0
+    for w in windows:
+        w_rms = float(np.sqrt(np.mean(w * w)))
+        if w_rms < SILENCE_RMS_THRESHOLD:
+            continue  # skip silent windows so they don't dilute the average
+        logmel = compute_logmel(torch.from_numpy(np.ascontiguousarray(w))).unsqueeze(0).to(_DEVICE)
+        with torch.no_grad():
+            out = loaded.model(logmel)
+            car_logits = out[0]
+            probs = F.softmax(car_logits, dim=-1).squeeze(0).cpu().numpy()
+        sum_probs += probs.astype(np.float64)
+        n_windows += 1
+
+    if n_windows == 0:
+        # Entire clip was silence under the per-window RMS gate.
+        return {
+            "predicted_class_id": None,
+            "predicted_display_name": None,
+            "predicted_confidence": 0.0,
+            "is_confident": False,
+            "couldnt_place": False,
+            "n_windows_aggregated": 0,
+            "duration_seconds": len(audio) / SAMPLE_RATE,
+            "top3": [],
+            "model_run_id": settings().model_run_id,
+            "model_id": chosen_id,
+            "silence": True,
+        }
+
+    avg_probs = (sum_probs / n_windows).astype(np.float32)
+    car_order = np.argsort(-avg_probs)
+    car_top1 = int(car_order[0])
+    top_conf = float(avg_probs[car_top1])
+    top2_conf = float(avg_probs[car_order[1]]) if len(car_order) > 1 else 0.0
+    margin = top_conf / max(top2_conf, 1e-6)
+
+    top3 = [(loaded.cars[i], float(avg_probs[i])) for i in car_order[:3]]
+
+    # Combined verdict — absolute floor + margin + min-windows requirement.
+    is_confident = (
+        n_windows >= AGG_MIN_WINDOWS_FOR_CONFIDENT
+        and top_conf >= AGG_CONFIDENT_MIN_TOP1
+        and margin >= AGG_CONFIDENT_MARGIN_RATIO
+    )
+    couldnt_place = (
+        top_conf < AGG_UNKNOWN_MAX_TOP1
+        or margin < AGG_UNKNOWN_MAX_MARGIN
+    )
+    predicted = loaded.cars[car_top1] if not couldnt_place else None
+
+    return {
+        "predicted_class_id": predicted,
+        "predicted_confidence": top_conf,
+        "is_confident": is_confident,
+        "couldnt_place": couldnt_place,
+        "n_windows_aggregated": n_windows,
+        "duration_seconds": len(audio) / SAMPLE_RATE,
+        "top3": top3,
         "model_run_id": settings().model_run_id,
         "model_id": chosen_id,
     }
