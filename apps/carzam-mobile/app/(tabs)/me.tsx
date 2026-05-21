@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { listModels } from "@/api/recognize";
-import type { ModelInfo } from "@/api/types";
+import { listModelClasses, listModels } from "@/api/recognize";
+import type { CarClass, ModelInfo } from "@/api/types";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { GlassCard } from "@/components/GlassCard";
 import { useAuthStore } from "@/store/auth";
@@ -17,6 +18,10 @@ export default function MeScreen() {
 
   const activeModelId = useModelStore((s) => s.activeModelId);
   const setActiveModelId = useModelStore((s) => s.setActiveModelId);
+
+  // Tracked separately from `activeModelId` so a user can browse classes
+  // without committing to switching their default model.
+  const [expandedModelId, setExpandedModelId] = useState<string | null>(null);
 
   const modelsQ = useQuery({
     queryKey: ["models"],
@@ -71,18 +76,28 @@ export default function MeScreen() {
                     sub={`(${modelsQ.data.default_id})`}
                     selected={activeModelId === null}
                     badge={null}
+                    expanded={false}
                     onPress={() => setActiveModelId(null)}
+                    onToggleExpand={() => {}}
                   />
-                  {modelsQ.data.models.map((m, i) => (
-                    <ModelRow
-                      key={m.id}
-                      label={m.label}
-                      sub={m.is_default ? "default" : null}
-                      selected={activeModelId === m.id}
-                      badge={m.is_loaded ? "hot" : null}
-                      onPress={() => setActiveModelId(m.id)}
-                      isFirst={false}
-                    />
+                  {modelsQ.data.models.map((m) => (
+                    <View key={m.id}>
+                      <ModelRow
+                        label={m.label}
+                        sub={m.is_default ? "default" : null}
+                        selected={activeModelId === m.id}
+                        badge={m.is_loaded ? "hot" : null}
+                        expanded={expandedModelId === m.id}
+                        onPress={() => {
+                          setActiveModelId(m.id);
+                          setExpandedModelId(expandedModelId === m.id ? null : m.id);
+                        }}
+                        onToggleExpand={() =>
+                          setExpandedModelId(expandedModelId === m.id ? null : m.id)
+                        }
+                      />
+                      {expandedModelId === m.id && <ModelClassesPanel modelId={m.id} />}
+                    </View>
                   ))}
                 </View>
               )}
@@ -106,14 +121,18 @@ function ModelRow({
   sub,
   selected,
   badge,
+  expanded,
   onPress,
+  onToggleExpand,
   isFirst,
 }: {
   label: string;
   sub: string | null;
   selected: boolean;
   badge: string | null;
+  expanded: boolean;
   onPress: () => void;
+  onToggleExpand: () => void;
   isFirst?: boolean;
 }) {
   return (
@@ -138,10 +157,62 @@ function ModelRow({
         </View>
         {sub && <Text style={styles.modelRowSub}>{sub}</Text>}
       </View>
+      <Pressable
+        hitSlop={10}
+        onPress={onToggleExpand}
+        style={styles.expandToggle}
+      >
+        <Text style={[styles.expandChevron, expanded && styles.expandChevronOn]}>
+          {expanded ? "▾" : "▸"}
+        </Text>
+      </Pressable>
       <View style={[styles.radio, selected && styles.radioOn]}>
         {selected && <View style={styles.radioInner} />}
       </View>
     </Pressable>
+  );
+}
+
+/**
+ * Renders the car classes a model can identify as a wrapped list of pills.
+ * Lazy-fetches on mount (only when expanded) and caches via react-query
+ * so toggling open/closed doesn't re-hit the server.
+ */
+function ModelClassesPanel({ modelId }: { modelId: string }) {
+  const q = useQuery({
+    queryKey: ["models", modelId, "classes"],
+    queryFn: () => listModelClasses(modelId),
+    staleTime: 5 * 60_000,
+  });
+  if (q.isLoading) {
+    return (
+      <View style={styles.classesPanel}>
+        <ActivityIndicator color="#fff" size="small" />
+      </View>
+    );
+  }
+  if (q.error || !q.data) {
+    return (
+      <View style={styles.classesPanel}>
+        <Text style={styles.modelError}>Couldn't load classes for this model.</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.classesPanel}>
+      <Text style={styles.classesHeading}>
+        Identifies {q.data.length} {q.data.length === 1 ? "car" : "cars"}
+      </Text>
+      <View style={styles.pillRow}>
+        {q.data.map((c) => (
+          <View key={c.id} style={styles.pill}>
+            <Text style={styles.pillText} numberOfLines={1}>
+              {c.display_name}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
@@ -235,4 +306,53 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   signOutText: { color: colors.danger, fontWeight: "700" },
+
+  expandToggle: {
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.xs,
+  },
+  expandChevron: {
+    color: colors.textDim,
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  expandChevronOn: { color: colors.text },
+
+  classesPanel: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(255,255,255,0.06)",
+    backgroundColor: "rgba(0,0,0,0.15)",
+  },
+  classesHeading: {
+    color: colors.textMuted,
+    fontSize: 11,
+    textTransform: "uppercase",
+    letterSpacing: 1.4,
+    fontWeight: "700",
+    marginBottom: spacing.sm,
+  },
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.10)",
+  },
+  pillText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: "600",
+  },
 });

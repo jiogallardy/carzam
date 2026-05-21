@@ -1,6 +1,7 @@
 import { api } from "./client";
 import type {
   AggregateRecognizeResponse,
+  CarClass,
   ModelsResponse,
   RecognizeResponse,
   SubmitNewCarRequest,
@@ -50,6 +51,12 @@ export async function recognizeAudioAggregate(
 
 export async function listModels(): Promise<ModelsResponse> {
   const { data } = await api.get<ModelsResponse>("/models");
+  return data;
+}
+
+/** Return the car classes a specific model can identify. */
+export async function listModelClasses(modelId: string): Promise<CarClass[]> {
+  const { data } = await api.get<CarClass[]>(`/models/${modelId}/classes`);
   return data;
 }
 
