@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   AppState,
+  Image,
   InteractionManager,
   Pressable,
   StyleSheet,
@@ -26,8 +27,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { recognizeAudio, submitAsNewCar } from "@/api/recognize";
-import type { RecognizeResponse } from "@/api/types";
+import { recognizeAudioAggregate, submitAsNewCar } from "@/api/recognize";
+import type { AggregateRecognizeResponse } from "@/api/types";
 import { CarIcon } from "@/components/CarIcon";
 import { GlassCard } from "@/components/GlassCard";
 import { MicPermissionGate } from "@/components/MicPermissionGate";
@@ -35,7 +36,10 @@ import { useMicPermission } from "@/hooks/useMicPermission";
 import { useModelStore } from "@/store/model";
 import { colors, fontSize, radius, spacing } from "@/theme";
 
-const RECORD_SECONDS = 5;
+// Shazam-style continuous listening: 10s record gives the server 3 windows
+// at 5s/2.5s-hop to average over, which trades single-window noise for
+// stable predictions. Was 5s in v0 — single-window only.
+const RECORD_SECONDS = 10;
 const SAMPLE_RATE = 16_000;
 // Below this peak dBFS we treat the clip as silence and refuse to upload.
 // iOS metering reports 0 dB = clipping, -160 dB = digital silence. A pocket
@@ -82,7 +86,7 @@ export default function CarzamModal() {
   const mic = useMicPermission();
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(RECORD_SECONDS);
-  const [result, setResult] = useState<RecognizeResponse | null>(null);
+  const [result, setResult] = useState<AggregateRecognizeResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const recordingRef = useRef<Audio.Recording | null>(null);
@@ -215,7 +219,12 @@ export default function CarzamModal() {
       }
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-      const res = await recognizeAudio(uri, activeModelId);
+      // Shazam-style: sliding-window aggregate. commit=true saves the
+      // clip + updates discovery, returning the same shape as old /recognize.
+      const res = await recognizeAudioAggregate(uri, {
+        modelId: activeModelId,
+        commit: true,
+      });
       if (res.silence) {
         throw new Error(
           "Couldn't hear an engine. Hold the phone closer to the car and try again.",
@@ -223,10 +232,14 @@ export default function CarzamModal() {
       }
       setResult(res);
       setPhase("result");
-      Haptics.notificationAsync(
-        res.discovery_unlocked ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning,
-      ).catch(() => {});
-      // refresh dependent queries
+      // Haptic palette by outcome: success on confident match, warning on
+      // best-guess, error on "couldn't place" — distinct feel for each.
+      const fb = res.is_confident && res.discovery_unlocked
+        ? Haptics.NotificationFeedbackType.Success
+        : res.couldnt_place
+        ? Haptics.NotificationFeedbackType.Error
+        : Haptics.NotificationFeedbackType.Warning;
+      Haptics.notificationAsync(fb).catch(() => {});
       qc.invalidateQueries({ queryKey: ["discoveries"] });
       qc.invalidateQueries({ queryKey: ["stats"] });
     } catch (e) {
@@ -429,7 +442,11 @@ function ListeningView({
   return (
     <View style={lvStyles.wrap}>
       <Text style={lvStyles.heading}>{uploading ? "Identifying" : "Listening"}</Text>
-      <Text style={lvStyles.timer}>{uploading ? "—" : `0:0${secondsLeft}`}</Text>
+      <Text style={lvStyles.timer}>
+        {uploading
+          ? "—"
+          : `0:${secondsLeft < 10 ? "0" : ""}${secondsLeft}`}
+      </Text>
 
       <View style={lvStyles.pulseStack}>
         <Animated.View style={[lvStyles.ring, lvStyles.ringOuter, r1]} />
@@ -476,7 +493,7 @@ function ListeningView({
       <Text style={lvStyles.hint}>
         {uploading
           ? "Sending to the model…"
-          : "Hold the phone near the engine.\nAuto-stops in 5 seconds."}
+          : `Hold the phone near the engine.\nAuto-stops in ${RECORD_SECONDS} seconds.`}
       </Text>
     </View>
   );
@@ -487,22 +504,70 @@ function ResultView({
   onDone,
   onWrong,
 }: {
-  result: RecognizeResponse;
+  result: AggregateRecognizeResponse;
   onDone: () => void;
   onWrong: () => void;
 }) {
-  const matched = result.predicted_class_id !== null;
+  // Three end-states, distinguished visually:
+  //  * confident match    → big title, image, "MATCH FOUND" eyebrow
+  //  * best-guess (middle) → same layout but eyebrow says "BEST GUESS"
+  //  * couldnt_place      → friendly fallback, no title pretending we got it
+  const couldntPlace = result.couldnt_place;
+  const matched = !couldntPlace && result.predicted_class_id !== null;
+  const isConfident = result.is_confident;
+
+  // Image lives at /car-classes/{id}/image on the API. axios baseURL gives
+  // us the host; we compose the full URL here so <Image source={...} /> can
+  // fetch it directly.
+  const apiBase = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000";
+  const imageUrl =
+    matched && result.predicted_class_id
+      ? `${apiBase}/car-classes/${result.predicted_class_id}/image`
+      : null;
+
+  const eyebrow = couldntPlace
+    ? "LOW CONFIDENCE"
+    : isConfident
+    ? "MATCH FOUND"
+    : "BEST GUESS";
+  const eyebrowColor = couldntPlace
+    ? colors.textMuted
+    : isConfident
+    ? colors.accentHi
+    : "#ffd166"; // amber for best-guess
+
   return (
     <View style={rvStyles.wrap}>
-      <Text style={rvStyles.eyebrow}>{matched ? "MATCH FOUND" : "LOW CONFIDENCE"}</Text>
+      <Text style={[rvStyles.eyebrow, { color: eyebrowColor }]}>{eyebrow}</Text>
       <Text style={rvStyles.title} numberOfLines={2}>
-        {result.predicted_display_name ?? "Couldn't place this one"}
+        {couldntPlace
+          ? "Couldn't quite place that one"
+          : result.predicted_display_name ?? result.predicted_class_id ?? "—"}
       </Text>
       <Text style={rvStyles.sub}>
-        {result.predicted_state} · {Math.round(result.confidence * 100)}% confidence
+        {couldntPlace
+          ? `Heard ${result.n_windows_aggregated} window${result.n_windows_aggregated === 1 ? "" : "s"} but nothing matched confidently.`
+          : `${Math.round(result.confidence * 100)}% · ${result.n_windows_aggregated} window${result.n_windows_aggregated === 1 ? "" : "s"}`}
       </Text>
       {result.model_id && (
         <Text style={rvStyles.byline}>via {result.model_id}</Text>
+      )}
+
+      {imageUrl && (
+        <View style={rvStyles.imageWrap}>
+          <Image
+            source={{ uri: imageUrl }}
+            style={rvStyles.image}
+            resizeMode="cover"
+            // Fail silently — show placeholder if R2 image is missing.
+            onError={() => {}}
+          />
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.65)"]}
+            style={rvStyles.imageGradient}
+            pointerEvents="none"
+          />
+        </View>
       )}
 
       <GlassCard style={{ marginTop: spacing.lg }}>
@@ -522,7 +587,7 @@ function ResultView({
         </View>
       </GlassCard>
 
-      {matched && (
+      {matched && result.n_total != null && result.n_discovered != null && (
         <View style={rvStyles.discovery}>
           <View>
             <Text style={rvStyles.dT1}>{result.discovery_unlocked ? "NEW DISCOVERY" : "ALREADY DISCOVERED"}</Text>
@@ -530,14 +595,16 @@ function ResultView({
               {result.n_discovered} of {result.n_total} found
             </Text>
           </View>
-          <View style={rvStyles.dPct}>
-            <Text style={rvStyles.dPctText}>{result.completion_percent}%</Text>
-          </View>
+          {result.completion_percent != null && (
+            <View style={rvStyles.dPct}>
+              <Text style={rvStyles.dPctText}>{result.completion_percent}%</Text>
+            </View>
+          )}
         </View>
       )}
 
       <View style={rvStyles.actions}>
-        <Pressable onPress={matched ? onWrong : onWrong} style={[rvStyles.btn, rvStyles.btnGhost]}>
+        <Pressable onPress={onWrong} style={[rvStyles.btn, rvStyles.btnGhost]}>
           <Text style={rvStyles.btnGhostText}>{matched ? "Wrong?" : "Add as new car"}</Text>
         </Pressable>
         <Pressable onPress={onDone} style={[rvStyles.btn, rvStyles.btnPrimary]}>
@@ -656,6 +723,27 @@ const rvStyles = StyleSheet.create({
   title: { color: colors.text, fontSize: 30, fontWeight: "800", letterSpacing: -0.8, marginTop: 6 },
   sub: { color: colors.textMuted, fontSize: fontSize.small, marginTop: 4 },
   byline: { color: colors.textDim, fontSize: 11, marginTop: 4, letterSpacing: 0.4, fontWeight: "600" },
+
+  imageWrap: {
+    marginTop: spacing.lg,
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.border,
+    aspectRatio: 16 / 9,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  imageGradient: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "40%",
+  },
 
   top3Inner: { padding: spacing.md },
   top3Label: { color: colors.textMuted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1.5, fontWeight: "700", marginBottom: 8 },

@@ -1,5 +1,10 @@
 import { api } from "./client";
-import type { ModelsResponse, RecognizeResponse, SubmitNewCarRequest } from "./types";
+import type {
+  AggregateRecognizeResponse,
+  ModelsResponse,
+  RecognizeResponse,
+  SubmitNewCarRequest,
+} from "./types";
 
 export async function recognizeAudio(
   uri: string,
@@ -13,6 +18,33 @@ export async function recognizeAudio(
   const { data } = await api.post<RecognizeResponse>("/recognize", form, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return data;
+}
+
+/**
+ * Shazam-style aggregate inference. Send a longer clip (~10-15s) and the
+ * server slides 5s windows at 2.5s hop, averaging softmax. Returns
+ * `is_confident` + `couldnt_place` so the client can pick its commit
+ * strategy.
+ *
+ * Pass `commit: true` exactly once — that's the call that saves the clip
+ * to R2 and updates the user's discovery. All polling calls (if any)
+ * should use commit=false.
+ */
+export async function recognizeAudioAggregate(
+  uri: string,
+  opts: { modelId?: string | null; commit?: boolean } = {},
+): Promise<AggregateRecognizeResponse> {
+  const form = new FormData();
+  // @ts-expect-error — RN-specific FormData shape
+  form.append("audio", { uri, name: "clip.wav", type: "audio/wav" });
+  if (opts.modelId) form.append("model", opts.modelId);
+  form.append("commit", opts.commit ? "true" : "false");
+  const { data } = await api.post<AggregateRecognizeResponse>(
+    "/recognize/aggregate",
+    form,
+    { headers: { "Content-Type": "multipart/form-data" } },
+  );
   return data;
 }
 

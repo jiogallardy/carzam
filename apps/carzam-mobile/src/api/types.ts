@@ -51,6 +51,27 @@ export type RecognizeResponse = {
   model_id?: string;
 };
 
+// Shazam-style aggregated response from /recognize/aggregate.
+// `is_confident` and `couldnt_place` drive the mobile commit decision.
+// Discovery-related fields are only populated when commit=true.
+export type AggregateRecognizeResponse = {
+  predicted_class_id: string | null;
+  predicted_display_name: string | null;
+  confidence: number;
+  is_confident: boolean;
+  couldnt_place: boolean;
+  n_windows_aggregated: number;
+  duration_seconds: number;
+  top3: TopCandidate[];
+  silence?: boolean;
+  model_id?: string;
+  clip_id?: string | null;
+  discovery_unlocked?: boolean;
+  completion_percent?: number | null;
+  n_discovered?: number | null;
+  n_total?: number | null;
+};
+
 export type ModelInfo = {
   id: string;
   label: string;
