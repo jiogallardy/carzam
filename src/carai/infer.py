@@ -24,16 +24,25 @@ def _load_classes(checkpoint: Path) -> tuple[tuple[str, ...], tuple[str, ...]]:
 
 def _load_model(checkpoint: Path, device: torch.device) -> tuple[CarAudioModel, tuple[str, ...], tuple[str, ...]]:
     cars, states = _load_classes(checkpoint)
-    # Detect whether the saved state_dict has a family head and size accordingly.
+    # Auto-detect family + embedding heads from the saved state_dict so the
+    # CLI handles every shipped generation (v6 fine-only, v7 family, v9-v11
+    # family+contrastive). Same trick as the deployed API loader.
     sd = torch.load(checkpoint, map_location=device)
-    n_families = None
-    if "family_head.weight" in sd:
-        n_families = sd["family_head.weight"].shape[0]
+    n_families = sd["family_head.weight"].shape[0] if "family_head.weight" in sd else None
+    embedding_dim: int | None = None
+    classes_path = Path(checkpoint).parent / "classes.json"
+    if classes_path.exists():
+        classes_payload = json.loads(classes_path.read_text())
+        embedding_dim = classes_payload.get("embedding_dim")
+    if embedding_dim is None and "embedding_head.2.weight" in sd:
+        embedding_dim = sd["embedding_head.2.weight"].shape[0]
+
     model = CarAudioModel(
         weights_path=None,
         n_cars=len(cars),
         n_states=len(states),
         n_families=n_families,
+        embedding_dim=embedding_dim,
     ).to(device)
     model.load_state_dict(sd)
     model.eval()
