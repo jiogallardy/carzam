@@ -4,9 +4,8 @@ version = "0.1.0"
 description = "Car engine sound classifier"
 requires-python = ">=3.11"
 dependencies = [
-    # Core deps needed for both training AND server inference. Kept lean
-    # because the carzam-api Docker image pip-installs the root carzam
-    # package and we don't want to OOM a 4 GB Hetzner box on the build.
+    # Core deps for training + CLI inference. Kept lean so the package
+    # installs fast on modest hardware.
     "torch>=2.3",
     "torchaudio>=2.3",
     "numpy>=1.26",

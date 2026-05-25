@@ -6,12 +6,12 @@
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![Built with PyTorch](https://img.shields.io/badge/built%20with-PyTorch-ee4c2c.svg)](https://pytorch.org/)
 
-`carzam` is an end-to-end pipeline for training and serving an audio classifier that recognizes cars by sound. It covers:
+`carzam` is an end-to-end pipeline for training and running an audio classifier that recognizes cars by sound, all from one CLI. It covers:
 
 - **Data collection** — scrape and normalize audio from a curated list of YouTube videos.
 - **Labeling** — both interactive (a TUI reviewer) and automated (visual verification with YOLOv8 + DINOv2, audio screening with silero-VAD + LAION-CLAP).
 - **Training** — a contrastive embedding model over PANNs CNN14, plus optional per-model specialist heads.
-- **Inference** — single-clip prediction, Shazam-style 10s rolling recognition, and a FastAPI server.
+- **Inference** — single-clip prediction, Shazam-style 10s rolling recognition, and live-mic mode.
 
 Current corpus: **~71 classes** spanning supercars, hypercars, JDM legends and modern flagships (Bugatti Chiron, Pagani Huayra, Lexus LFA, Porsche 992 GT3 RS, Nissan Skyline R34, …).
 
@@ -23,7 +23,6 @@ Current corpus: **~71 classes** spanning supercars, hypercars, JDM legends and m
 - [Repo layout](#repo-layout)
 - [The full pipeline](#the-full-pipeline)
 - [Auto-labeling](#auto-labeling)
-- [Serving](#serving)
 - [Dataset](#dataset)
 - [Development](#development)
 - [License](#license)
@@ -64,10 +63,6 @@ carzam/
 │   ├── infer.py
 │   ├── embedding.py         # open-set nearest-prototype matching
 │   └── cascade.py
-├── apps/
-│   ├── carzam-api/          # FastAPI server (Dockerfile included)
-│   ├── carzam-web/          # Static landing + legal pages
-│   └── epd/                 # E-paper display tooling (optional toy)
 ├── config/                  # Training configs + source video lists
 ├── scripts/                 # One-off utilities (yt classifier, audits, demos)
 ├── data/                    # See `Dataset` section — most is gitignored
@@ -181,27 +176,6 @@ carzam auto-label-batch --skip-existing
 # Sanity-check a video locally without download cost
 carzam visual-check path/to/video.mp4 --car ferrari_488
 ```
-
----
-
-## Serving
-
-The FastAPI backend lives in [`apps/carzam-api/`](./apps/carzam-api). It exposes:
-
-- `POST /recognize` — single clip, returns top-K (car, confidence)
-- `POST /recognize/aggregate` — Shazam-style 10s rolling, returns the winning car
-- car CRUD, discoveries, OAuth (Google + Apple)
-
-```bash
-cd apps/carzam-api
-cp .env.example .env  # fill in DATABASE_URL, OAuth secrets
-uv pip install -e .[dev]
-uvicorn app.main:app --reload --port 8000
-```
-
-A `Dockerfile` is included for Coolify or any Docker host. See [`apps/carzam-api/README.md`](./apps/carzam-api/README.md) for deployment details.
-
-> The iOS/Android Expo app is not part of this repository.
 
 ---
 
