@@ -1,0 +1,9 @@
+video_id: pXAFv4prYeo
+duration: 65.039125
+ranges:
+- start: 0.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 65.039125
+  label: skip

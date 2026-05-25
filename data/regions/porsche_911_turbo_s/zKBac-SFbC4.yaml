@@ -1,0 +1,15 @@
+video_id: zKBac-SFbC4
+duration: 204.498125
+ranges:
+- start: 0.0
+  end: 25.0
+  label: idle
+- start: 25.0
+  end: 185.0
+  label: idle
+- start: 185.0
+  end: 202.5
+  label: idle
+- start: 202.5
+  end: 204.498125
+  label: skip

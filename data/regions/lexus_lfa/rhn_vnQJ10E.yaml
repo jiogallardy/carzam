@@ -1,0 +1,12 @@
+video_id: rhn_vnQJ10E
+duration: 83.2086875
+ranges:
+- start: 0.0
+  end: 10.0
+  label: idle
+- start: 10.0
+  end: 82.5
+  label: idle
+- start: 82.5
+  end: 83.2086875
+  label: skip

@@ -1,0 +1,15 @@
+video_id: B5Lt-Bv4jkg
+duration: 230.7626875
+ranges:
+- start: 0.0
+  end: 125.0
+  label: idle
+- start: 125.0
+  end: 147.5
+  label: idle
+- start: 147.5
+  end: 230.0
+  label: idle
+- start: 230.0
+  end: 230.7626875
+  label: skip

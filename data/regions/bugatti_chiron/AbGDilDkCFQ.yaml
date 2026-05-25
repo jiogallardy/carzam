@@ -1,0 +1,12 @@
+video_id: AbGDilDkCFQ
+duration: 132.4373125
+ranges:
+- start: 0.0
+  end: 72.5
+  label: skip
+- start: 72.5
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 132.4373125
+  label: skip

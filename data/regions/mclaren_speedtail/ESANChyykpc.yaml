@@ -1,0 +1,24 @@
+video_id: ESANChyykpc
+duration: 245.3546875
+ranges:
+- start: 0.0
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 155.0
+  label: idle
+- start: 155.0
+  end: 185.0
+  label: skip
+- start: 185.0
+  end: 192.5
+  label: idle
+- start: 192.5
+  end: 217.5
+  label: skip
+- start: 217.5
+  end: 225.0
+  label: idle
+- start: 225.0
+  end: 245.3546875
+  label: skip

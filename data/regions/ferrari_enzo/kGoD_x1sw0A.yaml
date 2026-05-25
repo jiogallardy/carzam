@@ -1,0 +1,45 @@
+video_id: kGoD_x1sw0A
+duration: 733.6460625
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 50.0
+  label: skip
+- start: 50.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 80.0
+  label: skip
+- start: 80.0
+  end: 87.5
+  label: idle
+- start: 87.5
+  end: 260.0
+  label: skip
+- start: 260.0
+  end: 265.0
+  label: idle
+- start: 265.0
+  end: 365.0
+  label: skip
+- start: 365.0
+  end: 370.0
+  label: idle
+- start: 370.0
+  end: 430.0
+  label: skip
+- start: 430.0
+  end: 435.0
+  label: idle
+- start: 435.0
+  end: 507.5
+  label: skip
+- start: 507.5
+  end: 512.5
+  label: idle
+- start: 512.5
+  end: 733.6460625
+  label: skip

@@ -1,0 +1,21 @@
+video_id: AptaoAhOdUU
+duration: 161.408
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 10.0
+  label: skip
+- start: 10.0
+  end: 75.0
+  label: idle
+- start: 75.0
+  end: 160.0
+  label: idle
+- start: 160.0
+  end: 161.408
+  label: skip

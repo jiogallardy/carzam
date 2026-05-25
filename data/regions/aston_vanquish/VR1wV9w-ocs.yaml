@@ -1,0 +1,21 @@
+video_id: VR1wV9w-ocs
+duration: 351.341125
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 197.5
+  label: skip
+- start: 197.5
+  end: 202.5
+  label: idle
+- start: 202.5
+  end: 260.0
+  label: skip
+- start: 260.0
+  end: 275.0
+  label: idle
+- start: 275.0
+  end: 351.341125
+  label: skip

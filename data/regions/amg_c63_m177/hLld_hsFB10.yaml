@@ -1,0 +1,24 @@
+video_id: hLld_hsFB10
+duration: 163.561
+ranges:
+- start: 6.779189837875366
+  end: 9.675795980926514
+  label: accel
+- start: 9.675795980926514
+  end: 45.75509900953674
+  label: idle
+- start: 45.75509900953674
+  end: 88.65366883215331
+  label: accel
+- start: 88.65366883215331
+  end: 115.55638582833862
+  label: decel
+- start: 115.55638582833862
+  end: 148.9008839217987
+  label: accel
+- start: 148.9008839217987
+  end: 150.46711097138976
+  label: decel
+- start: 150.46711097138976
+  end: 163.561
+  label: accel

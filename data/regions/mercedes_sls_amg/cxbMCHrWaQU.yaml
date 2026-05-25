@@ -1,0 +1,9 @@
+video_id: cxbMCHrWaQU
+duration: 64.32
+ranges:
+- start: 0.0
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 64.32
+  label: skip

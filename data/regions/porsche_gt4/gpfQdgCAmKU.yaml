@@ -1,0 +1,12 @@
+video_id: gpfQdgCAmKU
+duration: 26.9003125
+ranges:
+- start: 0.0
+  end: 10.0
+  label: skip
+- start: 10.0
+  end: 25.0
+  label: idle
+- start: 25.0
+  end: 26.9003125
+  label: skip

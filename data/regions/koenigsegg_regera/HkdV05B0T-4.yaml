@@ -1,0 +1,15 @@
+video_id: HkdV05B0T-4
+duration: 136.010875
+ranges:
+- start: 0.0
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 95.0
+  label: idle
+- start: 95.0
+  end: 135.0
+  label: idle
+- start: 135.0
+  end: 136.010875
+  label: skip

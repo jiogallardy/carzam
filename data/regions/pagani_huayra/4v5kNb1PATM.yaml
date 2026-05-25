@@ -1,0 +1,9 @@
+video_id: 4v5kNb1PATM
+duration: 89.002125
+ranges:
+- start: 0.0
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 89.002125
+  label: skip

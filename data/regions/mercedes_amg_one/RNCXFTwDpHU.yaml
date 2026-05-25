@@ -1,0 +1,24 @@
+video_id: RNCXFTwDpHU
+duration: 377.1036875
+ranges:
+- start: 0.0
+  end: 97.5
+  label: skip
+- start: 97.5
+  end: 105.0
+  label: idle
+- start: 105.0
+  end: 115.0
+  label: skip
+- start: 115.0
+  end: 120.0
+  label: idle
+- start: 120.0
+  end: 270.0
+  label: skip
+- start: 270.0
+  end: 280.0
+  label: idle
+- start: 280.0
+  end: 377.1036875
+  label: skip

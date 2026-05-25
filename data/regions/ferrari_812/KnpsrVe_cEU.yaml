@@ -1,0 +1,33 @@
+video_id: KnpsrVe_cEU
+duration: 536.0
+ranges:
+- start: 2.0781919771118167
+  end: 11.356751089645385
+  label: idle
+- start: 11.356751089645385
+  end: 15.366714946594238
+  label: accel
+- start: 15.366714946594238
+  end: 29.96160998664856
+  label: idle
+- start: 29.96160998664856
+  end: 32.64919907247925
+  label: accel
+- start: 32.64919907247925
+  end: 47.168398992370605
+  label: idle
+- start: 47.168398992370605
+  end: 50.75849097138977
+  label: accel
+- start: 50.75849097138977
+  end: 54.809766122070315
+  label: idle
+- start: 54.809766122070315
+  end: 61.600477051498416
+  label: accel
+- start: 61.600477051498416
+  end: 77.31867314686585
+  label: accel
+- start: 77.31867314686585
+  end: 78.70956389318847
+  label: decel

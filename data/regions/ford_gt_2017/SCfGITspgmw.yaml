@@ -1,0 +1,12 @@
+video_id: SCfGITspgmw
+duration: 37.9414375
+ranges:
+- start: 0.0
+  end: 15.0
+  label: idle
+- start: 15.0
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 37.9414375
+  label: skip

@@ -1,0 +1,15 @@
+video_id: bpv7N8smafY
+duration: 90.430125
+ranges:
+- start: 0.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 62.5
+  label: skip
+- start: 62.5
+  end: 90.0
+  label: idle
+- start: 90.0
+  end: 90.430125
+  label: skip

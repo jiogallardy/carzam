@@ -1,0 +1,36 @@
+video_id: nqRfwix-ntg
+duration: 131.301
+ranges:
+- start: 5.2268400896453855
+  end: 8.040609102996825
+  label: decel
+- start: 8.040609102996825
+  end: 21.72993595803833
+  label: accel
+- start: 21.72993595803833
+  end: 22.883268038146973
+  label: decel
+- start: 22.883268038146973
+  end: 27.661167923706056
+  label: accel
+- start: 27.661167923706056
+  end: 40.37760793133545
+  label: skip
+- start: 40.37760793133545
+  end: 43.51600112397766
+  label: accel
+- start: 43.51600112397766
+  end: 55.9565819961853
+  label: decel
+- start: 55.9565819961853
+  end: 62.34156498664856
+  label: accel
+- start: 62.34156498664856
+  end: 71.57616211634827
+  label: skip
+- start: 71.57616211634827
+  end: 76.8122080076294
+  label: accel
+- start: 76.8122080076294
+  end: 81.39491912588501
+  label: decel

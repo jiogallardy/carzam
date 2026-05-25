@@ -1,0 +1,15 @@
+video_id: Rb6VosKMdr0
+duration: 124.8853125
+ranges:
+- start: 0.0
+  end: 10.0
+  label: idle
+- start: 10.0
+  end: 22.5
+  label: skip
+- start: 22.5
+  end: 122.5
+  label: idle
+- start: 122.5
+  end: 124.8853125
+  label: skip

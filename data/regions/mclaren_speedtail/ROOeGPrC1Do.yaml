@@ -1,0 +1,42 @@
+video_id: ROOeGPrC1Do
+duration: 414.7664375
+ranges:
+- start: 0.0
+  end: 220.0
+  label: skip
+- start: 220.0
+  end: 227.5
+  label: idle
+- start: 227.5
+  end: 270.0
+  label: skip
+- start: 270.0
+  end: 275.0
+  label: idle
+- start: 275.0
+  end: 280.0
+  label: skip
+- start: 280.0
+  end: 285.0
+  label: idle
+- start: 285.0
+  end: 300.0
+  label: skip
+- start: 300.0
+  end: 305.0
+  label: idle
+- start: 305.0
+  end: 325.0
+  label: skip
+- start: 325.0
+  end: 330.0
+  label: idle
+- start: 330.0
+  end: 380.0
+  label: skip
+- start: 380.0
+  end: 385.0
+  label: idle
+- start: 385.0
+  end: 414.7664375
+  label: skip

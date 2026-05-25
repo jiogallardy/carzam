@@ -1,0 +1,36 @@
+video_id: cmU-uGZytw8
+duration: 109.92325
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 25.0
+  label: idle
+- start: 25.0
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 57.5
+  label: skip
+- start: 57.5
+  end: 65.0
+  label: idle
+- start: 65.0
+  end: 82.5
+  label: skip
+- start: 82.5
+  end: 92.5
+  label: idle
+- start: 92.5
+  end: 100.0
+  label: skip
+- start: 100.0
+  end: 107.5
+  label: idle
+- start: 107.5
+  end: 109.92325
+  label: skip

@@ -1,0 +1,30 @@
+video_id: CSRpmjvvtPM
+duration: 504.101
+ranges:
+- start: 18.018592792099
+  end: 64.47768110108947
+  label: idle
+- start: 64.47768110108947
+  end: 83.31777388174439
+  label: idle
+- start: 83.31777388174439
+  end: 100.2088120705719
+  label: accel
+- start: 100.2088120705719
+  end: 112.86314294850159
+  label: accel
+- start: 112.86314294850159
+  end: 114.47719997138977
+  label: decel
+- start: 114.47719997138977
+  end: 118.87277308583069
+  label: accel
+- start: 118.87277308583069
+  end: 121.16915001716613
+  label: decel
+- start: 121.16915001716613
+  end: 141.73875882833863
+  label: accel
+- start: 141.73875882833863
+  end: 163.60549812588502
+  label: accel

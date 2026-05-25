@@ -1,0 +1,12 @@
+video_id: hVBJZSo3su0
+duration: 53.638125
+ranges:
+- start: 0.0
+  end: 5.0
+  label: skip
+- start: 5.0
+  end: 22.5
+  label: idle
+- start: 22.5
+  end: 53.638125
+  label: skip

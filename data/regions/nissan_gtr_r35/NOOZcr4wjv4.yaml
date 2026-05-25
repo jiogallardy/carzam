@@ -1,0 +1,15 @@
+video_id: NOOZcr4wjv4
+duration: 301.4826875
+ranges:
+- start: 0.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 147.5
+  label: idle
+- start: 147.5
+  end: 300.0
+  label: idle
+- start: 300.0
+  end: 301.4826875
+  label: skip

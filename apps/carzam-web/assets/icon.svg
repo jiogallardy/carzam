@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Background sphere gradient: deep ember -> molten red -> oxblood -->
+    <radialGradient id="bgGrad" cx="35%" cy="28%" r="80%">
+      <stop offset="0%"  stop-color="#ffd9b8"/>
+      <stop offset="22%" stop-color="#ff9a48"/>
+      <stop offset="55%" stop-color="#ff3d3d"/>
+      <stop offset="100%" stop-color="#5a0a18"/>
+    </radialGradient>
+
+    <!-- Specular highlight on the top of the sphere -->
+    <radialGradient id="specular" cx="40%" cy="18%" r="35%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Rim glow on the outer edge -->
+    <radialGradient id="rim" cx="50%" cy="50%" r="50%">
+      <stop offset="92%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.55"/>
+    </radialGradient>
+
+    <!-- Car body gradient: chrome with a hint of warm reflection -->
+    <linearGradient id="carBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#ffffff"/>
+      <stop offset="48%" stop-color="#f0f0f0"/>
+      <stop offset="52%" stop-color="#cfcfcf"/>
+      <stop offset="100%" stop-color="#7a7a7a"/>
+    </linearGradient>
+
+    <!-- Windshield gradient: dark, with subtle reflection -->
+    <linearGradient id="glass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#1a1f28"/>
+      <stop offset="100%" stop-color="#000814"/>
+    </linearGradient>
+
+    <!-- Soft shadow under the car -->
+    <radialGradient id="carShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 1) Sphere background -->
+  <circle cx="512" cy="512" r="512" fill="url(#bgGrad)"/>
+  <!-- 2) Rim shadow -->
+  <circle cx="512" cy="512" r="512" fill="url(#rim)"/>
+
+  <!-- 3) Car shadow on the "ground" of the sphere -->
+  <ellipse cx="512" cy="745" rx="320" ry="42" fill="url(#carShadow)"/>
+
+  <!-- 4) The car (low coupé side profile, slightly heroic proportions) -->
+  <g transform="translate(0, -20)">
+    <!-- main body: long hood, raked windshield, fastback rear -->
+    <path d="
+      M 180,620
+      L 168,620
+      Q 152,620 152,604
+      L 152,560
+      Q 152,544 168,540
+      L 220,520
+      Q 244,496 290,486
+      L 350,460
+      Q 392,432 470,422
+      L 590,420
+      Q 700,432 770,460
+      L 824,495
+      Q 866,506 880,540
+      L 882,548
+      Q 896,552 900,568
+      Q 902,580 902,594
+      L 902,608
+      Q 900,622 884,624
+      L 818,624
+      Q 808,672 760,672
+      Q 712,672 702,624
+      L 322,624
+      Q 314,672 264,672
+      Q 214,672 202,624
+      L 184,624
+      Q 168,624 168,608 Z" fill="url(#carBody)"/>
+    <!-- side window / greenhouse cutout (filled with glass gradient) -->
+    <path d="
+      M 360,488
+      Q 410,452 478,442
+      L 590,438
+      Q 670,448 740,484
+      L 728,514
+      Q 670,476 590,468
+      L 480,470
+      Q 416,478 380,510 Z" fill="url(#glass)"/>
+    <!-- subtle character line down the door -->
+    <path d="M 280,550 Q 480,556 760,548" stroke="#000" stroke-opacity="0.20" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- headlight -->
+    <ellipse cx="820" cy="538" rx="22" ry="10" fill="#fff" opacity="0.95"/>
+    <ellipse cx="820" cy="538" rx="14" ry="6" fill="#ffe5a6"/>
+    <!-- side indicator at front-bottom -->
+    <ellipse cx="845" cy="568" rx="6" ry="4" fill="#ffb347" opacity="0.95"/>
+    <!-- front splitter line -->
+    <path d="M 882,608 L 902,608" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Wheels: well-defined, slight gradient -->
+    <!-- rear wheel -->
+    <circle cx="264" cy="630" r="56" fill="#0a0a0a"/>
+    <circle cx="264" cy="630" r="44" fill="#1a1a1a"/>
+    <circle cx="264" cy="630" r="30" fill="#0a0a0a"/>
+    <circle cx="264" cy="630" r="22" fill="#2a2a2a"/>
+    <!-- rear wheel spokes (5-spoke) -->
+    <g transform="translate(264,630)" stroke="#cfcfcf" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-26" x2="0" y2="-12"/>
+      <line x1="22" y1="-8" x2="10" y2="-4"/>
+      <line x1="16" y1="20" x2="6" y2="10"/>
+      <line x1="-16" y1="20" x2="-6" y2="10"/>
+      <line x1="-22" y1="-8" x2="-10" y2="-4"/>
+    </g>
+    <circle cx="264" cy="630" r="6" fill="#cfcfcf"/>
+
+    <!-- front wheel -->
+    <circle cx="760" cy="630" r="56" fill="#0a0a0a"/>
+    <circle cx="760" cy="630" r="44" fill="#1a1a1a"/>
+    <circle cx="760" cy="630" r="30" fill="#0a0a0a"/>
+    <circle cx="760" cy="630" r="22" fill="#2a2a2a"/>
+    <g transform="translate(760,630)" stroke="#cfcfcf" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-26" x2="0" y2="-12"/>
+      <line x1="22" y1="-8" x2="10" y2="-4"/>
+      <line x1="16" y1="20" x2="6" y2="10"/>
+      <line x1="-16" y1="20" x2="-6" y2="10"/>
+      <line x1="-22" y1="-8" x2="-10" y2="-4"/>
+    </g>
+    <circle cx="760" cy="630" r="6" fill="#cfcfcf"/>
+  </g>
+
+  <!-- 5) Specular highlight on top of the sphere -->
+  <circle cx="512" cy="512" r="512" fill="url(#specular)"/>
+
+  <!-- 6) Sound wave radiating from front of car -->
+  <g transform="translate(900,538)" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.55">
+    <path d="M 0,-22 Q 20,-22 30,0 Q 20,22 0,22" />
+    <path d="M -8,-40 Q 30,-40 50,0 Q 30,40 -8,40" opacity="0.7"/>
+  </g>
+</svg>

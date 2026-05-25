@@ -1,0 +1,33 @@
+video_id: cvNySshtiKM
+duration: 142.561
+ranges:
+- start: 11.948801019073485
+  end: 17.371310007629393
+  label: skip
+- start: 17.371310007629393
+  end: 45.29719094850159
+  label: idle
+- start: 45.29719094850159
+  end: 78.21076109155274
+  label: accel
+- start: 78.21076109155274
+  end: 83.51390102861023
+  label: decel
+- start: 83.51390102861023
+  end: 101.20679408201599
+  label: accel
+- start: 101.20679408201599
+  end: 102.77971902861023
+  label: decel
+- start: 102.77971902861023
+  end: 105.94634912016296
+  label: accel
+- start: 105.94634912016296
+  end: 108.61753798664856
+  label: decel
+- start: 108.61753798664856
+  end: 116.09650902098083
+  label: accel
+- start: 116.09650902098083
+  end: 122.37181511634827
+  label: decel

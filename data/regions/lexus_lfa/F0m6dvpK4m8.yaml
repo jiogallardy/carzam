@@ -1,0 +1,9 @@
+video_id: F0m6dvpK4m8
+duration: 133.421859
+ranges:
+- start: 0.0
+  end: 132.5
+  label: idle
+- start: 132.5
+  end: 133.421859
+  label: skip

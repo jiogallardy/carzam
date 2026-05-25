@@ -1,0 +1,30 @@
+video_id: su_njTmDciQ
+duration: 200.6186875
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 10.0
+  label: idle
+- start: 10.0
+  end: 47.5
+  label: idle
+- start: 47.5
+  end: 50.0
+  label: skip
+- start: 50.0
+  end: 110.0
+  label: idle
+- start: 110.0
+  end: 112.5
+  label: skip
+- start: 112.5
+  end: 120.0
+  label: idle
+- start: 120.0
+  end: 195.0
+  label: idle
+- start: 195.0
+  end: 200.6186875
+  label: skip

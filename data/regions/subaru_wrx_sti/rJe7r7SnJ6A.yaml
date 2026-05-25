@@ -1,0 +1,24 @@
+video_id: rJe7r7SnJ6A
+duration: 262.701
+ranges:
+- start: 12.677957967575074
+  end: 70.38945003433227
+  label: accel
+- start: 70.38945003433227
+  end: 75.80192808392334
+  label: decel
+- start: 75.80192808392334
+  end: 78.3575457959137
+  label: accel
+- start: 78.3575457959137
+  end: 81.99284495613098
+  label: decel
+- start: 81.99284495613098
+  end: 85.12051497138977
+  label: idle
+- start: 85.12051497138977
+  end: 107.1243609885559
+  label: accel
+- start: 107.1243609885559
+  end: 121.8456370743866
+  label: skip

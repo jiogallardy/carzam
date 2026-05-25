@@ -1,0 +1,32 @@
+# Variant A: higher temperature + equal loss weights.
+# Hypothesis: temp 0.07 was too peaked for batch size 32 — every embedding
+# clustered tightly. Bump to 0.2 to spread the distribution. Equal weights
+# (1.0/1.0) keeps the contrastive head competitive with the classifier
+# gradient signal.
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  batch_size: 32
+  num_workers: 0
+  max_epochs: 40
+  early_stop_patience: 12
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 2
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.3
+
+  embedding_dim: 128
+  contrastive_loss_weight: 1.0
+  contrastive_temperature: 0.20
+  n_classes_per_batch: 8
+  n_samples_per_class: 4

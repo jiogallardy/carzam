@@ -1,0 +1,15 @@
+video_id: VPrh1i-c208
+duration: 286.6039375
+ranges:
+- start: 0.0
+  end: 40.0
+  label: idle
+- start: 40.0
+  end: 60.0
+  label: idle
+- start: 60.0
+  end: 285.0
+  label: idle
+- start: 285.0
+  end: 286.6039375
+  label: skip

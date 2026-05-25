@@ -1,0 +1,24 @@
+video_id: BfPsHiEFLNk
+duration: 129.1029375
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 27.5
+  label: idle
+- start: 27.5
+  end: 50.0
+  label: idle
+- start: 50.0
+  end: 57.5
+  label: idle
+- start: 57.5
+  end: 67.5
+  label: skip
+- start: 67.5
+  end: 127.5
+  label: idle
+- start: 127.5
+  end: 129.1029375
+  label: skip

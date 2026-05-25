@@ -1,0 +1,36 @@
+video_id: gfz-aGqjncQ
+duration: 425.14575
+ranges:
+- start: 0.0
+  end: 70.0
+  label: idle
+- start: 70.0
+  end: 97.5
+  label: idle
+- start: 97.5
+  end: 102.5
+  label: idle
+- start: 102.5
+  end: 155.0
+  label: idle
+- start: 155.0
+  end: 312.5
+  label: idle
+- start: 312.5
+  end: 315.0
+  label: skip
+- start: 315.0
+  end: 382.5
+  label: idle
+- start: 382.5
+  end: 392.5
+  label: idle
+- start: 392.5
+  end: 402.5
+  label: skip
+- start: 402.5
+  end: 415.0
+  label: idle
+- start: 415.0
+  end: 425.14575
+  label: skip

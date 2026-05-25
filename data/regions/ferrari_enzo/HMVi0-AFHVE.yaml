@@ -1,0 +1,24 @@
+video_id: HMVi0-AFHVE
+duration: 149.8848125
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 20.0
+  label: skip
+- start: 20.0
+  end: 35.0
+  label: idle
+- start: 35.0
+  end: 42.5
+  label: skip
+- start: 42.5
+  end: 142.5
+  label: idle
+- start: 142.5
+  end: 149.8848125
+  label: skip

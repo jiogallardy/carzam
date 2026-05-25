@@ -1,0 +1,12 @@
+video_id: LD-wT2TcXVM
+duration: 284.7695625
+ranges:
+- start: 0.0
+  end: 150.0
+  label: idle
+- start: 150.0
+  end: 275.0
+  label: idle
+- start: 275.0
+  end: 284.7695625
+  label: skip

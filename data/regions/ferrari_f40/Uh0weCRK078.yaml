@@ -1,0 +1,24 @@
+video_id: Uh0weCRK078
+duration: 139.6448125
+ranges:
+- start: 0.0
+  end: 5.0
+  label: skip
+- start: 5.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 27.5
+  label: skip
+- start: 27.5
+  end: 42.5
+  label: idle
+- start: 42.5
+  end: 120.0
+  label: idle
+- start: 120.0
+  end: 137.5
+  label: idle
+- start: 137.5
+  end: 139.6448125
+  label: skip

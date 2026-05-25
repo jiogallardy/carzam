@@ -1,0 +1,15 @@
+video_id: VCfnyKdkI1c
+duration: 91.1615625
+ranges:
+- start: 0.0
+  end: 15.0
+  label: idle
+- start: 15.0
+  end: 65.0
+  label: idle
+- start: 65.0
+  end: 90.0
+  label: idle
+- start: 90.0
+  end: 91.1615625
+  label: skip

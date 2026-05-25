@@ -1,0 +1,23 @@
+# carzam training defaults
+
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  batch_size: 32
+  num_workers: 0
+  max_epochs: 120          # "run for as long as possible"
+  early_stop_patience: 25  # tolerate longer plateaus to find slow improvements
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 3
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.5  # hierarchical coarse engine-family head

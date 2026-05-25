@@ -1,0 +1,12 @@
+video_id: s3ObCNQjxng
+duration: 111.304875
+ranges:
+- start: 0.0
+  end: 57.5
+  label: idle
+- start: 57.5
+  end: 107.5
+  label: idle
+- start: 107.5
+  end: 111.304875
+  label: skip

@@ -1,0 +1,12 @@
+video_id: d5CAeOx8A30
+duration: 116.819625
+ranges:
+- start: 0.0
+  end: 7.0
+  label: skip
+- start: 7.0
+  end: 19.0
+  label: idle
+- start: 19.0
+  end: 116.819625
+  label: skip

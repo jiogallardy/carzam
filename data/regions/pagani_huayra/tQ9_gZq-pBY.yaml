@@ -1,0 +1,39 @@
+video_id: tQ9_gZq-pBY
+duration: 513.8133125
+ranges:
+- start: 0.0
+  end: 10.0
+  label: idle
+- start: 10.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 27.5
+  label: idle
+- start: 27.5
+  end: 30.0
+  label: skip
+- start: 30.0
+  end: 100.0
+  label: idle
+- start: 100.0
+  end: 150.0
+  label: idle
+- start: 150.0
+  end: 172.5
+  label: idle
+- start: 172.5
+  end: 220.0
+  label: idle
+- start: 220.0
+  end: 342.5
+  label: idle
+- start: 342.5
+  end: 450.0
+  label: idle
+- start: 450.0
+  end: 507.5
+  label: idle
+- start: 507.5
+  end: 513.8133125
+  label: skip

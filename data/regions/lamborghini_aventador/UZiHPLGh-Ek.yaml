@@ -1,0 +1,24 @@
+video_id: UZiHPLGh-Ek
+duration: 459.2906875
+ranges:
+- start: 0.0
+  end: 127.5
+  label: skip
+- start: 127.5
+  end: 132.5
+  label: idle
+- start: 132.5
+  end: 260.0
+  label: skip
+- start: 260.0
+  end: 265.0
+  label: idle
+- start: 265.0
+  end: 447.5
+  label: skip
+- start: 447.5
+  end: 455.0
+  label: idle
+- start: 455.0
+  end: 459.2906875
+  label: skip

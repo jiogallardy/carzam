@@ -1,0 +1,15 @@
+video_id: FrrePfZ9Qxg
+duration: 99.008
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 97.5
+  label: idle
+- start: 97.5
+  end: 99.008
+  label: skip

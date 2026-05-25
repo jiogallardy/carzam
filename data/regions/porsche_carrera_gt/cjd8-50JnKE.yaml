@@ -1,0 +1,15 @@
+video_id: cjd8-50JnKE
+duration: 71.8506875
+ranges:
+- start: 0.0
+  end: 57.5
+  label: idle
+- start: 57.5
+  end: 60.0
+  label: skip
+- start: 60.0
+  end: 67.5
+  label: idle
+- start: 67.5
+  end: 71.8506875
+  label: skip

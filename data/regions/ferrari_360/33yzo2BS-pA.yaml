@@ -1,0 +1,15 @@
+video_id: 33yzo2BS-pA
+duration: 110.6546875
+ranges:
+- start: 0.0
+  end: 12.5
+  label: idle
+- start: 12.5
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 110.0
+  label: idle
+- start: 110.0
+  end: 110.6546875
+  label: skip

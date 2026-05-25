@@ -1,0 +1,15 @@
+video_id: 7PFPT6PPHSA
+duration: 39.7641875
+ranges:
+- start: 0.0
+  end: 20.0
+  label: idle
+- start: 20.0
+  end: 25.0
+  label: skip
+- start: 25.0
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 39.7641875
+  label: skip

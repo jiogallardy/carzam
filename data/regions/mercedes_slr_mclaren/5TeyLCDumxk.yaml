@@ -1,0 +1,9 @@
+video_id: 5TeyLCDumxk
+duration: 67.9466875
+ranges:
+- start: 0.0
+  end: 65.0
+  label: idle
+- start: 65.0
+  end: 67.9466875
+  label: skip

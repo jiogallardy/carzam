@@ -1,0 +1,60 @@
+# EAS Build ignore — keeps the monorepo upload small.
+# EAS uploads from the git workspace root; everything not needed
+# for the iOS/Android build of apps/carzam-mobile is excluded here.
+
+# ---- Sibling apps (not part of the mobile build) ----
+apps/carzam-api/
+apps/carzam-web/
+apps/epd/
+
+# ---- ML / training artifacts (huge) ----
+/data/
+/runs/
+/weights/
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.npy
+*.npz
+
+# ---- Python / backend (not needed for mobile native build) ----
+/src/
+/tests/
+/scripts/
+/config/
+/docs/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+pyproject.toml
+uv.lock
+
+# ---- Editor / OS ----
+.DS_Store
+.vscode/
+.idea/
+
+# ---- Mobile build artifacts that EAS will regenerate ----
+node_modules/
+apps/carzam-mobile/node_modules/
+apps/carzam-mobile/ios/Pods/
+apps/carzam-mobile/ios/build/
+apps/carzam-mobile/android/build/
+apps/carzam-mobile/android/.gradle/
+apps/carzam-mobile/.expo/
+apps/carzam-mobile/dist/
+apps/carzam-mobile/*.log
+apps/carzam-mobile/xcodebuild.log
+apps/carzam-mobile/xcodebuild-error.log
+
+# ---- Secrets (never upload) ----
+.env
+.env.*
+!.env.example
+
+# ---- Misc ----
+*.log

@@ -1,0 +1,19 @@
+[Unit]
+Description=Carzam e-paper push API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jiogallardy
+Group=jiogallardy
+WorkingDirectory=/home/jiogallardy/epd
+EnvironmentFile=-/home/jiogallardy/epd/.env
+ExecStart=/home/jiogallardy/epd/.venv/bin/epd serve --port 8765
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

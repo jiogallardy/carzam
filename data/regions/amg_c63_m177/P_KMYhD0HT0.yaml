@@ -1,0 +1,12 @@
+video_id: P_KMYhD0HT0
+duration: 144.448
+ranges:
+- start: 0.0
+  end: 21.0
+  label: skip
+- start: 21.0
+  end: 135.0
+  label: idle
+- start: 135.0
+  end: 144.448
+  label: skip

@@ -1,0 +1,12 @@
+video_id: NB7LkSSEVYw
+duration: 457.6885625
+ranges:
+- start: 0.0
+  end: 237.5
+  label: skip
+- start: 237.5
+  end: 245.0
+  label: idle
+- start: 245.0
+  end: 457.6885625
+  label: skip

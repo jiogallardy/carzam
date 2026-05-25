@@ -1,0 +1,18 @@
+video_id: 3nHAkgRRZFE
+duration: 33.3866875
+ranges:
+- start: 0.0
+  end: 5.0
+  label: skip
+- start: 5.0
+  end: 12.5
+  label: idle
+- start: 12.5
+  end: 15.0
+  label: skip
+- start: 15.0
+  end: 27.5
+  label: idle
+- start: 27.5
+  end: 33.3866875
+  label: skip

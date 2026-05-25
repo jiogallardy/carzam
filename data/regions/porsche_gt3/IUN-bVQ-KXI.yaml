@@ -1,0 +1,12 @@
+video_id: IUN-bVQ-KXI
+duration: 148.032
+ranges:
+- start: 0.0
+  end: 28.0
+  label: skip
+- start: 28.0
+  end: 143.0
+  label: idle
+- start: 143.0
+  end: 148.032
+  label: skip

@@ -1,0 +1,27 @@
+video_id: hbQPFREARiY
+duration: 312.02975
+ranges:
+- start: 0.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 85.0
+  label: skip
+- start: 85.0
+  end: 90.0
+  label: idle
+- start: 90.0
+  end: 137.5
+  label: idle
+- start: 137.5
+  end: 230.0
+  label: idle
+- start: 230.0
+  end: 277.5
+  label: idle
+- start: 277.5
+  end: 310.0
+  label: idle
+- start: 310.0
+  end: 312.02975
+  label: skip

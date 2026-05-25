@@ -1,0 +1,24 @@
+video_id: _GXZBH4Mv-A
+duration: 215.041
+ranges:
+- start: 6.67769120980835
+  end: 9.169796969482421
+  label: decel
+- start: 9.169796969482421
+  end: 20.144156047683715
+  label: idle
+- start: 20.144156047683715
+  end: 28.15712095803833
+  label: idle
+- start: 28.15712095803833
+  end: 52.61820795994568
+  label: accel
+- start: 52.61820795994568
+  end: 58.58757405340576
+  label: decel
+- start: 58.58757405340576
+  end: 66.8851949847412
+  label: accel
+- start: 66.8851949847412
+  end: 74.34193794468689
+  label: skip

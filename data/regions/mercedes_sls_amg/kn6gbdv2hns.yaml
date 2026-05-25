@@ -1,0 +1,27 @@
+video_id: kn6gbdv2hns
+duration: 104.8845625
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 22.5
+  label: idle
+- start: 22.5
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 40.0
+  label: skip
+- start: 40.0
+  end: 45.0
+  label: idle
+- start: 45.0
+  end: 80.0
+  label: idle
+- start: 80.0
+  end: 97.5
+  label: idle
+- start: 97.5
+  end: 104.8845625
+  label: skip

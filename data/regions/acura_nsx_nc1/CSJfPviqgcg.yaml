@@ -1,0 +1,45 @@
+video_id: CSJfPviqgcg
+duration: 614.8411875
+ranges:
+- start: 0.0
+  end: 47.5
+  label: idle
+- start: 47.5
+  end: 52.5
+  label: skip
+- start: 52.5
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 122.5
+  label: idle
+- start: 122.5
+  end: 157.5
+  label: idle
+- start: 157.5
+  end: 352.5
+  label: idle
+- start: 352.5
+  end: 355.0
+  label: skip
+- start: 355.0
+  end: 367.5
+  label: idle
+- start: 367.5
+  end: 552.5
+  label: idle
+- start: 552.5
+  end: 557.5
+  label: skip
+- start: 557.5
+  end: 575.0
+  label: idle
+- start: 575.0
+  end: 577.5
+  label: skip
+- start: 577.5
+  end: 607.5
+  label: idle
+- start: 607.5
+  end: 614.8411875
+  label: skip

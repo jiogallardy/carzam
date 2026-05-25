@@ -1,0 +1,15 @@
+video_id: LAHAdNMgrao
+duration: 46.8346875
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 30.0
+  label: skip
+- start: 30.0
+  end: 45.0
+  label: idle
+- start: 45.0
+  end: 46.8346875
+  label: skip

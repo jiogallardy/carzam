@@ -1,0 +1,36 @@
+video_id: WzCL8wQ8FLI
+duration: 409.681
+ranges:
+- start: 8.809874961853028
+  end: 10.775240074386597
+  label: idle
+- start: 10.775240074386597
+  end: 54.68151406866455
+  label: accel
+- start: 54.68151406866455
+  end: 66.84937306484986
+  label: accel
+- start: 66.84937306484986
+  end: 83.78105399809264
+  label: decel
+- start: 83.78105399809264
+  end: 84.95308802670289
+  label: decel
+- start: 84.95308802670289
+  end: 191.9500960743866
+  label: accel
+- start: 191.9500960743866
+  end: 194.8973229103546
+  label: decel
+- start: 194.8973229103546
+  end: 202.16832600190736
+  label: accel
+- start: 202.16832600190736
+  end: 203.42416486076354
+  label: decel
+- start: 203.42416486076354
+  end: 214.89925911444092
+  label: accel
+- start: 214.89925911444092
+  end: 221.90193188365174
+  label: decel

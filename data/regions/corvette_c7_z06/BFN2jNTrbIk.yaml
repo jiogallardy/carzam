@@ -1,0 +1,12 @@
+video_id: BFN2jNTrbIk
+duration: 37.4189375
+ranges:
+- start: 0.0
+  end: 6.0
+  label: skip
+- start: 6.0
+  end: 30.0
+  label: idle
+- start: 30.0
+  end: 37.4189375
+  label: skip

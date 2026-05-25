@@ -1,0 +1,15 @@
+video_id: lVvK1OI3Cu4
+duration: 254.1424375
+ranges:
+- start: 0.0
+  end: 77.5
+  label: skip
+- start: 77.5
+  end: 95.0
+  label: idle
+- start: 95.0
+  end: 105.0
+  label: idle
+- start: 105.0
+  end: 254.1424375
+  label: skip

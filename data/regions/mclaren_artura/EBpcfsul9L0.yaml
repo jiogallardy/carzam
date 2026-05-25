@@ -1,0 +1,21 @@
+video_id: EBpcfsul9L0
+duration: 616.5333125
+ranges:
+- start: 0.0
+  end: 230.0
+  label: idle
+- start: 230.0
+  end: 272.5
+  label: idle
+- start: 272.5
+  end: 327.5
+  label: idle
+- start: 327.5
+  end: 430.0
+  label: idle
+- start: 430.0
+  end: 610.0
+  label: idle
+- start: 610.0
+  end: 616.5333125
+  label: skip

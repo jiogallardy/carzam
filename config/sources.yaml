@@ -1,0 +1,238 @@
+
+# mclaren_765lt: McLaren 765LT — track-focused longtail variant of 720S.
+# Same M840T engine but 755hp, lighter, more aggressive aero, quad exhaust.
+mclaren_765lt:
+  - https://www.youtube.com/watch?v=V8zczpE0kXM  # [Mr.Alexandre]           (22s)  765LT Titanium Exhaust
+  - https://www.youtube.com/watch?v=_PC09EoOKvU  # [iPE]                    (41s)  765LT Tunnel Drive iPE Full Exhaust
+  - https://www.youtube.com/watch?v=Dc2lJ1Un4sc  # [NOVITEC]                (423s) POV Novitec 765LT spitting flames
+  - https://www.youtube.com/watch?v=3xc_isevP5U  # [AutoTopNL]              (529s) 765LT 326km/h on AUTOBAHN
+  - https://www.youtube.com/watch?v=CLtKDLM6TMc  # [Millionaire Motorsport] (385s) 765LT POV Drive Pure Exhaust
+  - https://www.youtube.com/watch?v=PqCJ2obcY1Q  # [NOVITEC]                (130s) Novitec 765LT Race Exhaust System
+  - https://www.youtube.com/watch?v=hQzvh8eUatY  # [Gumbal]                 (498s) 765LT Spider Engine Start, Accel, Flybys
+
+# mclaren_senna: McLaren Senna (track-focused 720S sibling — same M840T engine,
+# different exhaust + chassis tuning). Senna GTR included since it shares the
+# engine family.
+
+
+# Curated YouTube sources for carAI training. Verified IDs from yt-dlp search.
+# Format: URL  # [Channel] (duration_s) Title
+
+ferrari_812:
+  - https://www.youtube.com/watch?v=KnpsrVe_cEU  # [CarSpotterQVS] (536s) 812 SuperFast NOVITEC - COLD Start, Revs, Accelerations, Downshifts
+  - https://www.youtube.com/watch?v=UqRY-mqd4oI  # [AutoTopNL] (539s) 812 Novitec F1 V12 Exhaust 330km/h Autobahn
+  - https://www.youtube.com/watch?v=1fzUnAUarNI  # [NOVITEC] (646s) POV Novitec Exhaust 812 GTS V12 Heaven
+  - https://www.youtube.com/watch?v=7N7XnXHsljc  # [NOVITEC] (630s) POV 812 GTS N-Largo brutal V12
+  - https://www.youtube.com/watch?v=SRFOkfDZViE  # [NM2255] (511s) Novitec straight piped 812 GTS DYNO 9000rpm
+  - https://www.youtube.com/watch?v=CSRpmjvvtPM  # [NM2255] (504s) Novitec Exhaust 812 GTS DYNO Screaming V12
+  - https://www.youtube.com/watch?v=NmDfP-OEnYo  # [NOVITEC] (725s) POV Novitec 812 GTS Raw V12 Sound
+  - https://www.youtube.com/watch?v=R0pjeXZi5nA  # [AutoTopNL] (537s) 812 GTS 346km/h 9000RPM V12 Autobahn
+  - https://www.youtube.com/watch?v=rOGFFW3OPHo  # [AutoPaparazzi] (16s) 2023 812 Superfast V12 Exhaust + Wheel Slip
+  - https://www.youtube.com/watch?v=fG-t0X9VGcQ  # [Millionaire Motorsport] (223s) 812 Superfast POV Drive Pure Exhaust
+  - https://www.youtube.com/watch?v=D-6-pTL_NOI  # [9INE_FILM] (149s) 812 Superfast Gintani Full Exhaust
+  - https://www.youtube.com/watch?v=j8vUm0Mwkxc  # [ExoticCarspotters] (231s) Novitec Rosso 812 Superfast Lovely V12
+  - https://www.youtube.com/watch?v=_701BtbFTNw  # [AutoTopNL] (215s) 812 NOVITEC 9000RPM F1 EXHAUST POV
+
+# ferrari_f12: F12 Berlinetta / F12tdf / GTC4Lusso — older NA V12 6.3L (2012-2020)
+ferrari_f12:
+  - https://www.youtube.com/watch?v=2qXwvxR1iAs  # [Nick Kilgore]      (292s) Straight piped F12 cold start, revs, accelerations
+  - https://www.youtube.com/watch?v=x-GLxEINrG8  # [JWT Supercars]     (112s) PURE F12 Berlinetta V12 Exhaust
+  - https://www.youtube.com/watch?v=hHTb2vL7tdU  # [Orange StiQ]       (104s) F12berlinetta PURE V12 SOUNDS
+  - https://www.youtube.com/watch?v=fBRRSAcH1JE  # [ExoticCarspotters] (391s) F12 Berlinetta Novitec Exhaust LOUD
+  - https://www.youtube.com/watch?v=NtXeuJfOQbM  # [Just Supercars]    (69s)  F12 with Capristo exhaust Tunnel
+
+# ferrari_458: 458 Italia / Speciale / Spider — NA V8 4.5L flat-plane (2010-2015)
+ferrari_458:
+  - https://www.youtube.com/watch?v=0fBpNMYn7mU  # [Automann-TV]       (173s) 458 Italia (570hp) pure SOUND
+  - https://www.youtube.com/watch?v=fBZIEhsDRWk  # [NM2255]            (445s) 9000rpm Novitec 458 Italia SCREAMING on Dyno
+  - https://www.youtube.com/watch?v=X0yiRilcKME  # [AutoTopNL]         (212s) 458 0-310 KM/H ACCELERATION & SOUND
+  - https://www.youtube.com/watch?v=c7sZllaXw64  # [Marchettino]       (145s) 458 Italia PURE Sound
+  - https://www.youtube.com/watch?v=0HA-KjOo5fI  # [19Bozzy92]         (361s) 458 Italia Challenge PURE SOUND
+  - https://www.youtube.com/watch?v=wNa2wWWy_io  # [Socal Exotics]     (333s) Gintani 458 Italia tunnel
+
+# ferrari_488: 488 GTB / Pista / Spider — TT V8 3.9L flat-plane (2015-2019)
+ferrari_488:
+  - https://www.youtube.com/watch?v=HODYOYrKCl8  # [JWT Supercars]     (199s) 488 GTB w/ Fabspeed X-Pipe
+  - https://www.youtube.com/watch?v=_MzmcPDOQMY  # [Vipin Maben]       (211s) 488 GTB w/ Novitec Exhaust
+  - https://www.youtube.com/watch?v=AcleRa_DVis  # [NM2255]            (501s) 488 GTB OnBoard Flat Out at Track
+  - https://www.youtube.com/watch?v=rlz-K7FaaA4  # [AutoTopNL]         (273s) 488 GTB Capristo POV Test Drive
+  - https://www.youtube.com/watch?v=6qhCoBAD1DU  # [Vipin Maben]       (158s) 488 GTB Novitec accel + fly-bys
+
+# ferrari_f8: F8 Tributo / Spider — TT V8 3.9L (same engine as 488; 2019-2022)
+ferrari_f8:
+  - https://www.youtube.com/watch?v=sXnkmZOKkT0  # [Nick Kilgore]      (204s) 790HP straight piped F8 walkaround + revs
+  - https://www.youtube.com/watch?v=fVw-E7JOCcI  # [NOVITEC]           (513s) POV 818hp F8 Novitec exhaust
+  - https://www.youtube.com/watch?v=JdyCPYeqXes  # [AutoTopNL]         (484s) F8 TRIBUTO NOVITEC 0-341 km/h
+  - https://www.youtube.com/watch?v=9UCJyFFbqTU  # [Millionaire Motorsport] (279s) F8 Tributo POV Pure Exhaust
+  - https://www.youtube.com/watch?v=LcSA_OIZf00  # [Marko Zrile]       (24s)  F8 Tributo Spider Novitec cold start
+
+# ferrari_sf90: SF90 Stradale — TT V8 + hybrid (2020+)
+ferrari_sf90:
+  - https://www.youtube.com/watch?v=lkML0Wh26Og  # [AutoTopNL]         (480s) SF90 Stradale 0-100, 100-200, 200-300 POV & SOUND
+  - https://www.youtube.com/watch?v=tzNTmd9Ipos  # [cvdzijden]         (260s) SF90 Stradale Start Revs Acceleration
+  - https://www.youtube.com/watch?v=g4L74IVcPeM  # [The YSR]           (186s) Novitec SF90 Start Up + Revs + POV
+  - https://www.youtube.com/watch?v=bzW1bknPuS8  # [Autowizja]         (118s) SF90 cold start, revs, launch, interior 4K
+  - https://www.youtube.com/watch?v=Xd7G593VAFs  # [Automotive 4U]     (230s) 1000HP SF90 accelerations + Pure Sound
+
+# mclaren_720s: McLaren M840T 4.0L TT V8 (720S / 750S — base body).
+# Same engine config as Ferrari 488/F8 — direct flat-plane TT V8 comparison.
+mclaren_720s:
+  - https://www.youtube.com/watch?v=dj2XC5lx9dE  # [Millionaire Motorsport] (300s) 720S Spider POV Pure Exhaust
+  - https://www.youtube.com/watch?v=K_0jKeawP78  # [Automann-TV]            (213s) 720s Pure SOUND & SPEED
+  - https://www.youtube.com/watch?v=DTMxj4_stns  # [Gintani]                (22s)  Gintani Stage 2 720s on DYNO
+  - https://www.youtube.com/watch?v=VPf5eHr3Nns  # [ARMYTRIX]               (110s) 720S Dyno ARMYTRIX Full Exhaust
+mclaren_senna:
+  - https://www.youtube.com/watch?v=x3whCGn73UU  # [Millionaire Motorsport] (311s) Senna POV Pure Exhaust
+  - https://www.youtube.com/watch?v=JPSZ27gJAnE  # [NOVITEC]                (59s)  Novitec McLaren Senna Exhaust
+  - https://www.youtube.com/watch?v=QmC-nousCLk  # [19Bozzy92]              (317s) Senna Sound: Accel/Downshifts/Revs/Burnout
+  - https://www.youtube.com/watch?v=8ymHW-yiGbY  # [NM2255]                 (311s) 2020 Senna GTR 815HP Goodwood
+  - https://www.youtube.com/watch?v=2oLW9Caj208  # [Gumbal]                 (525s) Senna GTR Exhaust Goodwood Full Throttle
+
+# audi_r8_v10: 5.2L NA V10. Notably the SAME physical engine as the Lambo Huracán
+# (Audi-Lamborghini joint development). Tests if the model uses non-engine cues
+# (chassis acoustics, exhaust routing, intake) to distinguish them.
+audi_r8_v10:
+  - https://www.youtube.com/watch?v=2VKPplF7mpE  # [cvdzijden]              (499s) 630HP R8 V10 w/ Per4mance Exhaust
+  - https://www.youtube.com/watch?v=KHQc5egaCxQ  # [Automann-TV]            (347s) R8 Facelift 9000 rpm V10
+  - https://www.youtube.com/watch?v=bbS28m0j1Uk  # [Automann-TV]            (155s) R8 V10 Spyder (525hp) pure SOUND
+  - https://www.youtube.com/watch?v=9VWhIU501C4  # [AutoTopNL]              (248s) 2021 R8 V10 Spyder LOUD POV
+  - https://www.youtube.com/watch?v=LiBD0h0XyG8  # [Automann-TV]            (184s) 2017 R8 V10 PLUS (610hp) pure SOUND
+
+# ferrari_296: 296 GTB / GTS — TT V6 + hybrid (2022+) — only V6 in dataset
+ferrari_296:
+  - https://www.youtube.com/watch?v=Xi3Jy4zjstk  # [NOVITEC]           (169s) Novitec 296 Race Exhaust System
+  - https://www.youtube.com/watch?v=TAajG9gGWnU  # [NM2255]            (345s) 296 GTB Tubi OPF Cats Delete Soundcheck
+  - https://www.youtube.com/watch?v=HaYbSUe9lBU  # [NM2255]            (482s) 296 GTS Capristo Hub-DYNO 300+km/h
+  - https://www.youtube.com/watch?v=X34cetyOIyA  # [NOVITEC]           (376s) Novitec 296 GTB Exhaust System
+  - https://www.youtube.com/watch?v=GEucdiH2ECY  # [AutoTopNL]         (490s) 296 GTB Evening Drive 830HP V6 Hybrid
+
+lamborghini_huracan:
+  - https://www.youtube.com/watch?v=R3FzR6XEm3s  # [AutoTopNL] (334s) Huracan STO 0-323km/h INSANE FLYBY
+  - https://www.youtube.com/watch?v=WzCL8wQ8FLI  # [AutoTopNL] (410s) Huracan Performante LOOKS SOUND DRIVE
+  - https://www.youtube.com/watch?v=QdVujwuoyGU  # [Gumbal] (293s) Huracan STO Accelerations Close Fly Bys Exhaust
+  - https://www.youtube.com/watch?v=HgHKQZ2yLEU  # [19Bozzy92] (400s) Huracan Super Trofeo Evo Pure V10 Sound
+  - https://www.youtube.com/watch?v=-s3gi5ay_Z0  # [CarSpotterQVS] (109s) Huracan STO Start Up Acceleration Nürburgring
+  - https://www.youtube.com/watch?v=5bYUiu8x8FI  # [19Bozzy92] (314s) Huracan LP620-2 Super Trofeo LOUD V10
+
+# porsche_gt3: 911 GT3 / GT3 RS (rear-engine, NA flat-6, 4.0L on 991.2/992,
+# 3.8L on 991.1). All NA — the GT3 line is never turbocharged. The "911 Turbo"
+# is a different model.
+porsche_gt3:
+  - https://www.youtube.com/watch?v=cwtu6lSpX6I  # [AutoTopNL] 992-GT3    (290s) 911 GT3 992 0-319km/h INSANE SOUND
+  - https://www.youtube.com/watch?v=G3-WgZ2x6n4  # [NM2255]    992-GT3RS  (483s) 992 GT3 RS Akrapovic 340km/h DYNO
+  - https://www.youtube.com/watch?v=N9SjyUdVCWM  # [NM2255]    992-GT3RS  (482s) 992 GT3 RS JCR decat Titanium screaming
+  - https://www.youtube.com/watch?v=6YkMHQEaOZc  # [R1 MOTOR]  992-GT3RS  (126s) 992 GT3RS R1 Motorsport RSR EXHAUST
+  - https://www.youtube.com/watch?v=b6ncQ7RacVk  # [R1 MOTOR]  992-GT3RS  (347s) LOUDEST 992 GT3RS RSR Exhaust
+  - https://www.youtube.com/watch?v=sFCGg-lPm9M  # [R1 MOTOR]  992-GT3RS  (73s)  R1 Motorsport RSR Exhaust 992 GT3RS Pure Sound
+  - https://www.youtube.com/watch?v=IUN-bVQ-KXI  # [ChasingCv] 991-GT3RS  (148s) 2 Min of Porsche 911 GT3RS Raw Audio (review 0:28-2:23 only)
+
+# porsche_gt4: 718 Cayman GT4 / GT4 RS (mid-engine, NA flat-6).
+# 982 GT4 = 4.0L (same family as GT3); 982 GT4 RS = literal 992 GT3 engine (MA2.20).
+# 981 GT4 (older, 3.8L) is acoustically distinct — none currently in dataset.
+porsche_gt4:
+  - https://www.youtube.com/watch?v=1aW1a7fvotY  # [NM2255]    982-GT4RS  (485s) 718 GT4 RS 9000rpm DYNO JCR vs Akrapovic
+  - https://www.youtube.com/watch?v=nY2RENyO_RY  # [AutoTopNL] 982-GT4RS  (485s) 718 GT4 RS 0-300 ACCELERATION TOP SPEED
+  - https://www.youtube.com/watch?v=ob7l6CtjHiY  # [werqshop]  982-GT4RS  (238s) 718 GT4RS High Speed Pulls Flybys PURE EXHAUST
+  - https://www.youtube.com/watch?v=bjpYplzBMU0  # [Gumbal]    982-GT4RS  (274s) 718 GT4 RS Full Throttle Goodwood FOS
+  - https://www.youtube.com/watch?v=0n872rGMJzM  # [Automann]  982-GT4    (383s) 718 GT4 (4.0) 0-311 km/h
+  - https://www.youtube.com/watch?v=H4hb19_M7y0  # [NM2255]    982-GT4    (212s) 2019 718 Cayman GT4 SCREAMING Flat-Six Monza
+  - https://www.youtube.com/watch?v=QIIO2SOSQMw  # [AutoPaparazzi] 982-GT4 (12s) 2020 718 Cayman GT4 Exhaust Sound & Revs
+  - https://www.youtube.com/watch?v=iMC60XQdiyA  # [Autoblog]      982-GT4 (66s) Porsche Cayman GT4 Sound (mark 0-60)
+  - https://www.youtube.com/watch?v=PQtZr8s0V1s  # [MrHCars]       982-GT4 (10s) No Music Just GT4 Sounds (short)
+  - https://www.youtube.com/watch?v=f3mAWKlxG3U  # [JoshGT]        982-GT4 (8s)  Cayman GT4 Backfire (short)
+  - https://www.youtube.com/watch?v=rciiMVnvH1M  # [SechristDrives] 982-GT4 (67s) 718 GT4 Kline Inconel Exhaust Sound Clips
+  - https://www.youtube.com/watch?v=YRQmvkE_6ho  # [7CVid1]        982-GT4 (51s) Cayman GT4 Sound (mark 21-29)
+  - https://www.youtube.com/watch?v=gpfQdgCAmKU  # [Honaker]       982-GT4 (27s) 2021 GT4 leaving PON valved exhaust (mark 10-25)
+
+# M177 = 4.0L twin-turbo V8 (W205 C63s 2014+). Excludes M156 6.2L NA V8 entries.
+amg_c63_m177:
+  - https://www.youtube.com/watch?v=hLld_hsFB10  # [Automann-TV] (164s) 2018 C63s pure SOUND 60FPS
+  - https://www.youtube.com/watch?v=cvNySshtiKM  # [Automann-TV] (143s) 2018 C63 (476hp) pure SOUND 60FPS
+  - https://www.youtube.com/watch?v=nqRfwix-ntg  # [19Bozzy92] (131s) C63 AMG F1 Medical Car (W205, M177)
+  - https://www.youtube.com/watch?v=tiSZg1uwkRQ  # [AutoTopNL] (104s) C63 AMG Performance Exhaust Acceleration
+  - https://www.youtube.com/watch?v=92KUPNW78EE  # [R1 MOTORSPORT] (86s) Pure Sound LOUDEST C63s
+  - https://www.youtube.com/watch?v=9ECQgqtCu2Y  # [Michael Lenders] (25s) C63 S engine sound front and rear
+  - https://www.youtube.com/watch?v=SgmiSM0c00s  # [Petrol Apes] (80s) C63 S W205 M177 Sound-Check (mark 19-58)
+  - https://www.youtube.com/watch?v=P_KMYhD0HT0  # [Automann-TV] (144s) 2015 C63 S 510hp pure SOUND (mark 21-135)
+  - https://www.youtube.com/watch?v=sVswFsJ5fMU  # [amg Mercedes] (68s) C63 AMG SOUNDCHECK (mark 9-68)
+  - https://www.youtube.com/watch?v=fVa11Er2EyY  # [Alaatin61] (61s) 2017 C63 S Coupe SOUND
+
+# S58 = G80/G82 (2021+). Excludes F80 M3 (S55 engine).
+bmw_m3_s58:
+  - https://www.youtube.com/watch?v=O89GPMfQzRw  # [AutoTopNL] (216s) M3 G80 Competition SOUND ACCEL TOP SPEED
+  - https://www.youtube.com/watch?v=cU0NtTr9Gi8  # [NM2255] (226s) G82 M4 Akrapovic Race + decat
+  - https://www.youtube.com/watch?v=_GXZBH4Mv-A  # [CarSpotterQVS] (215s) M4 G82 Decat Valvetronic LOUD
+  - https://www.youtube.com/watch?v=FhU3of9f1Kg  # [Automann-TV] (268s) 2021 BMW M4 Competition DRIVE & SOUND
+  - https://www.youtube.com/watch?v=RnfZD_wgWCY  # [CarSpotterQVS] (248s) Crazy Loud M3 G80 Nürburgring
+  - https://www.youtube.com/watch?v=R1_dncEAZ24  # [Val The Camera Guy] (526s) LOUDEST G80 M3 Central LONDON Valvetronic S58
+  - https://www.youtube.com/watch?v=cT8da-mJMNM  # [ExoticCarspotters] (317s) M4 G82 Decat Valvetronic LOUD
+
+subaru_wrx_sti:
+  - https://www.youtube.com/watch?v=2I0XHEGEqeA  # [Hayai DemoN] (353s) STI Big Turbo Boxer Sounds
+  - https://www.youtube.com/watch?v=256n0ht2Sw0  # [Cars with JR] (286s) PURE STI RUMBLE 4MIN ARK CAT-BACK
+  - https://www.youtube.com/watch?v=lDZtmVm8aNY  # [MattyB727] (120s) Tomei Expreme Ti Titanium WRX STI
+  - https://www.youtube.com/watch?v=z70-kUYp7rM  # [DougieD] (209s) WRX awe track catback revs pops cold start pulls
+  - https://www.youtube.com/watch?v=sUw8N7anATo  # [F80 Alex] (332s) Cold start Revs Pulls Straight piped 2018 WRX
+  - https://www.youtube.com/watch?v=rJe7r7SnJ6A  # [BlackJack997] (263s) 2012 STI 400hp Acceleration Sound
+  - https://www.youtube.com/watch?v=EGX9ih3PZts  # [STiAlan] (208s) Pure Subie Rumble Stock Exhaust WRX STI
+  - https://www.youtube.com/watch?v=VGSrlRJCcEc  # [toasterrm] (348s) WRX STi 5-Minute Cold Start Revs Launch Pops
+
+# K20C1 = FK8 (2017-2021) and FL5 (2023+) Type R 2.0L turbo I4
+civic_type_r_k20c1:
+  - https://www.youtube.com/watch?v=pN8FAY8zM38  # [AutoTopNL] (538s) Civic Type R FK8 LE Acceleration Top Speed Sound
+  - https://www.youtube.com/watch?v=rpNcwIU1tGs  # [Cerita Motorsport] (178s) Civic type r fk8 sound
+  - https://www.youtube.com/watch?v=i6qnnWxDSGg  # [AeroflowDynamics] (439s) PERFECT Exhaust FL5 Type R
+  - https://www.youtube.com/watch?v=CcXDV1nebvE  # [KHC] (254s) 2023 FL5 Tomei Titanium Type D
+  - https://www.youtube.com/watch?v=GJ_2BvByhsM  # [Evasive Motorsports] (118s) AWE Track Edition Non-Resonated FL5
+  - https://www.youtube.com/watch?v=kBg86IZS4JE  # [Vivid Racing] (391s) FK8 Exhaust Sound Compilation
+  - https://www.youtube.com/watch?v=wren1t4d_uM  # [Borla] (138s) FL5 Civic Type R Borla Exhaust
+  - https://www.youtube.com/watch?v=M1oTmZHXngo  # [em1chris] (209s) Civic Type R FK8 Cold Start
+  - https://www.youtube.com/watch?v=45J91gENq20  # [Caffeine Fix] (174s) FL5 dual resonator delete: cold start/revs/accel
+  - https://www.youtube.com/watch?v=4-5JPeEA7Vg  # [DailyCivic K24] (168s) FK8 Cold Start and Revs
+  - https://www.youtube.com/watch?v=uD5Q1ncdr88  # [Automann-TV] (121s) 2016 Civic Type R (310hp) pure SOUND
+
+# corvette_c6_zr1: 2009-2013 LS9 supercharged 6.2L V8 (638hp).
+# C8 ZR1 (2025+, twin-turbo flat-plane) is intentionally NOT in this dataset.
+corvette_c6_zr1:
+  - https://www.youtube.com/watch?v=fZLKs5chthk  # [BrianZuk]    C6-ZR1 (67s)  Corvette C6 ZR1 Revving (mark 5-end)
+  - https://www.youtube.com/watch?v=d5CAeOx8A30  # [IMWC]        C6-ZR1 (117s) 2009 Corvette C6 ZR1 Pure Sound (mark 7-19)
+  - https://www.youtube.com/watch?v=7EKokItq7QY  # [DtRockstar1] C6-ZR1 (49s)  Corvette ZR1 angry sound
+  - https://www.youtube.com/watch?v=MRNAOjVpBqg  # [HighTechCv]  C6-ZR1 (61s)  ZR1 exhaust sound (mark 13-end)
+  - https://www.youtube.com/watch?v=TJq-6bnEGn0  # [CorvetteExh] C6-?  (13s)   Corsa Xtreme — title ambiguous, may be Z06 not ZR1
+  - https://www.youtube.com/watch?v=fxn9VLSoHZs  # [HighTechCv]  C6-ZR1 (47s)  ZR1 Akrapovic Titanium (mark 12-42)
+
+# corvette_c7_zr1: 2019 LT5 supercharged 6.2L V8 (755hp).
+corvette_c7_zr1:
+  - https://www.youtube.com/watch?v=VXm64uSoZsc  # [PAT ZR1]     C7-ZR1 (55s)  C7 ZR1 exhaust sound
+  - https://www.youtube.com/watch?v=AZ7Ha3h0MMI  # [DPCcars]     C7-ZR1 (123s) 2018 Corvette ZR1 Exhaust + Supercharger Sound
+  - https://www.youtube.com/watch?v=LE_f1aI9iTE  # [ESOTERIC]    C7-ZR1 (76s)  C7 ZR1 Stock vs Akrapovic comparison
+  - https://www.youtube.com/watch?v=msygBe9X-0Y  # [DPCcars]     C7-ZR1 (75s)  2019 Corvette ZR1 Loud Exhaust
+  - https://www.youtube.com/watch?v=mSFCqCUdkAs  # [R Vonminden] C7-ZR1 (24s)  2019 ZR1 Akrapovic exhaust sound
+  - https://www.youtube.com/watch?v=mrpyG6vRz4s  # [Billy Boat]  C7-ZR1 (95s)  2019 ZR1 Fusion Exhaust w/ Carbon
+  - https://www.youtube.com/watch?v=t7fkEgyJeEM  # [offtrack_pl] C7-ZR1 (105s) Corvette ZR1 Loud Acceleration
+  - https://www.youtube.com/watch?v=0u2wzpwG0qI  # [StyleNL]     C7-ZR1 (15s)  Brandnew 2018 ZR1 at the Nürburgring
+
+# corvette_c7_z06: 2015-2019 LT4 supercharged 6.2L V8 (650hp).
+corvette_c7_z06:
+  - https://www.youtube.com/watch?v=HGp1ZiRtmNY  # [JFlanigan]   C7-Z06 (15s) C7 Z06 Full Corsa
+  - https://www.youtube.com/watch?v=XNEOGFqh5tM  # [Nav Z06]     C7-Z06 (33s) Cold Start Stock (mark 19-end)
+  - https://www.youtube.com/watch?v=jPGnzOB6t4Y  # [P Keller]    C7-Z06 (53s) Corsa Extreme Exhaust (mark 7-50)
+  - https://www.youtube.com/watch?v=BFN2jNTrbIk  # [Aw]          C7-Z06 (37s) 2015 stock exhaust (mark 6-30)
+  - https://www.youtube.com/watch?v=HqZBsj1I7lY  # [Cheese]      C7-Z06 (14s) Stock Exhaust (mark 5-14)
+  - https://www.youtube.com/watch?v=dI_x2z38tr4  # [Hennessey]   C7-Z06 (103s) 0-185 mph 2015 Test Run
+  - https://www.youtube.com/watch?v=kgV1SaVXf_c  # [J Sorensen]  C7-Z06 (54s) Laguna Blue Great sound
+
+# Out-of-distribution / "not one of the 7" — diverse non-target vehicles.
+# Includes Porsche Taycan (electric but with motor whine + Porsche Electric
+# Sport Sound system) so the model has an EV reference.
+other:
+  - https://www.youtube.com/watch?v=wY9X8cSZqbc  # [RB The Mechanic] (586s) Toyota Camry low idle stalls
+  - https://www.youtube.com/watch?v=dfUWwP4HNdo  # [AmericanTrucks] (555s) Ford F150 5.0L Cat-Back exhausts
+  - https://www.youtube.com/watch?v=YDCb3ofQMOE  # [SuperBike Racer] (117s) Yamaha R1M 2016 Crossplane Sound Acceleration
+  - https://www.youtube.com/watch?v=sATrWRARmlY  # [Jennies Garage] (202s) Dodge Ram Cummins Diesel Idle Adjustment
+  - https://www.youtube.com/watch?v=h0IAgkHpU54  # [Automann-TV] (276s) Taycan Turbo S 0-270 LAUNCH CONTROL
+  - https://www.youtube.com/watch?v=huSvhv-vXGI  # [AutoTopNL] (108s) Taycan Turbo S 761HP TOP SPEED Autobahn
+  - https://www.youtube.com/watch?v=x_L4wQveKBo  # [Automann-TV] (168s) 2019 Mustang GT (450hp) pure SOUND
+  - https://www.youtube.com/watch?v=Nq9af9IR8fs  # [Autowizja] (59s) Mustang GT 5.0 exhaust + start up + launch control
+  - https://www.youtube.com/watch?v=XVp_dgDS028  # [Autowizja] (84s) Mustang Bullitt 5.0 V8 460hp interior + exhaust
+  - https://www.youtube.com/watch?v=l2N29NqRMVg  # [Cars With Steve] (56s) Mustang GT Active Valve Exhaust 2024-25

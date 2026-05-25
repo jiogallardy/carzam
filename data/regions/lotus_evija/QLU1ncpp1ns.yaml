@@ -1,0 +1,27 @@
+video_id: QLU1ncpp1ns
+duration: 83.568625
+ranges:
+- start: 0.0
+  end: 7.5
+  label: skip
+- start: 7.5
+  end: 12.5
+  label: idle
+- start: 12.5
+  end: 22.5
+  label: idle
+- start: 22.5
+  end: 25.0
+  label: skip
+- start: 25.0
+  end: 35.0
+  label: idle
+- start: 35.0
+  end: 42.5
+  label: skip
+- start: 42.5
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 83.568625
+  label: skip

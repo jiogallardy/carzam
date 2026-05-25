@@ -1,0 +1,9 @@
+video_id: iMC60XQdiyA
+duration: 65.6311875
+ranges:
+- start: 0.0
+  end: 60.0
+  label: idle
+- start: 60.0
+  end: 65.6311875
+  label: skip

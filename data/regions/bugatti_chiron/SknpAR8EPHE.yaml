@@ -1,0 +1,36 @@
+video_id: SknpAR8EPHE
+duration: 318.0553125
+ranges:
+- start: 0.0
+  end: 32.5
+  label: idle
+- start: 32.5
+  end: 77.5
+  label: skip
+- start: 77.5
+  end: 92.5
+  label: idle
+- start: 92.5
+  end: 107.5
+  label: skip
+- start: 107.5
+  end: 117.5
+  label: idle
+- start: 117.5
+  end: 127.5
+  label: skip
+- start: 127.5
+  end: 160.0
+  label: idle
+- start: 160.0
+  end: 175.0
+  label: idle
+- start: 175.0
+  end: 310.0
+  label: skip
+- start: 310.0
+  end: 315.0
+  label: idle
+- start: 315.0
+  end: 318.0553125
+  label: skip

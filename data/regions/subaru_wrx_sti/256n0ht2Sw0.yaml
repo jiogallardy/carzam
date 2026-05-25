@@ -1,0 +1,27 @@
+video_id: 256n0ht2Sw0
+duration: 286.281
+ranges:
+- start: 6.42575690272522
+  end: 38.24663200190735
+  label: accel
+- start: 38.24663200190735
+  end: 46.78990791226196
+  label: idle
+- start: 46.78990791226196
+  end: 89.91515498092652
+  label: accel
+- start: 89.91515498092652
+  end: 95.61198593896485
+  label: skip
+- start: 95.61198593896485
+  end: 126.98024103433228
+  label: idle
+- start: 126.98024103433228
+  end: 135.5758270629425
+  label: skip
+- start: 135.5758270629425
+  end: 155.1289481373291
+  label: idle
+- start: 155.1289481373291
+  end: 160.85133208583068
+  label: accel

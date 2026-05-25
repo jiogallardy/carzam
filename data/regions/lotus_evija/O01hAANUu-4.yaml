@@ -1,0 +1,24 @@
+video_id: O01hAANUu-4
+duration: 416.48475
+ranges:
+- start: 0.0
+  end: 12.5
+  label: skip
+- start: 12.5
+  end: 32.5
+  label: idle
+- start: 32.5
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 245.0
+  label: idle
+- start: 245.0
+  end: 407.5
+  label: idle
+- start: 407.5
+  end: 415.0
+  label: idle
+- start: 415.0
+  end: 416.48475
+  label: skip

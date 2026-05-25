@@ -1,0 +1,30 @@
+video_id: X66eSpblAN4
+duration: 490.96275
+ranges:
+- start: 0.0
+  end: 12.5
+  label: skip
+- start: 12.5
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 120.0
+  label: skip
+- start: 120.0
+  end: 130.0
+  label: idle
+- start: 130.0
+  end: 355.0
+  label: skip
+- start: 355.0
+  end: 360.0
+  label: idle
+- start: 360.0
+  end: 362.5
+  label: skip
+- start: 362.5
+  end: 367.5
+  label: idle
+- start: 367.5
+  end: 490.96275
+  label: skip

@@ -1,0 +1,18 @@
+video_id: SRFOkfDZViE
+duration: 510.701
+ranges:
+- start: 12.849090072479248
+  end: 70.87794818501281
+  label: idle
+- start: 70.87794818501281
+  end: 133.65623686076356
+  label: accel
+- start: 133.65623686076356
+  end: 135.3439430228882
+  label: decel
+- start: 135.3439430228882
+  end: 152.98495299046326
+  label: idle
+- start: 152.98495299046326
+  end: 159.0125119732971
+  label: skip

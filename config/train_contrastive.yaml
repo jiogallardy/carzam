@@ -1,0 +1,42 @@
+# v9 contrastive — adds an L2-normalized embedding head trained with SupCon
+# alongside the existing classifier head. The two losses are mixed at
+# (classifier=1.0, contrastive=0.5) by default; this keeps the classifier
+# working while teaching the backbone to produce a useful similarity space.
+#
+# Inference paths after training:
+#   * existing classifier head — `carzam infer` (unchanged)
+#   * new embedding head       — `carzam compare` / `carzam embed` (open-set
+#     recognition, nearest-prototype lookup, never-heard-before handling)
+#
+# Run with:
+#   carzam train --config config/train_contrastive.yaml
+
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  # ----- shared with classifier-only path -----
+  batch_size: 32                  # only used when contrastive is off
+  num_workers: 0
+  max_epochs: 40
+  early_stop_patience: 12
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 2
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.3          # keep the family head — helps stability
+
+  # ----- contrastive-specific -----
+  embedding_dim: 128                # turn on the embedding head
+  contrastive_loss_weight: 0.5      # SupCon weight in the combined loss
+  contrastive_temperature: 0.07     # SupCon temperature (Khosla et al)
+  n_classes_per_batch: 8            # K
+  n_samples_per_class: 4            # N → batch size = K*N = 32

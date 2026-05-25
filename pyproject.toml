@@ -1,0 +1,63 @@
+[project]
+name = "carzam"
+version = "0.1.0"
+description = "Car engine sound classifier"
+requires-python = ">=3.11"
+dependencies = [
+    # Core deps needed for both training AND server inference. Kept lean
+    # because the carzam-api Docker image pip-installs the root carzam
+    # package and we don't want to OOM a 4 GB Hetzner box on the build.
+    "torch>=2.3",
+    "torchaudio>=2.3",
+    "numpy>=1.26",
+    "pyyaml>=6",
+    "click>=8.1",
+    "rich>=13",
+    "soundfile>=0.12",
+    "librosa>=0.10",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.4", "mypy>=1.10"]
+# Local-only training extras — not needed by the prod API container.
+train = [
+    "yt-dlp>=2024.1.1",
+    "sounddevice>=0.4.6",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+]
+# Auto-label pipeline (YOLO + DINOv2 + silero VAD + CLAP). Only needed
+# locally for building training datasets; never installed on the server.
+auto-label = [
+    "torchvision>=0.18",
+    "transformers>=4.45",
+    "silero-vad>=5.1",
+    "ultralytics>=8.3",
+    "pillow>=10.0",
+    "yt-dlp>=2024.1.1",
+]
+
+[project.scripts]
+carzam = "carzam.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/carzam"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.2",
+    "pytest>=9.0.3",
+    "ruff>=0.15.12",
+]

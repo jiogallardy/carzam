@@ -1,0 +1,12 @@
+video_id: nLSzIbbTSPo
+duration: 52.0126875
+ranges:
+- start: 0.0
+  end: 15.0
+  label: skip
+- start: 15.0
+  end: 50.0
+  label: idle
+- start: 50.0
+  end: 52.0126875
+  label: skip

@@ -1,0 +1,45 @@
+video_id: NmDfP-OEnYo
+duration: 724.941
+ranges:
+- start: 3.6883549141693117
+  end: 27.733995091552735
+  label: idle
+- start: 27.733995091552735
+  end: 33.80961386076355
+  label: accel
+- start: 33.80961386076355
+  end: 46.7630680629425
+  label: idle
+- start: 46.7630680629425
+  end: 50.632490814987186
+  label: accel
+- start: 50.632490814987186
+  end: 57.010943074386596
+  label: decel
+- start: 57.010943074386596
+  end: 69.32198296757507
+  label: accel
+- start: 69.32198296757507
+  end: 85.32983418119812
+  label: decel
+- start: 85.32983418119812
+  end: 104.60686107820129
+  label: decel
+- start: 104.60686107820129
+  end: 108.62706611253357
+  label: decel
+- start: 108.62706611253357
+  end: 118.83479310108947
+  label: accel
+- start: 118.83479310108947
+  end: 124.8760588779297
+  label: skip
+- start: 124.8760588779297
+  end: 140.12209706294252
+  label: accel
+- start: 140.12209706294252
+  end: 145.14037599809265
+  label: decel
+- start: 145.14037599809265
+  end: 147.8191308550415
+  label: accel

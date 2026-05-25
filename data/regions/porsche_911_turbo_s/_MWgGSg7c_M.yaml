@@ -1,0 +1,21 @@
+video_id: _MWgGSg7c_M
+duration: 266.3909375
+ranges:
+- start: 0.0
+  end: 85.0
+  label: idle
+- start: 85.0
+  end: 87.5
+  label: skip
+- start: 87.5
+  end: 110.0
+  label: idle
+- start: 110.0
+  end: 112.5
+  label: skip
+- start: 112.5
+  end: 265.0
+  label: idle
+- start: 265.0
+  end: 266.3909375
+  label: skip

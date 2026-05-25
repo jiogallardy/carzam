@@ -1,0 +1,15 @@
+video_id: sxZ7-gs5G2I
+duration: 45.871
+ranges:
+- start: 0.0
+  end: 20.0
+  label: idle
+- start: 20.0
+  end: 27.5
+  label: idle
+- start: 27.5
+  end: 42.5
+  label: idle
+- start: 42.5
+  end: 45.871
+  label: skip

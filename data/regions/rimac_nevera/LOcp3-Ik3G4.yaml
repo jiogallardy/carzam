@@ -1,0 +1,33 @@
+video_id: LOcp3-Ik3G4
+duration: 140.1324375
+ranges:
+- start: 0.0
+  end: 25.0
+  label: skip
+- start: 25.0
+  end: 35.0
+  label: idle
+- start: 35.0
+  end: 37.5
+  label: skip
+- start: 37.5
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 62.5
+  label: skip
+- start: 62.5
+  end: 80.0
+  label: idle
+- start: 80.0
+  end: 107.5
+  label: idle
+- start: 107.5
+  end: 135.0
+  label: skip
+- start: 135.0
+  end: 140.0
+  label: idle
+- start: 140.0
+  end: 140.1324375
+  label: skip

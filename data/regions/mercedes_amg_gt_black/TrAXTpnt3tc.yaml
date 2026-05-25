@@ -1,0 +1,12 @@
+video_id: TrAXTpnt3tc
+duration: 36.8733125
+ranges:
+- start: 0.0
+  end: 5.0
+  label: idle
+- start: 5.0
+  end: 35.0
+  label: idle
+- start: 35.0
+  end: 36.8733125
+  label: skip

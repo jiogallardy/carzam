@@ -1,0 +1,24 @@
+video_id: FhU3of9f1Kg
+duration: 267.621
+ranges:
+- start: 3.1429179027252196
+  end: 62.94168089509583
+  label: accel
+- start: 62.94168089509583
+  end: 85.99692999427795
+  label: idle
+- start: 85.99692999427795
+  end: 182.9426731487732
+  label: accel
+- start: 182.9426731487732
+  end: 186.53861589128113
+  label: decel
+- start: 186.53861589128113
+  end: 225.50967689509582
+  label: accel
+- start: 225.50967689509582
+  end: 244.1480698474121
+  label: decel
+- start: 244.1480698474121
+  end: 263.62733
+  label: accel

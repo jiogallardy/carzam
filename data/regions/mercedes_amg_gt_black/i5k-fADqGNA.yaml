@@ -1,0 +1,9 @@
+video_id: i5k-fADqGNA
+duration: 39.0095625
+ranges:
+- start: 0.0
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 39.0095625
+  label: skip

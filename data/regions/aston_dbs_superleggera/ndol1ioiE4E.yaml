@@ -1,0 +1,33 @@
+video_id: ndol1ioiE4E
+duration: 302.3238125
+ranges:
+- start: 0.0
+  end: 30.0
+  label: idle
+- start: 30.0
+  end: 165.0
+  label: idle
+- start: 165.0
+  end: 167.5
+  label: skip
+- start: 167.5
+  end: 190.0
+  label: idle
+- start: 190.0
+  end: 192.5
+  label: skip
+- start: 192.5
+  end: 237.5
+  label: idle
+- start: 237.5
+  end: 245.0
+  label: idle
+- start: 245.0
+  end: 247.5
+  label: skip
+- start: 247.5
+  end: 285.0
+  label: idle
+- start: 285.0
+  end: 302.3238125
+  label: skip

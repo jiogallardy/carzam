@@ -1,0 +1,15 @@
+video_id: R0pjeXZi5nA
+duration: 536.561
+ranges:
+- start: 8.78548286076355
+  end: 27.449725959945678
+  label: accel
+- start: 27.449725959945678
+  end: 35.471174171661374
+  label: decel
+- start: 35.471174171661374
+  end: 63.95300187602234
+  label: accel
+- start: 63.95300187602234
+  end: 78.70445804196167
+  label: decel

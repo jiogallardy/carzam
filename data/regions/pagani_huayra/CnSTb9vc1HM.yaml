@@ -1,0 +1,15 @@
+video_id: CnSTb9vc1HM
+duration: 31.138
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 12.5
+  label: skip
+- start: 12.5
+  end: 30.0
+  label: idle
+- start: 30.0
+  end: 31.138
+  label: skip

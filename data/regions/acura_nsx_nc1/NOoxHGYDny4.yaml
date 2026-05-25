@@ -1,0 +1,33 @@
+video_id: NOoxHGYDny4
+duration: 269.9900625
+ranges:
+- start: 0.0
+  end: 15.0
+  label: idle
+- start: 15.0
+  end: 20.0
+  label: skip
+- start: 20.0
+  end: 25.0
+  label: idle
+- start: 25.0
+  end: 80.0
+  label: idle
+- start: 80.0
+  end: 85.0
+  label: idle
+- start: 85.0
+  end: 87.5
+  label: skip
+- start: 87.5
+  end: 210.0
+  label: idle
+- start: 210.0
+  end: 237.5
+  label: idle
+- start: 237.5
+  end: 252.5
+  label: idle
+- start: 252.5
+  end: 269.9900625
+  label: skip

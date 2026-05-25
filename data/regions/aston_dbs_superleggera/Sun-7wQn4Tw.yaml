@@ -1,0 +1,33 @@
+video_id: Sun-7wQn4Tw
+duration: 346.2908125
+ranges:
+- start: 0.0
+  end: 70.0
+  label: idle
+- start: 70.0
+  end: 100.0
+  label: idle
+- start: 100.0
+  end: 122.5
+  label: idle
+- start: 122.5
+  end: 125.0
+  label: skip
+- start: 125.0
+  end: 175.0
+  label: idle
+- start: 175.0
+  end: 187.5
+  label: idle
+- start: 187.5
+  end: 215.0
+  label: idle
+- start: 215.0
+  end: 322.5
+  label: idle
+- start: 322.5
+  end: 327.5
+  label: idle
+- start: 327.5
+  end: 346.2908125
+  label: skip

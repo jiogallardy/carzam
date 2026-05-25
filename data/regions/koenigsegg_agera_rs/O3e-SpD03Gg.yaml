@@ -1,0 +1,24 @@
+video_id: O3e-SpD03Gg
+duration: 235.968
+ranges:
+- start: 0.0
+  end: 10.0
+  label: skip
+- start: 10.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 72.5
+  label: idle
+- start: 72.5
+  end: 185.0
+  label: idle
+- start: 185.0
+  end: 187.5
+  label: skip
+- start: 187.5
+  end: 235.0
+  label: idle
+- start: 235.0
+  end: 235.968
+  label: skip

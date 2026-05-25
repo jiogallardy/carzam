@@ -1,0 +1,9 @@
+video_id: JLvPyRyVheM
+duration: 209.28
+ranges:
+- start: 0.0
+  end: 207.5
+  label: idle
+- start: 207.5
+  end: 209.28
+  label: skip

@@ -1,0 +1,12 @@
+video_id: m0qp_tXTIi0
+duration: 70.9485625
+ranges:
+- start: 0.0
+  end: 42.5
+  label: idle
+- start: 42.5
+  end: 70.0
+  label: idle
+- start: 70.0
+  end: 70.9485625
+  label: skip

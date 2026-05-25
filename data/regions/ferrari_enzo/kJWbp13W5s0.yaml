@@ -1,0 +1,21 @@
+video_id: kJWbp13W5s0
+duration: 77.891375
+ranges:
+- start: 0.0
+  end: 25.0
+  label: skip
+- start: 25.0
+  end: 42.5
+  label: idle
+- start: 42.5
+  end: 52.5
+  label: idle
+- start: 52.5
+  end: 55.0
+  label: skip
+- start: 55.0
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 77.891375
+  label: skip

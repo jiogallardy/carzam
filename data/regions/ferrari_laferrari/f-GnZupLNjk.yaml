@@ -1,0 +1,12 @@
+video_id: f-GnZupLNjk
+duration: 38.784
+ranges:
+- start: 0.0
+  end: 10.0
+  label: idle
+- start: 10.0
+  end: 22.5
+  label: idle
+- start: 22.5
+  end: 38.784
+  label: skip

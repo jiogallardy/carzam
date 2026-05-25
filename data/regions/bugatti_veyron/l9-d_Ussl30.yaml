@@ -1,0 +1,15 @@
+video_id: l9-d_Ussl30
+duration: 185.6
+ranges:
+- start: 0.0
+  end: 145.0
+  label: idle
+- start: 145.0
+  end: 160.0
+  label: idle
+- start: 160.0
+  end: 185.0
+  label: idle
+- start: 185.0
+  end: 185.6
+  label: skip

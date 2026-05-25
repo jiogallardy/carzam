@@ -1,0 +1,39 @@
+video_id: pN8FAY8zM38
+duration: 538.341
+ranges:
+- start: 19.627144020980836
+  end: 36.371658969482425
+  label: skip
+- start: 36.371658969482425
+  end: 70.69152491226197
+  label: accel
+- start: 70.69152491226197
+  end: 72.54290397329711
+  label: idle
+- start: 72.54290397329711
+  end: 77.94013581498719
+  label: accel
+- start: 77.96027390844726
+  end: 79.38393495803832
+  label: skip
+- start: 79.38393495803832
+  end: 82.46667817738343
+  label: decel
+- start: 82.46667817738343
+  end: 84.54323809155274
+  label: idle
+- start: 84.54323809155274
+  end: 111.98605393133545
+  label: accel
+- start: 111.98605393133545
+  end: 117.49193103051758
+  label: decel
+- start: 117.49193103051758
+  end: 130.11886112397767
+  label: accel
+- start: 130.11886112397767
+  end: 152.84614405340577
+  label: decel
+- start: 152.84614405340577
+  end: 184.6426659847412
+  label: accel

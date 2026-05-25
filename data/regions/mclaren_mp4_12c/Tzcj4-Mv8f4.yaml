@@ -1,0 +1,27 @@
+video_id: Tzcj4-Mv8f4
+duration: 240.0853125
+ranges:
+- start: 0.0
+  end: 15.0
+  label: idle
+- start: 15.0
+  end: 127.5
+  label: idle
+- start: 127.5
+  end: 145.0
+  label: skip
+- start: 145.0
+  end: 162.5
+  label: idle
+- start: 162.5
+  end: 175.0
+  label: idle
+- start: 175.0
+  end: 177.5
+  label: skip
+- start: 177.5
+  end: 240.0
+  label: idle
+- start: 240.0
+  end: 240.0853125
+  label: skip

@@ -1,0 +1,18 @@
+video_id: k2sUZN-70_E
+duration: 92.4850625
+ranges:
+- start: 0.0
+  end: 5.0
+  label: skip
+- start: 5.0
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 80.0
+  label: idle
+- start: 80.0
+  end: 90.0
+  label: idle
+- start: 90.0
+  end: 92.4850625
+  label: skip

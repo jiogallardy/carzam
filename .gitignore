@@ -1,0 +1,50 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# Node (in case any subapp keeps a JS lib)
+node_modules/
+
+# OS
+.DS_Store
+
+# Editor / agent state
+.superpowers/
+.idea/
+.vscode/
+
+# Large or derivable training data — regenerate via
+#   carzam download && carzam window
+/data/raw/
+/data/windows/
+/data/video_cache/
+/data/visual_audit_cache/
+/data/confidence_test_cache/
+
+# Training artifacts
+/runs/
+/weights/
+*.pth
+*.pt
+
+# What we DO keep in git (small + precious):
+#   /data/regions/      hand-labeled YAMLs
+#   /data/references/   reference photos for the auto-label pipeline
+#   /data/manifest.csv  derived but cheap
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Mobile build artifacts (the iOS app lives in a separate private repo)
+*.ipa
+*.apk

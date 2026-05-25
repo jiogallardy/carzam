@@ -1,0 +1,33 @@
+video_id: 3RZdCY7VTsc
+duration: 385.6
+ranges:
+- start: 0.0
+  end: 5.0
+  label: skip
+- start: 5.0
+  end: 130.0
+  label: idle
+- start: 130.0
+  end: 132.5
+  label: skip
+- start: 132.5
+  end: 172.5
+  label: idle
+- start: 172.5
+  end: 175.0
+  label: skip
+- start: 175.0
+  end: 212.5
+  label: idle
+- start: 212.5
+  end: 242.5
+  label: skip
+- start: 242.5
+  end: 332.5
+  label: idle
+- start: 332.5
+  end: 367.5
+  label: idle
+- start: 367.5
+  end: 385.6
+  label: skip

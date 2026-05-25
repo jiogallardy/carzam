@@ -1,0 +1,30 @@
+video_id: JZF4BzThiG8
+duration: 379.286375
+ranges:
+- start: 0.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 52.5
+  label: idle
+- start: 52.5
+  end: 107.5
+  label: idle
+- start: 107.5
+  end: 127.5
+  label: idle
+- start: 127.5
+  end: 130.0
+  label: skip
+- start: 130.0
+  end: 155.0
+  label: idle
+- start: 155.0
+  end: 192.5
+  label: idle
+- start: 192.5
+  end: 375.0
+  label: idle
+- start: 375.0
+  end: 379.286375
+  label: skip

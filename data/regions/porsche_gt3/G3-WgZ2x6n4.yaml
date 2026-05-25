@@ -1,0 +1,39 @@
+video_id: G3-WgZ2x6n4
+duration: 483.101
+ranges:
+- start: 3.804376040054321
+  end: 14.36859109727478
+  label: accel
+- start: 14.36859109727478
+  end: 27.257325982833862
+  label: idle
+- start: 27.257325982833862
+  end: 63.894734877929686
+  label: accel
+- start: 63.894734877929686
+  end: 97.28934893515014
+  label: idle
+- start: 97.28934893515014
+  end: 143.50226082070924
+  label: accel
+- start: 143.50226082070924
+  end: 155.01095915830993
+  label: decel
+- start: 155.01095915830993
+  end: 194.831438917984
+  label: accel
+- start: 194.831438917984
+  end: 214.30989219454955
+  label: decel
+- start: 214.30989219454955
+  end: 242.15249211825562
+  label: accel
+- start: 242.15249211825562
+  end: 244.08357412397766
+  label: decel
+- start: 244.08357412397766
+  end: 261.35366309346006
+  label: accel
+- start: 261.35366309346006
+  end: 269.8871640133514
+  label: decel

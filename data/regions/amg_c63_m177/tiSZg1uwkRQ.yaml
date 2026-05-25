@@ -1,0 +1,9 @@
+video_id: tiSZg1uwkRQ
+duration: 104.041
+ranges:
+- start: 2.2826449294281006
+  end: 20.40396911062622
+  label: skip
+- start: 20.40396911062622
+  end: 102.87043206866456
+  label: accel

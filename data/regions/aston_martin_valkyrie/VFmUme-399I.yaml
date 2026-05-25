@@ -1,0 +1,45 @@
+video_id: VFmUme-399I
+duration: 660.387125
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 312.5
+  label: idle
+- start: 312.5
+  end: 315.0
+  label: skip
+- start: 315.0
+  end: 400.0
+  label: idle
+- start: 400.0
+  end: 477.5
+  label: idle
+- start: 477.5
+  end: 497.5
+  label: idle
+- start: 497.5
+  end: 502.5
+  label: idle
+- start: 502.5
+  end: 507.5
+  label: idle
+- start: 507.5
+  end: 512.5
+  label: skip
+- start: 512.5
+  end: 530.0
+  label: idle
+- start: 530.0
+  end: 532.5
+  label: skip
+- start: 532.5
+  end: 657.5
+  label: idle
+- start: 657.5
+  end: 660.387125
+  label: skip

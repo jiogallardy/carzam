@@ -1,0 +1,12 @@
+video_id: 14zsF-Q9hS4
+duration: 692.65125
+ranges:
+- start: 0.0
+  end: 687.5
+  label: skip
+- start: 687.5
+  end: 692.5
+  label: idle
+- start: 692.5
+  end: 692.65125
+  label: skip

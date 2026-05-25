@@ -1,0 +1,34 @@
+# v8 cascade — family-specialist training.
+#
+# Used by carzam train --config config/train_specialist.yaml.
+# Set `specialist_family` to one of the engine-family names from
+# ENGINE_FAMILIES (see src/carzam/models/multihead.py).
+#
+# A specialist model trains ONLY on rows whose car maps to this family, and
+# its output dimension equals the number of fine classes in the family. The
+# v8 cascade chains:
+#     v7 (12-family classifier) → specialist for the picked family → final car.
+
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  batch_size: 32
+  num_workers: 0
+  max_epochs: 60
+  early_stop_patience: 15
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 2
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.0      # specialist sees one family — no family head
+  # The family this specialist covers. Override per run via env or by editing:
+  specialist_family: na_flat6

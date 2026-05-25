@@ -1,0 +1,9 @@
+video_id: rHFLgfpsjzw
+duration: 67.3493125
+ranges:
+- start: 0.0
+  end: 65.0
+  label: idle
+- start: 65.0
+  end: 67.3493125
+  label: skip

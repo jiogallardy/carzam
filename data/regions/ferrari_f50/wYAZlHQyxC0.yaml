@@ -1,0 +1,18 @@
+video_id: wYAZlHQyxC0
+duration: 282.0053125
+ranges:
+- start: 0.0
+  end: 35.0
+  label: idle
+- start: 35.0
+  end: 197.5
+  label: idle
+- start: 197.5
+  end: 227.5
+  label: idle
+- start: 227.5
+  end: 270.0
+  label: idle
+- start: 270.0
+  end: 282.0053125
+  label: skip

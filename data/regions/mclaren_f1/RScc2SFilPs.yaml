@@ -1,0 +1,39 @@
+video_id: RScc2SFilPs
+duration: 79.9346875
+ranges:
+- start: 0.0
+  end: 7.5
+  label: idle
+- start: 7.5
+  end: 22.5
+  label: idle
+- start: 22.5
+  end: 27.5
+  label: skip
+- start: 27.5
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 40.0
+  label: skip
+- start: 40.0
+  end: 52.5
+  label: idle
+- start: 52.5
+  end: 57.5
+  label: idle
+- start: 57.5
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 67.5
+  label: idle
+- start: 67.5
+  end: 72.5
+  label: skip
+- start: 72.5
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 79.9346875
+  label: skip

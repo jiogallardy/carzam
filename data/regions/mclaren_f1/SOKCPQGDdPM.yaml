@@ -1,0 +1,39 @@
+video_id: SOKCPQGDdPM
+duration: 201.0666875
+ranges:
+- start: 0.0
+  end: 20.0
+  label: idle
+- start: 20.0
+  end: 37.5
+  label: idle
+- start: 37.5
+  end: 40.0
+  label: skip
+- start: 40.0
+  end: 45.0
+  label: idle
+- start: 45.0
+  end: 47.5
+  label: skip
+- start: 47.5
+  end: 52.5
+  label: idle
+- start: 52.5
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 82.5
+  label: skip
+- start: 82.5
+  end: 97.5
+  label: idle
+- start: 97.5
+  end: 175.0
+  label: idle
+- start: 175.0
+  end: 195.0
+  label: idle
+- start: 195.0
+  end: 201.0666875
+  label: skip

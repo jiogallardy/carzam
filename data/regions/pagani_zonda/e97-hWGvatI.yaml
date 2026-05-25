@@ -1,0 +1,33 @@
+video_id: e97-hWGvatI
+duration: 167.296
+ranges:
+- start: 0.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 27.5
+  label: skip
+- start: 27.5
+  end: 47.5
+  label: idle
+- start: 47.5
+  end: 50.0
+  label: skip
+- start: 50.0
+  end: 55.0
+  label: idle
+- start: 55.0
+  end: 60.0
+  label: skip
+- start: 60.0
+  end: 77.5
+  label: idle
+- start: 77.5
+  end: 157.5
+  label: idle
+- start: 157.5
+  end: 165.0
+  label: idle
+- start: 165.0
+  end: 167.296
+  label: skip

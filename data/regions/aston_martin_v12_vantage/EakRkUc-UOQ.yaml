@@ -1,0 +1,36 @@
+video_id: EakRkUc-UOQ
+duration: 374.7004375
+ranges:
+- start: 0.0
+  end: 2.5
+  label: skip
+- start: 2.5
+  end: 52.5
+  label: idle
+- start: 52.5
+  end: 55.0
+  label: skip
+- start: 55.0
+  end: 67.5
+  label: idle
+- start: 67.5
+  end: 80.0
+  label: idle
+- start: 80.0
+  end: 170.0
+  label: idle
+- start: 170.0
+  end: 202.5
+  label: idle
+- start: 202.5
+  end: 205.0
+  label: skip
+- start: 205.0
+  end: 312.5
+  label: idle
+- start: 312.5
+  end: 370.0
+  label: idle
+- start: 370.0
+  end: 374.7004375
+  label: skip

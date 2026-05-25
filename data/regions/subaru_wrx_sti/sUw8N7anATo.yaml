@@ -1,0 +1,18 @@
+video_id: sUw8N7anATo
+duration: 331.821
+ranges:
+- start: 6.616773792098999
+  end: 93.41797018119811
+  label: idle
+- start: 93.41797018119811
+  end: 148.4896300743866
+  label: accel
+- start: 148.4896300743866
+  end: 150.69271090463258
+  label: skip
+- start: 150.69271090463258
+  end: 169.5670031335144
+  label: idle
+- start: 169.5670031335144
+  end: 225.3442279885559
+  label: accel

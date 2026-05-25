@@ -1,0 +1,12 @@
+video_id: RK0ZWXa--BA
+duration: 77.9306875
+ranges:
+- start: 0.0
+  end: 47.5
+  label: idle
+- start: 47.5
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 77.9306875
+  label: skip

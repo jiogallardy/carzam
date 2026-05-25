@@ -1,0 +1,29 @@
+# 2-epoch smoke test for contrastive training. Verifies the pipeline wires
+# end-to-end before launching a real training run. Not for production use.
+paths:
+  manifest: data/manifest.csv
+  weights: weights/Cnn14_mAP=0.431.pth
+  runs_dir: runs
+
+splits:
+  ratios: [0.7, 0.15, 0.15]
+  seed: 42
+
+train:
+  batch_size: 32
+  num_workers: 0
+  max_epochs: 2
+  early_stop_patience: 99
+  lr_head: 3.0e-4
+  lr_backbone: 5.0e-5
+  weight_decay: 1.0e-4
+  warmup_epochs: 1
+  car_loss_weight: 1.0
+  state_loss_weight: 0.0
+  family_loss_weight: 0.3
+
+  embedding_dim: 128
+  contrastive_loss_weight: 0.5
+  contrastive_temperature: 0.07
+  n_classes_per_batch: 8
+  n_samples_per_class: 4

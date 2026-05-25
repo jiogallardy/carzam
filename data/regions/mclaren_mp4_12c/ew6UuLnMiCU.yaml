@@ -1,0 +1,15 @@
+video_id: ew6UuLnMiCU
+duration: 42.5386875
+ranges:
+- start: 0.0
+  end: 17.5
+  label: idle
+- start: 17.5
+  end: 35.0
+  label: skip
+- start: 35.0
+  end: 40.0
+  label: idle
+- start: 40.0
+  end: 42.5386875
+  label: skip

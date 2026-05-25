@@ -1,0 +1,15 @@
+video_id: fj_QhEWTJdk
+duration: 169.5056875
+ranges:
+- start: 0.0
+  end: 12.5
+  label: skip
+- start: 12.5
+  end: 62.5
+  label: idle
+- start: 62.5
+  end: 127.5
+  label: idle
+- start: 127.5
+  end: 169.5056875
+  label: skip

@@ -1,0 +1,33 @@
+video_id: 2VKPplF7mpE
+duration: 499.261
+ranges:
+- start: 5.7617338970031735
+  end: 24.389059095367433
+  label: idle
+- start: 29.3240660667572
+  end: 52.785625959945676
+  label: idle
+- start: 60.37513811634827
+  end: 64.2709559217987
+  label: idle
+- start: 79.597292
+  end: 81.84400801907348
+  label: idle
+- start: 84.88230210108948
+  end: 109.88370387602234
+  label: idle
+- start: 114.29478602288819
+  end: 133.28701112588502
+  label: idle
+- start: 158.31913496376038
+  end: 162.7660178226166
+  label: idle
+- start: 175.7887659599457
+  end: 196.82181795231628
+  label: idle
+- start: 302.1972050400543
+  end: 307.3116152002716
+  label: idle
+- start: 313.8290479217987
+  end: 322.46827490081785
+  label: idle

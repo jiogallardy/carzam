@@ -1,0 +1,9 @@
+video_id: XUdbMoWTcSA
+duration: 87.0051875
+ranges:
+- start: 0.0
+  end: 85.0
+  label: idle
+- start: 85.0
+  end: 87.0051875
+  label: skip

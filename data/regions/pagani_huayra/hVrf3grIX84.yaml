@@ -1,0 +1,18 @@
+video_id: hVrf3grIX84
+duration: 44.8853125
+ranges:
+- start: 0.0
+  end: 12.5
+  label: idle
+- start: 12.5
+  end: 27.5
+  label: idle
+- start: 27.5
+  end: 30.0
+  label: skip
+- start: 30.0
+  end: 40.0
+  label: idle
+- start: 40.0
+  end: 44.8853125
+  label: skip

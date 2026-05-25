@@ -1,0 +1,18 @@
+video_id: EGX9ih3PZts
+duration: 208.061
+ranges:
+- start: 7.03931490272522
+  end: 10.519285853134155
+  label: skip
+- start: 10.519285853134155
+  end: 31.37710099809265
+  label: idle
+- start: 31.37710099809265
+  end: 60.09194694850159
+  label: accel
+- start: 60.09194694850159
+  end: 61.24432102861023
+  label: idle
+- start: 61.24432102861023
+  end: 176.33105002479553
+  label: skip
