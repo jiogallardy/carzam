@@ -133,6 +133,29 @@ ffmpeg -y -i "$HOME/Downloads/clip_full.wav" \
 
 ---
 
+## Clip library — which YouTube link maps to which waveform
+
+Source URLs for every waveform made for the project. Outputs live in `~/Downloads/`
+as `<name>.wav`, `<name>_wave.png` (cyan-on-dark `0x35E0FF`), and `<name>_wave.mp4`
+(animated white-on-black). Range is the section pulled via `--download-sections`
+("full" = whole clip).
+
+| Name              | Car / sound          | Range       | YouTube link |
+|-------------------|----------------------|-------------|--------------|
+| `carrera_idle`    | Porsche Carrera idle | 1:26–1:28   | https://www.youtube.com/watch?v=WDeGl53AzME |
+| `carrera_rev`     | Porsche Carrera rev  | 0:47–0:51   | https://www.youtube.com/watch?v=q6o0bV3pmNI |
+| `carrera_launch`  | Porsche Carrera GT V10 launch | full (~13.5s) | https://www.youtube.com/watch?v=y3HJzpoSIeU |
+| `lfa_idle`        | Lexus LFA idle       | 0:12–0:14   | https://www.youtube.com/watch?v=rhn_vnQJ10E |
+| `lfa_v10`         | Lexus LFA V10 (Mat Watson) | full (~59s) | https://www.youtube.com/shorts/FboQ5yuQtGc |
+| `lfa_launch`      | Lexus LFA acceleration/launch | full (~9.6s) | https://www.youtube.com/shorts/vWoUGP5zjHU |
+
+> Note on ranged Shorts/webm clips: `--download-sections` snaps the **start** to the
+> nearest prior keyframe (so the WAV often runs longer than asked), but the **end** is
+> accurate. To get the exact window, trim the **last** N seconds, not the first —
+> e.g. `carrera_rev` came down as ~11s and was trimmed to the final 4s to land 0:47–0:51.
+
+---
+
 ## One-shot helper
 
 ```bash
